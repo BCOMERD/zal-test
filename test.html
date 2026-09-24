@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>ZAL Test</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="zal-config.js"></script>
+<style>
+  :root { --bg:#0A192F; --card:#112240; --line:#1d3557; --txt:#E6EDF7; --mute:#8FA3BF; --y:#F2B203; --ok:#22C55E; --bad:#EF4444; }
+  * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter','Tajawal',sans-serif; }
+  body { background:var(--bg); color:var(--txt); max-width:520px; margin:0 auto; min-height:100vh; padding-bottom:84px; }
+  header { display:flex; align-items:center; justify-content:space-between; padding:16px; position:sticky; top:0; background:var(--bg); z-index:5; border-bottom:1px solid var(--line); }
+  .logo { font-weight:800; font-size:22px; display:flex; gap:6px; align-items:center; }
+  .logo b { background:var(--y); color:var(--bg); width:32px; height:32px; border-radius:50%; display:grid; place-items:center; }
+  .pill { font-size:11px; background:#3b2f00; color:var(--y); padding:3px 8px; border-radius:99px; }
+  main { padding:16px; }
+  h2 { font-size:20px; margin:4px 0 12px; } h3 { font-size:16px; margin:16px 0 8px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:12px; }
+  .row { display:flex; gap:8px; align-items:center; } .between { justify-content:space-between; } .wrap { flex-wrap:wrap; }
+  .mute { color:var(--mute); font-size:13px; } .small { font-size:12px; }
+  input, select, textarea { width:100%; background:#0d1d36; border:1px solid var(--line); color:var(--txt); border-radius:12px; padding:12px; font-size:15px; margin:4px 0 10px; }
+  button { background:var(--y); color:#111; border:0; border-radius:12px; padding:12px 16px; font-weight:700; font-size:15px; cursor:pointer; }
+  button.ghost { background:transparent; color:var(--txt); border:1px solid var(--line); }
+  button.sm { padding:7px 11px; font-size:13px; border-radius:10px; }
+  button:disabled { opacity:.5; }
+  .chip { border:1px solid var(--line); border-radius:99px; padding:7px 12px; font-size:13px; background:transparent; color:var(--txt); font-weight:600; }
+  .chip.on { background:var(--y); color:#111; border-color:var(--y); }
+  .tag { font-size:11px; padding:2px 8px; border-radius:99px; background:#1d3557; margin-right:4px; }
+  .status { font-size:12px; font-weight:700; padding:3px 9px; border-radius:99px; background:#1d3557; }
+  .status.paid,.status.accepted { background:#1e3a8a; } .status.ready,.status.picked_up { background:#7c2d12; } .status.completed { background:#14532d; } .status.cancelled { background:#7f1d1d; }
+  nav { position:fixed; bottom:0; left:0; right:0; max-width:520px; margin:0 auto; display:flex; background:#081426; border-top:1px solid var(--line); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:9; }
+  nav button { flex:1; background:none; color:var(--mute); font-size:11px; padding:6px 2px; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  nav button.on { color:var(--y); } nav i { font-style:normal; font-size:20px; }
+  .cartbar { position:fixed; bottom:76px; left:0; right:0; max-width:520px; margin:0 auto; padding:0 16px; z-index:8; }
+  .cartbar button { width:100%; display:flex; justify-content:space-between; }
+  .msg { padding:10px 12px; border-radius:12px; margin:8px 0; max-width:88%; white-space:pre-wrap; line-height:1.45; font-size:14px; }
+  .msg.me { background:var(--y); color:#111; margin-left:auto; } .msg.ai { background:var(--card); border:1px solid var(--line); }
+  .toast { position:fixed; top:14px; left:50%; transform:translateX(-50%); background:#111; border:1px solid var(--line); padding:10px 16px; border-radius:12px; z-index:20; font-size:14px; max-width:90%; }
+  .bank { background:linear-gradient(135deg,#005498,#00a6e2); border-radius:18px; padding:18px; color:#fff; margin:12px 0; }
+  .big { font-size:28px; font-weight:800; } .ok { color:var(--ok); } .bad { color:var(--bad); }
+  table { width:100%; border-collapse:collapse; font-size:14px; } td { padding:6px 0; border-bottom:1px solid var(--line); } td:last-child { text-align:right; font-weight:700; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><b>Z</b>AL <span class="pill">TEST MODE · fake money</span></div>
+  <span id="who" class="mute small"></span>
+</header>
+<main id="view"></main>
+<div class="cartbar" id="cartbar"></div>
+<nav id="nav"></nav>
+
+<script>
+const sb = supabase.createClient(window.ZAL_SUPABASE.url, window.ZAL_SUPABASE.key);
+const S = { tab: 'explore', user: null, me: null, cart: null, filters: {}, q: '', ai: [], restaurant: null, bill: null };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur = (n) => '€' + Number(n || 0).toFixed(2);
+function toast(t, bad) { const d = document.createElement('div'); d.className = 'toast ' + (bad ? 'bad' : ''); d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3500); }
+async function rpc(fn, args) { const { data, error } = await sb.rpc(fn, args || {}); if (error) { toast(error.message, true); throw error; } return data; }
+function needLogin() { if (!S.user) { toast('Sign in first (Account tab)'); go('account'); return true; } return false; }
+
+const TABS = [['explore','🍽️','Explore'],['orders','🧾','Orders'],['ai','🦉','Zal AI'],['wallet','💶','Wallets'],['account','👤','Account']];
+function nav() {
+  const extra = [];
+  if (S.me?.restaurants?.length) extra.push(['kitchen','👨‍🍳','Kitchen']);
+  if (S.me?.courier) extra.push(['courier','🛵','Courier']);
+  const tabs = [...TABS.slice(0,3), ...extra, ...TABS.slice(3)];
+  $('nav').innerHTML = tabs.map(([k,i,l]) => `<button class="${S.tab===k?'on':''}" onclick="go('${k}')"><i>${i}</i>${l}</button>`).join('');
+  $('who').textContent = S.user ? (S.me?.profile?.full_name || S.user.email) : 'guest';
+}
+function go(tab, extra) { S.tab = tab; Object.assign(S, extra || {}); render(); window.scrollTo(0,0); }
+async function refreshMe() {
+  const { data } = await sb.auth.getUser(); S.user = data.user || null;
+  S.me = S.user ? await rpc('zal_me') : null; nav();
+}
+
+// ---------- Explore ----------
+async function explore() {
+  const f = S.filters;
+  const chips = [['test','⭐ Test restaurants'],['halal','Halal'],['healthy','Healthy'],['vegetarian','Vegetarian'],['menu','With menu']];
+  let q = sb.from('restaurant_cards').select('id,name,cuisine,address,halal,healthy,vegetarian,min_dish_price,dish_count,rating_value,delivery_available,is_test', { count:'exact' })
+    .order('is_test', { ascending:false }).order('rating_count', { ascending:false, nullsFirst:false }).limit(30);
+  if (S.q) q = q.or(`name.ilike.%${S.q}%,cuisine.ilike.%${S.q}%`);
+  if (f.test) q = q.eq('is_test', true);
+  ['halal','healthy','vegetarian'].forEach(k => { if (f[k]) q = q.eq(k, true); });
+  if (f.menu) q = q.gt('dish_count', 0);
+  const { data, count, error } = await q;
+  if (error) return toast(error.message, true);
+  $('view').innerHTML = `<h2>Discover Brussels</h2>
+    <input id="q" placeholder="Search restaurant or cuisine (e.g. Syrian, pizza)" value="${esc(S.q)}" onkeydown="if(event.key==='Enter'){S.q=this.value;render()}">
+    <div class="row wrap" style="margin-bottom:12px">${chips.map(([k,l]) => `<button class="chip ${f[k]?'on':''}" onclick="S.filters.${k}=!S.filters.${k};render()">${l}</button>`).join('')}</div>
+    <p class="mute" style="margin-bottom:8px">${count ?? 0} places · showing ${data.length}</p>
+    ${data.map(r => `<div class="card" onclick="openRestaurant('${r.id}')" style="cursor:pointer">
+      <div class="row between"><b>${esc(r.name)}</b>${r.rating_value ? `<span>★ ${Number(r.rating_value).toFixed(1)}</span>` : ''}</div>
+      <div class="mute">${esc(r.cuisine)} · ${esc((r.address||'').split(',').slice(-1)[0])}</div>
+      <div style="margin-top:6px">${r.is_test?'<span class="tag" style="background:#3b2f00;color:#F2B203">TEST</span>':''}${r.halal?'<span class="tag">Halal</span>':''}${r.healthy?'<span class="tag">Healthy</span>':''}${r.vegetarian?'<span class="tag">Vegetarian</span>':''}${r.delivery_available?'<span class="tag">Delivery</span>':''}
+      ${r.min_dish_price!=null?`<span class="tag">from ${eur(r.min_dish_price)}</span>`:'<span class="tag">Menu coming soon</span>'}</div></div>`).join('')}`;
+}
+async function openRestaurant(id) {
+  const [{ data: r }, { data: menu }] = await Promise.all([
+    sb.from('restaurant_cards').select('*').eq('id', id).single(),
+    sb.from('menu_items').select('id,name,price,description,ingredients').eq('restaurant_id', id).order('price').limit(300)]);
+  if (!S.cart || S.cart.rid !== id) S.cart = { rid: id, name: r.name, delivery: r.delivery_available, items: {} };
+  S.restaurant = { r, menu: menu || [] }; go('restaurant');
+}
+function restaurantView() {
+  const { r, menu } = S.restaurant;
+  $('view').innerHTML = `<button class="ghost sm" onclick="go('explore')">← Back</button>
+    <h2 style="margin-top:12px">${esc(r.name)}</h2>
+    <p class="mute">${esc(r.cuisine)} · ${esc(r.address)}</p>
+    <p class="mute">${r.phone?`📞 ${esc(r.phone)} · `:''}${r.delivery_available?'Pickup + delivery':'Pickup'}${r.reservation_available?' · Booking':''}</p>
+    <h3>Menu</h3>
+    ${menu.length ? menu.map(m => { const n = S.cart.items[m.id]?.qty || 0; return `<div class="card">
+      <div class="row between"><b>${esc(m.name)}</b><b>${eur(m.price)}</b></div>
+      ${m.description?`<p class="mute" style="margin:4px 0">${esc(m.description)}</p>`:''}
+      <div class="row between" style="margin-top:6px"><span class="mute small">${(m.ingredients||[]).slice(0,6).map(esc).join(' · ')}</span>
+      <div class="row"><button class="ghost sm" onclick="addItem('${m.id}',-1)">−</button><b>${n}</b><button class="sm" onclick="addItem('${m.id}',1)">+</button></div></div></div>`; }).join('')
+      : '<div class="card mute">Menu coming soon. Try a ⭐ Test restaurant, or register your own in Account.</div>'}`;
+}
+function addItem(id, d) {
+  const m = S.restaurant.menu.find(x => x.id === id); const it = S.cart.items[id] || { name: m.name, price: m.price, qty: 0 };
+  it.qty = Math.max(0, Math.min(50, it.qty + d)); if (it.qty) S.cart.items[id] = it; else delete S.cart.items[id]; render();
+}
+function cartTotal() { return Object.values(S.cart?.items || {}).reduce((s, i) => s + i.qty * i.price, 0); }
+function cartbar() {
+  const n = Object.values(S.cart?.items || {}).reduce((s, i) => s + i.qty, 0);
+  $('cartbar').innerHTML = n && ['restaurant','explore'].includes(S.tab) ? `<button onclick="go('checkout')"><span>🛒 ${n} item${n>1?'s':''} · ${esc(S.cart.name)}</span><span>${eur(cartTotal())} →</span></button>` : '';
+}
+
+// ---------- Checkout + fake Bancontact ----------
+function checkout() {
+  if (needLogin()) return;
+  const c = S.cart; const items = Object.values(c.items);
+  $('view').innerHTML = `<button class="ghost sm" onclick="go('restaurant')">← Menu</button><h2 style="margin-top:12px">Checkout</h2>
+    <div class="card">${items.map(i => `<div class="row between"><span>${i.qty}× ${esc(i.name)}</span><span>${eur(i.qty*i.price)}</span></div>`).join('')}</div>
+    <h3>How do you get it?</h3>
+    <select id="ful"><option value="pickup">Pickup at the restaurant</option>${c.delivery?'<option value="delivery">Delivery (+€2.50 test fee)</option>':''}</select>
+    ${c.delivery?'':'<p class="mute small">This restaurant offers pickup only.</p>'}
+    <h3>Tip for the courier</h3>
+    <select id="tip"><option value="0">No tip</option><option value="1">€1</option><option value="2">€2</option><option value="3">€3</option></select>
+    <button style="width:100%;margin-top:8px" onclick="placeOrder(this)">Continue to payment</button>`;
+}
+async function placeOrder(btn) {
+  btn.disabled = true;
+  try {
+    const items = Object.entries(S.cart.items).map(([menu_item_id, i]) => ({ menu_item_id, qty: i.qty }));
+    S.bill = await rpc('zal_checkout', { p_restaurant_id: S.cart.rid, p_items: items, p_fulfilment: $('ful').value, p_tip: Number($('tip').value) });
+    go('pay');
+  } catch { btn.disabled = false; }
+}
+function pay() {
+  const b = S.bill;
+  $('view').innerHTML = `<h2>Payment</h2>
+    <table><tr><td>Food</td><td>${eur(b.subtotal)}</td></tr><tr><td>Delivery</td><td>${eur(b.delivery_fee)}</td></tr><tr><td>Tip</td><td>${eur(b.tip)}</td></tr>
+    <tr><td><b>Total</b></td><td class="big">${eur(b.total)}</td></tr></table>
+    <div class="bank"><div style="font-weight:800;font-size:18px">Bancontact <span class="small">· TEST</span></div>
+      <div style="letter-spacing:3px;margin:18px 0 6px">6703 •••• •••• TEST</div><div class="small">No real money is charged.</div></div>
+    <button style="width:100%" onclick="doPay(this)">Pay ${eur(b.total)} (fake)</button>`;
+}
+async function doPay(btn) {
+  btn.disabled = true; btn.textContent = 'Processing…';
+  await new Promise(r => setTimeout(r, 1500));
+  try {
+    await rpc('zal_mock_pay', { p_order_id: S.bill.order_id, p_method: 'bancontact-test' });
+    const b = S.bill; const toRest = b.subtotal - b.commission - b.gateway_fee;
+    S.cart = null;
+    $('view').innerHTML = `<h2 class="ok">✓ Paid</h2><p class="mute">Order sent to the restaurant.</p>
+      <div class="card"><h3 style="margin-top:0">Where your ${eur(b.total)} goes</h3><table>
+      <tr><td>Restaurant (food − 7% − card fee)</td><td>${eur(toRest)}</td></tr>
+      <tr><td>ZAL commission (7%)</td><td>${eur(b.commission)}</td></tr>
+      <tr><td>Payment provider (test)</td><td>${eur(b.gateway_fee)}</td></tr>
+      <tr><td>Courier (100% fee + tip, on delivery)</td><td>${eur(b.delivery_fee + b.tip)}</td></tr></table></div>
+      <button style="width:100%" onclick="go('orders')">Track my order</button>`;
+  } catch { btn.disabled = false; btn.textContent = 'Try again'; }
+}
+
+// ---------- Orders (customer) ----------
+async function orders() {
+  if (needLogin()) return;
+  const list = await rpc('zal_my_orders');
+  $('view').innerHTML = `<h2>My orders</h2>${list.length ? list.map(o => `<div class="card">
+    <div class="row between"><b>${esc(o.restaurant)}</b><span class="status ${o.status}">${o.status.replace('_',' ')}</span></div>
+    <p class="mute">${o.fulfilment} · ${new Date(o.created_at).toLocaleString()}</p>
+    <p style="margin:6px 0">${(o.items||[]).map(i => `${i.qty}× ${esc(i.name)}`).join(', ')}</p><b>${eur(o.total)}</b></div>`).join('') : '<p class="mute">No orders yet. Pick a restaurant in Explore.</p>'}
+    <button class="ghost" style="width:100%" onclick="render()">↻ Refresh</button>`;
+}
+
+// ---------- Zal AI ----------
+function ai() {
+  $('view').innerHTML = `<h2>🦉 Zal AI</h2><p class="mute">Ask in any language: "halal Syrian food under €10", "best pizza", "بدي أكل كردي"…</p>
+    <div id="chat" style="margin:12px 0">${S.ai.map(m => `<div class="msg ${m.role==='user'?'me':'ai'}">${esc(m.content)}${m.places?`<div style="margin-top:8px">${m.places.map(p => `<button class="chip" style="margin:3px" onclick="openRestaurant('${p.id}')">${esc(p.name)}</button>`).join('')}</div>`:''}</div>`).join('')}</div>
+    <div class="row"><input id="ask" placeholder="What do you feel like eating?" onkeydown="if(event.key==='Enter')askAI()"><button onclick="askAI()">Send</button></div>`;
+}
+async function askAI() {
+  const t = $('ask').value.trim(); if (!t) return;
+  S.ai.push({ role:'user', content:t }); ai(); $('chat').insertAdjacentHTML('beforeend','<div class="msg ai mute" id="typing">Zal AI is thinking…</div>');
+  const { data, error } = await sb.functions.invoke('zal-ai', { body: { message: t, history: S.ai.slice(-6).map(({role,content}) => ({role,content})) } });
+  if (error || data?.error) S.ai.push({ role:'assistant', content:'Zal AI is not available right now. (' + (data?.error || error.message) + ')' });
+  else S.ai.push({ role:'assistant', content:data.answer, places:(data.restaurants||[]).slice(0,5) });
+  ai();
+}
+
+// ---------- Wallets ----------
+async function wallet() {
+  const p = await rpc('zal_platform_wallet');
+  const w = S.user ? await rpc('zal_wallet') : null;
+  $('view').innerHTML = `<h2>Wallets <span class="pill">fake money</span></h2>
+    ${w ? `<div class="card"><h3 style="margin-top:0">My wallet</h3><table>
+      <tr><td>Spent as customer</td><td>${eur(w.spent_as_customer)}</td></tr>
+      <tr><td>Earned as restaurant</td><td class="ok">${eur(w.earned_as_restaurant)}</td></tr>
+      <tr><td>Earned as courier</td><td class="ok">${eur(w.earned_as_courier)}</td></tr></table>
+      ${(w.entries||[]).slice(0,15).map(e => `<div class="row between small" style="margin-top:6px"><span class="mute">${esc(e.party)} · ${esc(e.note)}</span><span class="${e.amount<0?'bad':'ok'}">${e.amount<0?'':'+'}${eur(e.amount)}</span></div>`).join('')}</div>` : '<div class="card mute">Sign in to see your own wallet.</div>'}
+    <div class="card"><h3 style="margin-top:0">Whole platform (all testers)</h3><table>
+      <tr><td>Customers paid</td><td>${eur(p.customers_paid)}</td></tr>
+      <tr><td>→ Restaurants</td><td>${eur(p.restaurants)}</td></tr>
+      <tr><td>→ Couriers</td><td>${eur(p.couriers)}</td></tr>
+      <tr><td>→ ZAL (7%)</td><td>${eur(p.zal)}</td></tr>
+      <tr><td>→ Payment provider</td><td>${eur(p.gateway)}</td></tr>
+      <tr><td>Paid orders</td><td>${p.orders_paid}</td></tr></table>
+      <p class="mute small" style="margin-top:8px">Courier money arrives when the order is delivered.</p></div>`;
+}
+
+// ---------- Account: sign up / in, register restaurant or courier ----------
+function account() {
+  if (!S.user) {
+    $('view').innerHTML = `<h2>Account</h2><div class="card">
+      <input id="em" type="email" placeholder="Email"><input id="pw" type="password" placeholder="Password (min 6)">
+      <input id="nm" placeholder="Your name (for sign up)"><input id="ph" placeholder="Phone (optional)">
+      <div class="row"><button style="flex:1" onclick="signUp(this)">Create account</button><button class="ghost" style="flex:1" onclick="signIn(this)">Sign in</button></div></div>
+      <p class="mute small">Test accounts only. Use any email you can remember; no email is sent.</p>`;
+    return;
+  }
+  const m = S.me || {};
+  $('view').innerHTML = `<h2>Hi ${esc(m.profile?.full_name || S.user.email)}</h2>
+    <div class="card"><p class="mute">${esc(S.user.email)} · role: <b>${esc(m.profile?.role || 'customer')}</b></p>
+    <button class="ghost sm" style="margin-top:8px" onclick="sb.auth.signOut().then(()=>{S.cart=null;refreshMe().then(render)})">Sign out</button></div>
+    <h3>Own a restaurant?</h3>
+    ${(m.restaurants||[]).map(r => `<div class="card row between"><b>${esc(r.name)}</b><button class="sm" onclick="go('kitchen')">Open kitchen</button></div>`).join('')}
+    <div class="card"><input id="rn" placeholder="Restaurant name"><input id="ra" placeholder="Address (e.g. Rue des Éburons 16, 1000 Brussels)">
+      <input id="rp" placeholder="Restaurant phone"><input id="rc" placeholder="Cuisine (Syrian, Kurdish, Italian…)">
+      <label class="row small"><input type="checkbox" id="rd" style="width:auto;margin:0"> We deliver with our own couriers / ZAL couriers</label>
+      <button style="width:100%;margin-top:10px" onclick="regRestaurant(this)">Register restaurant</button></div>
+    <h3>Want to deliver?</h3>
+    ${m.courier ? `<div class="card row between"><span>Courier · ${esc(m.courier.vehicle)} · ${esc(m.courier.zone||'')}</span><button class="sm" onclick="go('courier')">Open jobs</button></div>` :
+    `<div class="card"><input id="cn" placeholder="Full name" value="${esc(m.profile?.full_name||'')}"><input id="cp" placeholder="Phone">
+      <select id="cv"><option value="bike">Bike</option><option value="ebike">E-bike</option><option value="scooter">Scooter</option><option value="car">Car</option></select>
+      <input id="cz" placeholder="Zone (e.g. Ixelles, Centre)"><button style="width:100%" onclick="regCourier(this)">Register as courier</button></div>`}`;
+}
+async function signUp(btn) {
+  btn.disabled = true;
+  const { error } = await sb.auth.signUp({ email: $('em').value.trim(), password: $('pw').value, options: { data: { full_name: $('nm').value } } });
+  if (error) { btn.disabled = false; return toast(error.message, true); }
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { btn.disabled = false; return toast('Account created. Confirm the email, then sign in.'); }
+  await rpc('zal_set_profile', { p_name: $('nm').value, p_phone: $('ph').value, p_role: 'customer' });
+  await refreshMe(); toast('Welcome to ZAL!'); render();
+}
+async function signIn(btn) {
+  btn.disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: $('em').value.trim(), password: $('pw').value });
+  btn.disabled = false; if (error) return toast(error.message, true);
+  await refreshMe(); render();
+}
+async function regRestaurant(btn) {
+  btn.disabled = true;
+  try {
+    await rpc('zal_register_restaurant', { p_name: $('rn').value, p_address: $('ra').value, p_phone: $('rp').value, p_cuisine: $('rc').value,
+                                           p_lat: null, p_lng: null, p_delivery: $('rd').checked });
+    await refreshMe(); toast('Restaurant registered. Add your dishes.'); go('kitchen');
+  } catch { btn.disabled = false; }
+}
+async function regCourier(btn) {
+  btn.disabled = true;
+  try { await rpc('zal_register_courier', { p_name: $('cn').value, p_phone: $('cp').value, p_vehicle: $('cv').value, p_zone: $('cz').value });
+        await refreshMe(); toast('You are a ZAL courier now.'); go('courier'); } catch { btn.disabled = false; }
+}
+
+// ---------- Kitchen (restaurant owner) ----------
+async function kitchen() {
+  const rs = S.me?.restaurants || []; if (!rs.length) return go('account');
+  const list = await rpc('zal_restaurant_orders');
+  const next = { paid:[['accepted','Accept'],['cancelled','Cancel + refund']], accepted:[['ready','Mark ready']], ready:[['completed','Picked up by customer']] };
+  $('view').innerHTML = `<h2>👨‍🍳 Kitchen</h2>
+    <h3>Incoming orders</h3>${list.length ? list.map(o => `<div class="card">
+      <div class="row between"><b>${esc(o.restaurant)}</b><span class="status ${o.status}">${o.status.replace('_',' ')}</span></div>
+      <p class="mute">${o.fulfilment} · ${esc(o.customer||'customer')} · ${new Date(o.created_at).toLocaleTimeString()}</p>
+      <p style="margin:6px 0">${(o.items||[]).map(i => `${i.qty}× ${esc(i.name)}`).join(', ')}</p>
+      <p class="small">Food ${eur(o.subtotal)} · you receive <b class="ok">${eur(o.payout)}</b></p>
+      <div class="row wrap" style="margin-top:8px">${(next[o.status]||[]).filter(([s]) => !(s==='completed' && o.fulfilment==='delivery')).map(([s,l]) => `<button class="sm ${s==='cancelled'?'ghost':''}" onclick="setStatus('${o.id}','${s}')">${l}</button>`).join('')}
+      ${o.status==='ready'&&o.fulfilment==='delivery'?'<span class="mute small">Waiting for a courier…</span>':''}</div></div>`).join('') : '<p class="mute">No orders yet.</p>'}
+    <button class="ghost" style="width:100%;margin-bottom:8px" onclick="render()">↻ Refresh</button>
+    <h3>Add a dish</h3><div class="card">
+      <select id="dr">${rs.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')}</select>
+      <input id="dn" placeholder="Dish name"><input id="dp" type="number" step="0.10" min="0" placeholder="Price €">
+      <input id="dd" placeholder="Short description (optional)"><input id="di" placeholder="Ingredients, comma separated">
+      <button style="width:100%" onclick="addDish(this)">Add dish</button>
+      <button class="ghost" style="width:100%;margin-top:8px" onclick="openRestaurant($('dr').value)">See my menu as a customer</button></div>`;
+}
+async function setStatus(id, s) { await rpc('zal_restaurant_set_status', { p_order_id: id, p_status: s }); toast('Order ' + s); render(); }
+async function addDish(btn) {
+  btn.disabled = true;
+  try { await rpc('zal_add_dish', { p_restaurant_id: $('dr').value, p_name: $('dn').value, p_price: Number($('dp').value), p_description: $('dd').value,
+          p_ingredients: $('di').value.split(',').map(s => s.trim()).filter(Boolean) });
+        toast('Dish added'); ['dn','dp','dd','di'].forEach(i => $(i).value = ''); } catch {}
+  btn.disabled = false;
+}
+
+// ---------- Courier ----------
+async function courier() {
+  if (!S.me?.courier) return go('account');
+  const jobs = await rpc('zal_courier_jobs');
+  $('view').innerHTML = `<h2>🛵 Delivery jobs</h2>${jobs.length ? jobs.map(j => `<div class="card">
+      <div class="row between"><b>${esc(j.restaurant)}</b><span class="status ${j.status}">${j.status.replace('_',' ')}</span></div>
+      <p class="mute">Pickup: ${esc(j.pickup_address || '')}</p><p class="small">You earn <b class="ok">${eur(Number(j.fee) + Number(j.tip))}</b> (fee ${eur(j.fee)} + tip ${eur(j.tip)})</p>
+      <div class="row" style="margin-top:8px">${!j.mine ? `<button class="sm" onclick="job('${j.id}','take')">Take job</button>` :
+        j.status==='ready' ? `<button class="sm" onclick="job('${j.id}','picked_up')">Picked up</button>` :
+        j.status==='picked_up' ? `<button class="sm" onclick="job('${j.id}','delivered')">Delivered ✓</button>` : '<span class="mute small">Waiting for the kitchen…</span>'}</div></div>`).join('')
+    : '<p class="mute">No delivery jobs right now. Jobs appear when a restaurant with delivery accepts an order.</p>'}
+    <button class="ghost" style="width:100%" onclick="render()">↻ Refresh</button>`;
+}
+async function job(id, a) { await rpc('zal_courier_update', { p_order_id: id, p_action: a }); toast(a === 'delivered' ? 'Delivered! Money is in your wallet.' : 'Updated'); render(); }
+
+async function render() {
+  nav(); cartbar();
+  const v = { explore, restaurant: restaurantView, checkout, pay, orders, ai, wallet, account, kitchen, courier }[S.tab];
+  try { await v(); } catch (e) { console.error(e); }
+  cartbar();
+}
+sb.auth.onAuthStateChange(() => {});
+refreshMe().then(render);
+</script>
+</body>
+</html>
