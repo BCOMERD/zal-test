@@ -83,7 +83,7 @@
       total: "Total",
       paymentHint: "Simulation only. No bank details, charges or real payouts.",
       testHint:
-        "Test restaurants are operated by your team. Orders to directory restaurants are simulations; those restaurants are not notified.",
+        "Beta: payments are simulated. Orders reach restaurants that joined ZAL; other listed restaurants are not notified yet.",
       noBackend:
         "The team-test backend is not deployed yet. This feature cannot save data until deployment.",
       signedIn: "Signed in",
@@ -189,7 +189,7 @@
       total: "الإجمالي",
       paymentHint: "محاكاة فقط. لا بيانات بنكية أو خصم أو تحويل أموال حقيقية.",
       testHint:
-        "مطاعم التجربة يديرها فريقك. الطلبات لمطاعم الدليل محاكاة ولا تُرسل لتلك المطاعم.",
+        "نسخة تجريبية: الدفع وهمي. الطلبات تصل للمطاعم المنضمة إلى زال فقط، وباقي مطاعم الدليل لا تصلها إشعارات بعد.",
       noBackend:
         "خادم تجربة الفريق لم يُنشر بعد؛ لا يمكن حفظ هذه العملية قبل النشر.",
       signedIn: "تم الدخول",
@@ -327,6 +327,7 @@
   function updateBar() {
     const testMode = new URLSearchParams(location.search).get("debug") === "1";
     bar.hidden = !testMode;
+    document.body.classList.toggle("zt-has-bar", testMode);
     if (!testMode) return;
     bar.innerHTML = `<strong>ZAL</strong><span class="zt-label">${esc(t("test"))}</span>${btn(user ? "account" : "login", "open-account")}${btn("catalog", "open-catalog")}${btn("ai", "open-ai")}<select aria-label="Language" data-language>${Object.keys(
       words,
@@ -337,46 +338,51 @@
       )
       .join("")}</select>`;
   }
-  // one app, three kinds of users: each only sees their own screens
+  // Each page serves one audience: the app + website = customers, partner.html = restaurants, courier.html = drivers.
+  // An account belongs to the portal it was created in (its own dashboard and wallet).
+  const PORTAL = window.ZAL_PORTAL || "customer";
+  const PORTAL_PAGE = { restaurant: "partner.html", driver: "courier.html", customer: "app.html" };
   function role() {
     const r = user?.user_metadata?.role;
+    if (["customer", "restaurant", "driver"].includes(r)) return r;
     if (data?.restaurants?.length) return "restaurant";
     if (data?.driver) return "driver";
-    return ["restaurant", "driver"].includes(r) ? r : "customer";
+    return "customer";
   }
-  function tabsFor(r) {
-    if (!user) return ["account"];
-    return { restaurant: ["restaurant", "wallet", "ai", "account"], driver: ["driver", "wallet", "account"],
-             customer: ["orders", "wallet", "ai", "account"] }[r];
+  function tabsFor() {
+    const tabs = { customer: ["orders", "wallet", "ai", "account"], restaurant: ["restaurant", "wallet", "account"],
+                   driver: ["driver", "wallet", "account"] }[PORTAL];
+    if (!user || role() !== PORTAL) return PORTAL === "customer" ? ["ai", "account"] : ["account"];
+    return tabs;
   }
-  function home() {
-    const r = role();
-    return r === "restaurant" ? "restaurant" : r === "driver" ? "driver" : null;
-  }
+  function home() { return PORTAL === "customer" ? null : PORTAL; }
+  const PAGE = PORTAL !== "customer";            // partner/courier portals: a full page, not a pop-up
+  function closeSheet() { if (!PAGE) dialog.close(); }
   const ROLE_LABEL = { customer: { en: "Customer", ar: "زبون", fr: "Client", nl: "Klant" },
                        restaurant: { en: "Restaurant owner", ar: "صاحب مطعم", fr: "Restaurateur", nl: "Restauranthouder" },
                        driver: { en: "Driver", ar: "سائق", fr: "Livreur", nl: "Bezorger" } };
   const roleLabel = (r) => ROLE_LABEL[r][lang] || ROLE_LABEL[r].en;
   function shell() {
     dialog.dir = lang === "ar" ? "rtl" : "ltr";
-    dialog.querySelector("header strong").textContent = user ? "ZAL · " + roleLabel(role()) : "ZAL";
-    dialog.classList.toggle("zt-full", !!(user && home()));
+    dialog.querySelector("header strong").textContent = "ZAL" + (PORTAL === "customer" ? "" : " · " + roleLabel(PORTAL));
     dialog.querySelector("[data-action=close]").textContent = t("close");
-    dialog.querySelector("nav").innerHTML = tabsFor(role())
+    let out = dialog.querySelector("header [data-action=logout]");
+    if (user && !out) { dialog.querySelector("header [data-action=close]").insertAdjacentHTML("beforebegin", btn("logout", "logout")); }
+    if (!user && out) out.remove();
+    dialog.querySelector("nav").innerHTML = tabsFor()
       .map((k) => btn(k, "tab", `data-view="${k}"`))
       .join("");
     dialog
       .querySelectorAll("nav button")
       .forEach((b) => b.classList.toggle("active", b.dataset.view === view));
   }
-  let wantRole = "customer";
   async function open(v = "account", restaurantId = "") {
+    if (PORTAL === "customer" && ["restaurant", "driver"].includes(v)) { location.href = PORTAL_PAGE[v]; return; }
     lastFocus = document.activeElement;
-    if (!user && ["restaurant", "driver"].includes(v)) wantRole = v;  // "Partner with us" / "Become a courier"
     view = v;
     if (restaurantId) aiRestaurant = restaurantId;
     shell();
-    if (!dialog.open) dialog.showModal();
+    if (!dialog.open) PAGE ? dialog.show() : dialog.showModal();
     message("");
     render();
     if (user && ["orders", "restaurant", "driver", "wallet"].includes(v))
@@ -384,8 +390,15 @@
     if (v === "catalog") await loadCatalog();
     if (v === "ai") await loadAIOptions();
   }
+  function wrongPortal() {
+    const r = role();
+    const where = { en: `This is a ${roleLabel(r)} account. Open it here:`, ar: `هذا حساب ${roleLabel(r)}. افتحه من هنا:`,
+                    fr: `Ce compte est un compte ${roleLabel(r)} :`, nl: `Dit is een ${roleLabel(r)}-account:` }[lang] || "";
+    return `<div class="zt-auth"><h2>${esc(t("account"))}</h2><p>${esc(user.email)}</p><p>${esc(where)} <a href="${PORTAL_PAGE[r]}">${esc(PORTAL_PAGE[r])}</a></p>${btn("logout", "logout")}</div>`;
+  }
   function authView() {
-    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<label class="zt-field"><span>${esc({ en: "I am a", ar: "أنا", fr: "Je suis", nl: "Ik ben" }[lang] || "I am a")}</span><select name="role">${["customer", "restaurant", "driver"].map((r) => `<option value="${r}" ${r === wantRole ? "selected" : ""}>${esc(roleLabel(r))}</option>`).join("")}</select></label><div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}${btn("resend", "resend")}</div></form>`}</div>`;
+    if (user && role() !== PORTAL) return wrongPortal();
+    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}</div></form>`}</div>`;
   }
   function orderCard(o, role) {
     const customer = o.customer_id === user?.id;
@@ -446,7 +459,7 @@
       main.innerHTML = authView();
       return;
     }
-    if (!user && !["catalog", "ai"].includes(view)) {
+    if ((!user || role() !== PORTAL) && !["catalog", "ai"].includes(view)) {
       main.innerHTML = `<p>${esc(t("loginRequired"))}</p>${authView()}`;
       return;
     }
@@ -562,10 +575,9 @@
     }
   }
   function renderAI() {
-    main.innerHTML = `<h2>${esc(t("ai"))}</h2><p class="zt-muted">${esc(t("aiHint"))}</p><label>${esc(t("choose"))}<select data-ai-restaurant><option value="">${esc(t("all"))}</option>${aiOptions.map((r) => `<option value="${r.id}" ${aiRestaurant === r.id ? "selected" : ""}>${esc(r.name)}</option>`).join("")}</select></label><div aria-live="polite">${chat.map((m) => `<div class="zt-chat ${m.role === "user" ? "user" : ""}">${esc(m.content)}</div>`).join("")}</div><form data-form="ai"><label>${esc(t("question"))}<textarea name="question" required maxlength="1500"></textarea></label><button class="primary">${esc(t("ask"))}</button></form>`;
+    main.innerHTML = `<h2>${esc(t("ai"))}</h2><p class="zt-muted">${esc(t("aiHint"))}</p><label>${esc(t("choose"))}<select data-ai-restaurant><option value="">${esc(t("all"))}</option>${aiOptions.map((r) => `<option value="${r.id}" ${aiRestaurant === r.id ? "selected" : ""}>${esc(r.name)}</option>`).join("")}</select></label><div aria-live="polite">${chat.map((m) => `<div class="zt-chat ${m.role === "user" ? "user" : ""}">${esc(m.content).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")}</div>`).join("")}</div><form data-form="ai"><label>${esc(t("question"))}<textarea name="question" required maxlength="1500"></textarea></label><button class="primary">${esc(t("ask"))}</button></form>`;
   }
   async function ask(question, restaurantId = aiRestaurant) {
-    if (!user) throw Error(t("loginRequired"));
     if (!client) throw Error(t("loading"));
     const { data: out, error } = await client.functions.invoke("zal-ai", {
       body: { question, restaurant_id: restaurantId || null, language: lang },
@@ -583,7 +595,7 @@
   async function handleAction(b) {
     const a = b.dataset.action;
     if (a === "close") {
-      dialog.close();
+      closeSheet();
       lastFocus?.focus?.();
       return;
     }
@@ -684,7 +696,7 @@
                 password,
                 options: {
                   emailRedirectTo: new URL("app.html", location.href).href,
-                  data: { role: v("role") || "customer" },
+                  data: { role: PORTAL },
                 },
               })
             : await client.auth.signInWithPassword({ email, password });
@@ -695,7 +707,7 @@
           await refresh(true).catch(() => {});
           if (checkout) { view = "checkout"; render(); }
           else if (home()) await open(home());
-          else { dialog.close(); window.dispatchEvent(new Event("zal-signed-in")); }
+          else { closeSheet(); window.dispatchEvent(new Event("zal-signed-in")); }
         } else message(t("confirm"));
         break;
       }
@@ -818,6 +830,23 @@
     await open(user ? "checkout" : "account");
     if (!user) message(t("loginRequired"));
   }
+  // website header: a customer account icon next to the cart
+  function addWebsiteAccountIcon() {
+    let tries = 0;
+    const t = setInterval(() => {
+      const cart = document.querySelector('[data-lucide="shopping-bag"], svg.lucide-shopping-bag')?.closest("button, a");
+      if (!cart && ++tries < 60) return;
+      clearInterval(t);
+      if (!cart || document.getElementById("zal-account-icon")) return;
+      const b = cart.cloneNode(false);
+      b.id = "zal-account-icon";
+      b.removeAttribute("onclick"); b.removeAttribute("href");
+      b.setAttribute("aria-label", "Account"); b.type = "button";
+      b.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+      b.style.marginInlineEnd = "8px";
+      cart.parentNode.insertBefore(b, cart);
+    }, 250);
+  }
   async function init() {
     if (!window.ZalDB?.client()) return false;
     client = window.ZalDB.client();
@@ -887,8 +916,13 @@
         refresh(true);
     }, 15000);
     window.ZalTeam = { open, ask, startCheckout, getUser: () => user, home: () => home() };
+    if (PAGE) dialog.classList.add("zt-page");
+    if (/app\.html$/.test(location.pathname)) dialog.classList.add("zt-phone");   // account screen sized like the phone
+    if (PORTAL === "customer" && !/app\.html$/.test(location.pathname)) addWebsiteAccountIcon();
     document.addEventListener("click", (e) => {
-      const acc = e.target.closest('button[aria-label="Account"]');
+      const askBar = e.target.closest("button")?.querySelector('[data-lucide="sparkles"], .lucide-sparkles');
+      if (askBar && /app\.html$/.test(location.pathname)) { e.preventDefault(); e.stopPropagation(); return open("ai"); }
+      const acc = e.target.closest('button[aria-label="Account"], #zal-account-icon');
       const bell = e.target.closest("button")?.querySelector('[data-lucide="bell"], .lucide-bell');
       if (!acc && !bell) return;
       e.preventDefault(); e.stopPropagation();
@@ -897,6 +931,7 @@
     }, true);
     window.dispatchEvent(new Event("zal-team-ready"));
     if (location.hash === "#account") open("account");
+    if (PAGE) { document.title = "ZAL " + roleLabel(PORTAL); await refresh(true).catch(() => {}); open(user && role() === PORTAL ? home() : "account"); }
     return true;
   }
   let attempts = 0;
