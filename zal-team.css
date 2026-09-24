@@ -6,6 +6,10 @@
   line-height: 1.5;
   box-sizing: border-box;
 }
+#zal-team-bar[hidden] {
+  display: none !important;
+}
+
 #zal-team-bar {
   position: fixed;
   top: 0;
