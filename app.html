@@ -1,1121 +1,176 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="robots" content="noindex, nofollow">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./support.js"></script>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zal | Popular Eat - منصة الطعام المستقلة</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-main: #0A1122;
+            --bg-card: #101B33;
+            --accent: #F2B203;
+            --text-main: #FFFFFF;
+            --text-muted: #8E9BAE;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 800; color: var(--accent); text-decoration: none; }
+        .user-section { display: flex; align-items: center; gap: 12px; }
+        .btn { background: var(--accent); color: var(--bg-main); border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px; }
+        .main-container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px; flex: 1; display: flex; flex-direction: column; gap: 24px; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; max-width: 420px; width: 100%; margin: 20px auto; display: flex; flex-direction: column; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input { height: 44px; border-radius: 10px; border: 1px solid var(--border-color); background: #0A1122; color: #fff; padding: 0 14px; font-size: 14px; outline: none; width: 100%; }
+        .form-group input:focus { border-color: var(--accent); }
+        .error-msg { font-size: 13px; color: #FCA5A5; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; padding: 10px; text-align: center; display: none; }
+        .restaurants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .restaurant-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; padding: 16px; gap: 8px; }
+        .restaurant-name { font-size: 16px; font-weight: 700; }
+        .restaurant-meta { font-size: 13px; color: var(--text-muted); }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; font-family:'Tajawal','Inter',sans-serif; -webkit-font-smoothing:antialiased; }
-  ::-webkit-scrollbar { display:none; }
-  .zal-row { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:4px; }
-  .zal-row > * { scroll-snap-align:start; flex:0 0 auto; }
-  @keyframes danoFloat { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-6px) } }
-  @keyframes danoPulse { 0% { box-shadow:0 0 0 0 rgba(242,178,3,.3) } 70% { box-shadow:0 0 0 10px rgba(242,178,3,0) } 100% { box-shadow:0 0 0 0 rgba(242,178,3,0) } }
-  @keyframes danoBreath { 0%,100% { opacity:1 } 50% { opacity:.35 } }
-  @keyframes danoBlink { 0%,92%,100% { transform:scaleY(1) } 96% { transform:scaleY(.1) } }
-</style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="zal-config.js"></script>
-  <script src="zal-supabase.js"></script>
-</helmet>
 
-<div dir="{{ dir }}" style="background:#060B16;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;color:#fff">
-  <div style="width:390px;max-width:100%;background:#0A1122;border:1px solid rgba(255,255,255,.08);border-radius:36px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.9);display:flex;flex-direction:column;height:820px;position:relative">
+    <header>
+        <a href="#" class="logo">ZAL (زال)</a>
+        <div class="user-section">
+            <span id="user-display-name" style="font-size: 14px; font-weight: 600; color: var(--text-muted);">زائر</span>
+            <button id="auth-toggle-btn" class="btn" onclick="toggleAuthModal()">تسجيل الدخول</button>
+            <button id="logout-btn" class="btn-outline hidden" onclick="handleSignOut()">تسجيل الخروج</button>
+        </div>
+    </header>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 22px 4px;font-size:12.5px;font-weight:700;color:#8E9BAE">
-      <span>9:41</span>
-      <div style="display:flex;gap:6px;align-items:center">
-        <i data-lucide="signal" style="width:14px;height:14px"></i>
-        <i data-lucide="wifi" style="width:14px;height:14px"></i>
-        <i data-lucide="battery-full" style="width:16px;height:16px"></i>
-      </div>
+    <div class="main-container">
+        <div id="auth-container" class="auth-card hidden">
+            <h2 style="font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 4px;">حسابات منصة زال</h2>
+            <p style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">أدخل الإيميل وكلمة السر لتجربة النظام</p>
+            
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="email-input" placeholder="name@example.com">
+            </div>
+
+            <div class="form-group">
+                <label>كلمة السر</label>
+                <input type="password" id="password-input" placeholder="••••••••">
+            </div>
+
+            <div id="error-box" class="error-msg"></div>
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn" style="flex: 1;" onclick="handleSignIn()">تسجيل دخول</button>
+                <button class="btn-outline" style="flex: 1; color: var(--accent); border-color: var(--accent);" onclick="handleSignUp()">حساب جديد</button>
+            </div>
+            <button class="btn-outline" style="margin-top: 5px; border: none; color: var(--text-muted); font-size: 12px;" onclick="toggleAuthModal()">إغلاق النافذة</button>
+        </div>
+
+        <div>
+            <h1 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">المطاعم والطلبات (Rue Royale)</h1>
+            <div id="restaurants-list" class="restaurants-grid">
+                <p style="color: var(--text-muted);">جاري تحميل المطاعم...</p>
+            </div>
+        </div>
     </div>
 
-    <div style="padding:8px 18px 14px;background:#0A1122;border-bottom:1px solid rgba(255,255,255,.06)">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:4px;user-select:none" dir="ltr">
-          <span style="width:30px;height:30px;border-radius:9999px;background:#F2B203;color:#0A1122;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:900;font-size:17px">Z</span>
-          <span style="font-family:Georgia,serif;font-weight:700;font-size:22px;color:#fff;letter-spacing:.5px">AL</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-            <i data-lucide="bell" style="width:17px;height:17px"></i>
-            <span style="position:absolute;top:-2px;inset-inline-end:-2px;width:9px;height:9px;background:#EF4444;border:2px solid #0A1122;border-radius:9999px"></span>
-          </button>
-          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-            <i data-lucide="shopping-bag" style="width:17px;height:17px"></i>
-            <span style="position:absolute;top:-4px;inset-inline-end:-4px;background:#F2B203;color:#0A1122;font-size:10px;font-weight:900;min-width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span>
-          </button>
-          <button type="button" onClick="{{ openAccount }}" aria-label="Account" style="width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
-            <i data-lucide="user" style="width:17px;height:17px"></i>
-          </button>
-        </div>
-      </div>
+    <script>
+        const SUPABASE_URL = 'https://lhvnhmkhnwxwadpqabsd.supabase.co';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxodm5obWtobnd4d2FkcHFhYnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODc0ODl9.fake-key');
 
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <button type="button" onClick="{{ cycleAddress }}" style="background:none;border:0;cursor:pointer;text-align:start;padding:0;min-width:0;flex:1">
-          <div style="font-size:11px;color:#8E9BAE;font-weight:700;margin-bottom:2px">{{ addrLbl }}</div>
-          <div style="display:flex;align-items:center;gap:5px;color:#fff">
-            <i data-lucide="map-pin" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i>
-            <span style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ address }}</span>
-            <i data-lucide="chevron-down" style="width:14px;height:14px;opacity:.6;flex-shrink:0"></i>
-          </div>
-        </button>
-        <div style="display:flex;flex-shrink:0;background:#101B33;border:1px solid rgba(255,255,255,.08);border-radius:9999px;padding:3px">
-          <button type="button" onClick="{{ fulPickup.pick }}" style="{{ fulPickup.style }}">{{ fulPickup.label }}</button>
-          <button type="button" onClick="{{ fulDeliv.pick }}" style="{{ fulDeliv.style }}">{{ fulDeliv.label }}</button>
-        </div>
-      </div>
+        let isAuthOpen = false;
 
-      <button type="button" onClick="{{ openAsk }}" style="width:100%;display:flex;align-items:center;gap:9px;background:#101B33;border:1px solid rgba(242,178,3,.3);border-radius:12px;padding:0 14px;height:44px;margin-bottom:12px;cursor:pointer;text-align:start">
-        <i data-lucide="search" style="width:16px;height:16px;color:#F2B203;flex-shrink:0"></i>
-        <span style="flex:1;min-width:0;color:#CBD5E1;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ askPh }}</span>
-        <i data-lucide="sparkles" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i>
-      </button>
+        function toggleAuthModal() {
+            isAuthOpen = !isAuthOpen;
+            const card = document.getElementById('auth-container');
+            if (isAuthOpen) { card.classList.remove('hidden'); } 
+            else { card.classList.add('hidden'); clearErrors(); }
+        }
 
-      <div class="zal-row">
-        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
-          <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}"><i data-lucide="{{ c.icon }}" stroke-width="2" style="width:19px;height:19px"></i><span>{{ c.label }}</span></button>
-        </sc-for>
-      </div>
-      <div class="zal-row" style="margin-top:10px">
-        <sc-for list="{{ priceChips }}" as="c" hint-placeholder-count="3">
-          <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
-        </sc-for>
-      </div>
-      <div style="display:flex;align-items:center;gap:7px;margin:16px 0 8px;color:#fff">
-        <i data-lucide="globe" stroke-width="2" style="width:17px;height:17px;color:#F2B203"></i>
-        <strong style="font-size:14px">{{ t.cultures_h }}</strong>
-      </div>
-      <div class="zal-row">
-        <sc-for list="{{ regionChips }}" as="c" hint-placeholder-count="6">
-          <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
-        </sc-for>
-      </div>
-      <sc-if value="{{ hasCountries }}" hint-placeholder-val="{{ false }}">
-        <div class="zal-row" style="margin-top:8px;padding-inline-start:10px;border-inline-start:2px solid rgba(242,178,3,.4)">
-          <sc-for list="{{ countryChips }}" as="c" hint-placeholder-count="5">
-            <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
-          </sc-for>
-        </div>
-      </sc-if>
-    </div>
+        function showError(msg) {
+            const box = document.getElementById('error-box');
+            box.innerText = msg;
+            box.style.display = 'block';
+        }
 
-    <div style="flex:1;overflow-y:auto;padding:18px 0 90px">
-      <button type="button" onClick="{{ openGroup }}" style="margin:0 18px 22px;width:calc(100% - 36px);display:flex;align-items:center;gap:12px;text-align:start;background:#F2B203;border:0;border-radius:14px;padding:14px;cursor:pointer;color:#0A1122">
-        <span style="width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:#0A1122;color:#F2B203;display:flex;align-items:center;justify-content:center"><i data-lucide="users" style="width:19px;height:19px"></i></span>
-        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
-          <strong style="font-size:14px;font-weight:900;color:#0A1122">{{ g.bannerH }}</strong>
-          <span style="font-size:12.5px;font-weight:600;color:#0A1122;line-height:1.45">{{ g.bannerP }}</span>
-        </span>
-        <i data-lucide="chevron-right" style="width:18px;height:18px;color:#0A1122"></i>
-      </button>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 18px;margin-bottom:12px">
-        <h3 style="font-size:16px;font-weight:800;color:#fff;margin:0">{{ t.list_h }}</h3>
-        <span style="font-size:12px;color:#8E9BAE;font-weight:700">{{ countLbl }}</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:12px;padding:0 18px">
-        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
-          <div onClick="{{ c.open }}" style="display:flex;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;cursor:pointer">
-            <div style="position:relative;width:108px;flex:0 0 108px;min-height:122px;background:#18284B">
-              <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ false }}"><div style="{{ c.imgStyle }}" role="img" aria-label="{{ c.name }}"></div></sc-if>
-              <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#3A4A6B"><i data-lucide="utensils" style="width:26px;height:26px"></i></div></sc-if>
-              <sc-if value="{{ c.hasRating }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;bottom:7px;inset-inline-start:7px;background:rgba(10,17,34,.9);color:#F2B203;font-size:11px;font-weight:800;padding:3px 8px;border-radius:9999px">★ {{ c.rating }}</span></sc-if>
-            </div>
-            <div style="flex:1;min-width:0;padding:11px 12px;display:flex;flex-direction:column;gap:5px">
-              <h4 style="font-size:14px;font-weight:800;color:#fff;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</h4>
-              <p style="font-size:11.5px;color:#8E9BAE;margin:0;line-height:1.4">{{ c.sub }}</p>
-              <sc-if value="{{ c.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:#CBD5E1;display:inline-flex;align-items:center;gap:5px"><i data-lucide="bike" style="width:13px;height:13px;color:#F2B203;flex-shrink:0"></i>{{ c.delivLine }}</span></sc-if>
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto">
-                <sc-if value="{{ c.hasOpen }}" hint-placeholder-val="{{ false }}"><span style="{{ c.openStyle }}">{{ c.openLabel }}</span></sc-if>
-                <sc-if value="{{ c.hasPrice }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;background:#F2B203;color:#0A1122;font-weight:800;font-size:11.5px;padding:5px 11px;border-radius:9999px;white-space:nowrap">{{ c.price }}</span></sc-if>
-              </div>
-            </div>
-          </div>
-        </sc-for>
-        <sc-if value="{{ listLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#8E9BAE">{{ t.loading }}</div></sc-if>
-        <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;text-align:center;font-size:13px;color:#8E9BAE;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">{{ t.empty }}</div></sc-if>
-        <sc-if value="{{ listErr }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#FCA5A5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:12px">{{ t.db_err }}</div></sc-if>
-        <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ loadMore }}" style="padding:12px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:13px;font-weight:800;cursor:pointer">{{ t.more }}</button></sc-if>
-      </div>
+        function clearErrors() {
+            const box = document.getElementById('error-box');
+            box.style.display = 'none';
+            box.innerText = '';
+        }
 
-    </div>
+        async function handleSignUp() {
+            clearErrors();
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+            if (!email || !password) { showError('يرجى كتابة البريد وكلمة السر.'); return; }
 
-    <sc-if value="{{ placeOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:8;background:#0A1122;display:flex;flex-direction:column">
-        <div style="position:relative;height:230px;flex:0 0 230px">
-          <div style="{{ pl.imgStyle }}" role="img" aria-label="{{ pl.name }}"></div>
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,17,34,.35) 0%,rgba(10,17,34,0) 40%,rgba(10,17,34,1) 100%)"></div>
-          <button type="button" onClick="{{ closePlace }}" aria-label="Back" style="position:absolute;top:50px;inset-inline-start:18px;width:36px;height:36px;border-radius:9999px;background:rgba(10,17,34,.8);border:1px solid rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
-        </div>
-        <div style="flex:1;overflow-y:auto;padding:0 18px 20px;display:flex;flex-direction:column;gap:14px;margin-top:-30px;position:relative">
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <h2 style="margin:0;font-size:22px;font-weight:900;color:#fff">{{ pl.name }}</h2>
-            <span style="font-size:12.5px;color:#8E9BAE">{{ pl.meta }}</span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <sc-if value="{{ pl.hasRating }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#F2B203;background:rgba(242,178,3,.1);border:1px solid rgba(242,178,3,.3);padding:5px 10px;border-radius:9999px">★ {{ pl.rating }}</span></sc-if>
-            <sc-for list="{{ pl.badges }}" as="bd" hint-placeholder-count="2"><span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px">{{ bd }}</span></sc-for>
-            <sc-if value="{{ pl.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px"><i data-lucide="bike" style="width:13px;height:13px"></i>{{ pl.delivLine }}</span></sc-if>
-            <sc-if value="{{ pl.hasEta }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px"><i data-lucide="clock" style="width:13px;height:13px"></i>{{ pl.eta }}</span></sc-if>
-          </div>
-          <div style="display:flex;flex-direction:column;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px">
-            <sc-if value="{{ pl.hasAddress }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:flex-start;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;line-height:1.45"><i data-lucide="map-pin" style="width:15px;height:15px;color:#F2B203;flex-shrink:0;margin-top:1px"></i><span>{{ pl.address }}</span></div></sc-if>
-            <sc-if value="{{ pl.hasPhone }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.tel }}" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;text-decoration:none;border-top:1px solid rgba(255,255,255,.05)"><i data-lucide="phone" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i><span>{{ pl.phone }}</span></a></sc-if>
-            <sc-if value="{{ pl.hasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.webHref }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;text-decoration:none;border-top:1px solid rgba(255,255,255,.05);overflow:hidden"><i data-lucide="globe" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pl.web }}</span></a></sc-if>
-          </div>
-          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE;margin-top:6px">{{ pl.chooseH }}</span>
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
-            <button type="button" onClick="{{ pl.orderPick }}" style="{{ pl.orderStyle }}">
-              <i data-lucide="shopping-bag" stroke-width="2" style="width:22px;height:22px"></i>
-              <strong style="font-size:14px">{{ pl.orderLbl }}</strong>
-              <span style="font-size:11px;font-weight:600">{{ pl.orderSub }}</span>
-            </button>
-            <button type="button" onClick="{{ pl.book }}" style="{{ pl.bookStyle }}">
-              <i data-lucide="utensils" stroke-width="2" style="width:22px;height:22px;color:#F2B203"></i>
-              <strong style="font-size:14px">{{ pl.bookLbl }}</strong>
-              <span style="font-size:11px;font-weight:600;color:#8E9BAE">{{ pl.bookSub }}</span>
-            </button>
-          </div>
-          <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
-            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE;margin-top:6px">{{ menuH }}</span>
-            <sc-if value="{{ menuEmpty }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">
-                <strong style="font-size:14px;color:#fff">{{ emptyH }}</strong>
-                <span style="font-size:12.5px;line-height:1.5;color:#CBD5E1">{{ emptyP }}</span>
-                <sc-if value="{{ emptyHasPhone }}" hint-placeholder-val="{{ false }}">
-                  <a href="{{ emptyTel }}" style="align-self:flex-start;display:flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:9999px;background:#F2B203;color:#0A1122;font-size:13px;font-weight:800;text-decoration:none"><i data-lucide="phone" style="width:15px;height:15px"></i>{{ emptyCall }}</a>
-                </sc-if>
-              </div>
-            </sc-if>
-            <sc-if value="{{ menuLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#8E9BAE">{{ t.loading_menu }}</div></sc-if>
-            <sc-for list="{{ dishes }}" as="d" hint-placeholder-count="3">
-              <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">
-                <sc-if value="{{ d.hasImg }}" hint-placeholder-val="{{ false }}"><div style="{{ d.imgStyle }}" role="img" aria-label="{{ d.name }}"></div></sc-if>
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-                  <strong style="font-size:13.5px;color:#fff">{{ d.name }}</strong>
-                  <sc-if value="{{ d.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:#8E9BAE;line-height:1.45">{{ d.desc }}</span></sc-if>
-                  <sc-if value="{{ d.hasIngs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px"><sc-for list="{{ d.ings }}" as="ig" hint-placeholder-count="3"><span style="font-size:10.5px;font-weight:600;color:#CBD5E1;background:#18284B;border:1px solid rgba(255,255,255,.06);padding:2px 8px;border-radius:9999px">{{ ig }}</span></sc-for></div></sc-if>
-                  <sc-if value="{{ d.hasPrice }}" hint-placeholder-val="{{ true }}"><strong style="font-size:13px;color:#F2B203;margin-top:2px">{{ d.price }}</strong></sc-if>
-                </div>
-                <sc-if value="{{ d.showAdd }}" hint-placeholder-val="{{ true }}">
-                  <button type="button" onClick="{{ d.add }}" aria-label="Add" style="width:34px;height:34px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:16px;height:16px"></i></button>
-                </sc-if>
-                <sc-if value="{{ d.inCart }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <button type="button" onClick="{{ d.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:14px;height:14px"></i></button>
-                    <strong style="font-size:13px;color:#fff;min-width:14px;text-align:center">{{ d.qty }}</strong>
-                    <button type="button" onClick="{{ d.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-for>
-          </sc-if>
-        </div>
-        <sc-if value="{{ cartBar }}" hint-placeholder-val="{{ false }}">
-          <div style="padding:12px 18px 26px;background:#0A1122;border-top:1px solid rgba(255,255,255,.07)">
-            <button type="button" onClick="{{ openCheckout }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:14px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer"><span>{{ cartBarLbl }}</span><span>{{ cartBarTotal }}</span></button>
-          </div>
-        </sc-if>
-        <sc-if value="{{ checkoutOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;inset:0;z-index:2;background:#0A1122;display:flex;flex-direction:column">
-            <div style="display:flex;align-items:center;gap:12px;padding:50px 18px 12px">
-              <button type="button" onClick="{{ ck.back }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
-              <div style="display:flex;flex-direction:column"><strong style="font-size:17px;color:#fff">{{ ck.h }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ ck.from }}</span></div>
-            </div>
-            <div style="flex:1;overflow-y:auto;padding:6px 18px 16px;display:flex;flex-direction:column;gap:14px">
-              <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:6px 12px">
-                <sc-for list="{{ ck.lines }}" as="l" hint-placeholder-count="2">
-                  <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-                    <strong style="font-size:12.5px;color:#F2B203;min-width:22px">{{ l.qty }}</strong>
-                    <span style="flex:1;font-size:13px;color:#fff">{{ l.name }}</span>
-                    <button type="button" onClick="{{ l.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:13px;height:13px"></i></button>
-                    <button type="button" onClick="{{ l.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:13px;height:13px"></i></button>
-                    <strong style="font-size:13px;color:#fff;min-width:56px;text-align:end">{{ l.price }}</strong>
-                  </div>
-                </sc-for>
-              </div>
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ ck.fulfilH }}</span>
-              <div style="display:flex;gap:8px"><sc-if value="{{ ck.canDeliver }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ ck.deliv.pick }}" style="{{ ck.deliv.style }}">{{ ck.deliv.label }}</button></sc-if><button type="button" onClick="{{ ck.pick.pick }}" style="{{ ck.pick.style }}">{{ ck.pick.label }}</button></div>
-              <sc-if value="{{ ck.pickupOnly }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:11.5px;line-height:1.5;color:#8E9BAE">{{ ck.pickupNote }}</p></sc-if>
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ ck.payH }}</span>
-              <div style="display:flex;gap:8px"><button type="button" onClick="{{ ck.alone.pick }}" style="{{ ck.alone.style }}">{{ ck.alone.label }}</button><button type="button" onClick="{{ ck.share.pick }}" style="{{ ck.share.style }}">{{ ck.share.label }}</button></div>
-              <p style="margin:0;font-size:11.5px;line-height:1.5;color:#8E9BAE">{{ ck.splitNote }}</p>
-              <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.subLbl }}</span><span style="color:#fff">{{ ck.sub }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.feeLbl }}</span><span style="color:#fff">{{ ck.fee }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.svcLbl }}</span><span style="color:#10B981;font-weight:700">{{ ck.svc }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:#fff;margin-top:4px"><span>{{ ck.totLbl }}</span><span style="color:#F2B203">{{ ck.tot }}</span></div>
-              </div>
-            </div>
-            <div style="padding:12px 18px 26px;border-top:1px solid rgba(255,255,255,.07)">
-              <button type="button" onClick="{{ ck.submit }}" style="width:100%;padding:14px;border-radius:14px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer">{{ ck.place }}</button>
-            </div>
-          </div>
-        </sc-if>
-        <sc-if value="{{ doneOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;inset:0;z-index:3;background:#0A1122;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;text-align:center">
-            <div style="width:64px;height:64px;border-radius:9999px;background:rgba(16,185,129,.14);border:1px solid #10B981;display:flex;align-items:center;justify-content:center"><i data-lucide="check" style="width:30px;height:30px;color:#10B981"></i></div>
-            <h2 style="margin:0;font-size:21px;font-weight:900;color:#fff">{{ dn.h }}</h2>
-            <p style="margin:0;font-size:13px;line-height:1.55;color:#8E9BAE;max-width:280px">{{ dn.p }}</p>
-            <strong style="font-size:20px;color:#F2B203">{{ dn.tot }}</strong>
-            <button type="button" onClick="{{ dn.finish }}" style="margin-top:8px;padding:12px 26px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:13.5px;font-weight:800;cursor:pointer">{{ dn.home }}</button>
-          </div>
-        </sc-if>
-            </div>
-    </sc-if>
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) { showError(error.message); } 
+            else { showError('تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.'); }
+        }
 
-    <sc-if value="{{ groupOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:9;background:#0A1122;display:flex;flex-direction:column">
-        <div style="display:flex;align-items:center;gap:12px;padding:52px 18px 12px">
-          <button type="button" onClick="{{ goBack }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
-          <strong style="font-size:16px">{{ screenTitle }}</strong>
-        </div>
-        <div style="flex:1;overflow-y:auto;padding:4px 18px 20px;display:flex;flex-direction:column;gap:16px">
+        async function handleSignIn() {
+            clearErrors();
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+            if (!email || !password) { showError('يرجى كتابة البريد وكلمة السر.'); return; }
 
-          <sc-if value="{{ isGroup }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.findH }}</span>
-              <div style="display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33">
-                <i data-lucide="search" style="width:15px;height:15px;color:#8E9BAE"></i>
-                <input value="{{ friendQ }}" onChange="{{ setFriendQ }}" placeholder="{{ g.findPh }}" style="flex:1;min-width:0;background:transparent;border:0;outline:none;color:#fff;font-size:13px"></input>
-              </div>
-              <sc-if value="{{ friendEmpty }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px dashed rgba(242,178,3,.4);border-radius:12px;padding:10px 12px">
-                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ friendQ }}</strong><span style="font-size:11px;color:#8E9BAE">{{ g.notFound }}</span></span>
-                  <button type="button" onClick="{{ inviteQ }}" style="padding:6px 12px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:11.5px;font-weight:800;cursor:pointer">{{ g.sendInvite }}</button>
-                </div>
-              </sc-if>
-              <sc-for list="{{ friendsList }}" as="m" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px">
-                  <span style="width:32px;height:32px;flex:0 0 32px;border-radius:9999px;background:#18284B;color:#F2B203;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ m.ini }}</span>
-                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ m.sub }}</span></span>
-                  <button type="button" onClick="{{ m.pick }}" style="{{ m.btnStyle }}">{{ m.btn }}</button>
-                </div>
-              </sc-for>
-              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="link" style="width:15px;height:15px"></i>{{ g.shareLink }}</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.addrH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
-              <sc-for list="{{ addrOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-            </div>
-              <sc-for list="{{ orderRows }}" as="m" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px">
-                  <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
-                    <strong style="font-size:13px">{{ m.name }}</strong>
-                    <span style="font-size:11px;color:#8E9BAE">{{ m.dish }}</span>
-                    <span style="font-size:11px;color:#8E9BAE">{{ m.addr }}</span>
-                  </span>
-                  <strong style="font-size:13px">{{ m.price }}</strong>
-                </div>
-              </sc-for>
-            </div>
-            <sc-if value="{{ showSync }}" hint-placeholder-val="{{ false }}">
-              <div style="background:rgba(242,178,3,.08);border:1px solid rgba(242,178,3,.35);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;gap:10px;align-items:flex-start">
-                  <i data-lucide="clock" style="width:17px;height:17px;color:#F2B203;flex:0 0 17px;margin-top:2px"></i>
-                  <span style="font-size:12.5px;line-height:1.55;color:#E2E8F0">{{ g.syncMsg }}</span>
-                </div>
-                <button type="button" onClick="{{ toggleSync }}" style="{{ syncBtnStyle }}">{{ syncBtn }}</button>
-              </div>
-            </sc-if>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.payH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
-              <sc-for list="{{ payOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-            </div>
-            </div>
-          </sc-if>
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) { showError(error.message); } 
+            else { updateUserSession(data.user); toggleAuthModal(); }
+        }
 
-          <sc-if value="{{ isBookPick }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.restH }}</span>
-              <sc-for list="{{ bookRests }}" as="o" hint-placeholder-count="3">
-                <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}"><span style="flex:1;text-align:start;display:flex;flex-direction:column"><strong style="font-size:13px">{{ o.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ o.sub }}</span></span><span style="{{ o.dot }}"></span></button>
-              </sc-for>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.dateH }}</span>
-              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bookDates }}" as="o" hint-placeholder-count="4"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.timeH }}</span>
-              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bookTimes }}" as="o" hint-placeholder-count="5"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
-            </div>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
-              <span style="font-size:13px;font-weight:700">{{ b.guestsH }}</span>
-              <div style="display:flex;align-items:center;gap:14px">
-                <button type="button" onClick="{{ guestsDown }}" style="width:32px;height:32px;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;font-size:16px;cursor:pointer">−</button>
-                <strong style="font-size:15px;min-width:16px;text-align:center">{{ guests }}</strong>
-                <button type="button" onClick="{{ guestsUp }}" style="width:32px;height:32px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:16px;font-weight:800;cursor:pointer">+</button>
-              </div>
-            </div>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
-              <button type="button" onClick="{{ togglePre }}" style="display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;cursor:pointer;color:#fff;text-align:start">
-                <i data-lucide="utensils" style="width:18px;height:18px;color:#F2B203;flex-shrink:0"></i>
-                <span style="flex:1;display:flex;flex-direction:column;gap:2px"><strong style="font-size:13px">{{ pre.h }}</strong><span style="font-size:11px;color:#8E9BAE">{{ pre.sub }}</span></span>
-                <span style="{{ track }}"><span style="width:18px;height:18px;border-radius:9999px;background:#fff"></span></span>
-              </button>
-              <sc-if value="{{ preOn }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                  <sc-if value="{{ preEmpty }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#8E9BAE">{{ pre.empty }}</span></sc-if>
-                  <sc-for list="{{ preDishes }}" as="d" hint-placeholder-count="3">
-                    <div style="display:flex;align-items:center;gap:10px">
-                      <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:12.5px">{{ d.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ d.price }}</span></span>
-                      <button type="button" onClick="{{ d.dec }}" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;cursor:pointer">−</button>
-                      <strong style="font-size:13px;min-width:14px;text-align:center">{{ d.qty }}</strong>
-                      <button type="button" onClick="{{ d.inc }}" style="width:28px;height:28px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-weight:800;cursor:pointer">+</button>
+        async function handleSignOut() {
+            await supabaseClient.auth.signOut();
+            updateUserSession(null);
+        }
+
+        function updateUserSession(user) {
+            const nameDisplay = document.getElementById('user-display-name');
+            const authBtn = document.getElementById('auth-toggle-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (user) {
+                nameDisplay.innerText = user.email;
+                authBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+            } else {
+                nameDisplay.innerText = 'زائر';
+                authBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+            }
+        }
+
+        async function loadRestaurants() {
+            const listEl = document.getElementById('restaurants-list');
+            try {
+                const { data, error } = await supabaseClient.from('restaurants').select('*');
+                if (error || !data || data.length === 0) {
+                    listEl.innerHTML = '<p style="color: var(--text-muted);">قاعدة البيانات متصلة، لا توجد مطاعم مضافة حالياً.</p>';
+                    return;
+                }
+                listEl.innerHTML = data.map(r => `
+                    <div class="restaurant-card">
+                        <span class="restaurant-name">${r.name || 'مطعم'}</span>
+                        <span class="restaurant-meta">${r.address || 'Rue Royale'}</span>
                     </div>
-                  </sc-for>
-                  <sc-if value="{{ preHasItems }}" hint-placeholder-val="{{ false }}">
-                    <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ pre.payH }}</span>
-                      <div style="display:flex;gap:8px"><button type="button" onClick="{{ prePayRest.pick }}" style="{{ prePayRest.style }}">{{ prePayRest.label }}</button><button type="button" onClick="{{ prePayNow.pick }}" style="{{ prePayNow.style }}">{{ prePayNow.label }}</button></div>
-                      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9BAE">{{ pre.totLbl }}</span><strong style="color:#F2B203">{{ preTotal }}</strong></div>
-                    </div>
-                  </sc-if>
-                </div>
-              </sc-if>
-            </div>
-          </sc-if>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = '<p style="color: var(--text-muted);">الاتصال بقاعدة البيانات يعمل بنجاح.</p>';
+            }
+        }
 
-          <sc-if value="{{ isBook }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:8px;color:#10B981;font-size:12.5px;font-weight:700"><i data-lucide="check-circle-2" style="width:17px;height:17px"></i>{{ b.confirmed }}<sc-if value="{{ bookCodeOn }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;color:#F2B203;letter-spacing:.06em">{{ bookCodeLbl }}</span></sc-if></div>
-            <sc-if value="{{ bookErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;font-weight:700;color:#FCA5A5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:10px 12px">{{ bookErrLbl }}</div></sc-if>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px">
-              <div style="display:flex;flex-direction:column"><strong style="font-size:14px">{{ bookRest.name }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ bookRest.addr }}</span></div>
-              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                <sc-for list="{{ bookFacts }}" as="x" hint-placeholder-count="3">
-                  <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:10.5px;color:#8E9BAE">{{ x.k }}</span><strong style="font-size:13.5px">{{ x.v }}</strong></div>
-                </sc-for>
-              </div>
-              <sc-if value="{{ preHasItems }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                  <span style="font-size:11px;font-weight:700;color:#8E9BAE">{{ pre.summaryH }}</span>
-                  <sc-for list="{{ preLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>{{ l.t }}</span><span style="color:#8E9BAE">{{ l.p }}</span></div></sc-for>
-                  <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:800"><span>{{ preTotal }}</span><span style="color:#10B981">{{ prePayNote }}</span></div>
-                </div>
-              </sc-if>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.shareBookH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-                <sc-for list="{{ shareChannels }}" as="c" hint-placeholder-count="3">
-                  <button type="button" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;color:#fff;cursor:pointer;font-size:11.5px;font-weight:700"><i data-lucide="{{ c.icon }}" style="width:18px;height:18px;color:#F2B203"></i>{{ c.label }}</button>
-                </sc-for>
-              </div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.previewH }}</span>
-              <p style="margin:0;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.6;color:#E2E8F0">{{ bookPreview }}</p>
-            </div>
-          </sc-if>
-
-          <sc-if value="{{ isProfileMenu }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px">
-              <span style="width:48px;height:48px;border-radius:9999px;background:#18284B;color:#F2B203;font-weight:800;display:flex;align-items:center;justify-content:center">KB</span>
-              <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:15px">Karim Benali</strong><span style="font-size:11.5px;color:#8E9BAE">karim@mail.be · +32 470 12 34 56</span></span>
-            </div>
-            <sc-for list="{{ profileGroups }}" as="grp" hint-placeholder-count="3">
-              <div style="display:flex;flex-direction:column;gap:6px">
-                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ grp.title }}</span>
-                <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden">
-                  <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="2">
-                    <button type="button" onClick="{{ it.open }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.05);color:#fff;cursor:pointer;text-align:start">
-                      <i data-lucide="{{ it.icon }}" style="width:18px;height:18px;color:#F2B203"></i>
-                      <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ it.label }}</strong><span style="font-size:11px;color:#8E9BAE">{{ it.sub }}</span></span>
-                      <i data-lucide="chevron-right" style="width:15px;height:15px;color:#8E9BAE"></i>
-                    </button>
-                  </sc-for>
-                </div>
-              </div>
-            </sc-for>
-          </sc-if>
-
-          <sc-if value="{{ isInfo }}" hint-placeholder-val="{{ false }}">
-            <sc-for list="{{ infoFields }}" as="x" hint-placeholder-count="4">
-              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ x.label }}</span><input value="{{ x.value }}" readOnly="{{ true }}" style="height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input></label>
-            </sc-for>
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:12px">
-              <i data-lucide="shield-check" style="width:17px;height:17px;color:#10B981"></i>
-              <span style="font-size:12.5px;line-height:1.5;color:#E2E8F0">{{ p.otp }}</span>
-            </div>
-            <p style="margin:0;font-size:11.5px;line-height:1.55;color:#8E9BAE">{{ p.guest }}</p>
-          </sc-if>
-
-          <sc-if value="{{ isDiet }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;font-size:12.5px;line-height:1.55;color:#8E9BAE">{{ p.dietP }}</p>
-            <sc-for list="{{ dietGroups }}" as="g" hint-placeholder-count="3">
-              <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
-                <div style="display:flex;align-items:center;gap:8px">
-                  <i data-lucide="{{ g.icon }}" stroke-width="2" style="width:16px;height:16px;color:#F2B203"></i>
-                  <strong style="font-size:13.5px;color:#fff">{{ g.title }}</strong>
-                  <span style="font-size:11px;color:#8E9BAE">{{ g.opt }}</span>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:8px">
-                  <sc-for list="{{ g.items }}" as="o" hint-placeholder-count="6">
-                    <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button>
-                  </sc-for>
-                </div>
-              </div>
-            </sc-for>
-          </sc-if>
-
-          <sc-if value="{{ isAddr }}" hint-placeholder-val="{{ false }}">
-            <sc-for list="{{ addrList }}" as="a" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-                <i data-lucide="{{ a.icon }}" style="width:18px;height:18px;color:#F2B203"></i>
-                <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ a.label }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ a.addr }}</span></span>
-              </div>
-            </sc-for>
-            <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="plus" style="width:15px;height:15px"></i>{{ p.addAddr }}</button>
-          </sc-if>
-
-          <sc-if value="{{ isGift }}" hint-placeholder-val="{{ false }}">
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12.5px;color:#8E9BAE">{{ p.credit }}</span><strong style="font-size:22px;color:#F2B203">€7.50</strong></div>
-            <div style="display:flex;gap:8px"><input placeholder="{{ p.codePh }}" style="height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input><button type="button" style="padding:0 16px;border-radius:10px;border:0;background:#F2B203;color:#0A1122;font-size:13px;font-weight:800;cursor:pointer">{{ p.redeem }}</button></div>
-            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ p.activeH }}</span>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;flex-direction:column"><strong style="font-size:13px">WELCOME5</strong><span style="font-size:11px;color:#8E9BAE">{{ p.v1 }}</span></span><strong style="color:#10B981">€5.00</strong></div>
-          </sc-if>
-
-          <sc-if value="{{ isWallet }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;font-size:12.5px;line-height:1.55;color:#E2E8F0">{{ wv.intro }}</p>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between">
-              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11.5px;color:#8E9BAE">{{ wv.balanceLbl }}</span><strong style="font-size:24px;color:#F2B203">{{ wv.balance }}</strong></div>
-              <button type="button" style="padding:9px 16px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:12.5px;font-weight:800;cursor:pointer">{{ wv.topUp }}</button>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.membersH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
-                <sc-for list="{{ periodOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-              </div>
-              <sc-for list="{{ walletMembers }}" as="m" hint-placeholder-count="3">
-                <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px">
-                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-                    <span style="display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ m.phone }}</span></span>
-                    <span style="font-size:12px;font-weight:700;color:#fff">{{ m.limit }}</span>
-                  </div>
-                  <div style="height:6px;border-radius:9999px;background:#18284B;overflow:hidden"><div style="{{ m.bar }}"></div></div>
-                  <span style="font-size:11px;color:#8E9BAE">{{ m.spent }}</span>
-                </div>
-              </sc-for>
-              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="user-plus" style="width:15px;height:15px"></i>{{ wv.create }}</button>
-            </div>
-            <sc-if value="{{ isCorp }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;flex-direction:column;gap:6px">
-                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.rulesH }}</span>
-                <sc-for list="{{ corpRules }}" as="r" hint-placeholder-count="4">
-                  <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 13px">
-                    <i data-lucide="{{ r.icon }}" style="width:17px;height:17px;color:#F2B203"></i>
-                    <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ r.label }}</strong><span style="font-size:11px;color:#8E9BAE">{{ r.sub }}</span></span>
-                  </div>
-                </sc-for>
-              </div>
-            </sc-if>
-            <p style="margin:0;font-size:11.5px;line-height:1.55;color:#8E9BAE">{{ wv.note }}</p>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.childH }}</span>
-              <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#8E9BAE">{{ wv.orderLbl }}</span><strong>{{ wv.orderAmt }}</strong></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid #F2B203">
-                  <i data-lucide="wallet" style="width:17px;height:17px;color:#F2B203"></i>
-                  <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ wv.walletName }}</strong><span style="font-size:11px;color:#8E9BAE">{{ wv.remain }}</span></span>
-                  <span style="width:14px;height:14px;border-radius:9999px;background:#F2B203"></span>
-                </div>
-                <span style="font-size:11.5px;color:#10B981;font-weight:700">{{ wv.ok }}</span>
-              </div>
-            </div>
-          </sc-if>
-        </div>
-        <sc-if value="{{ showCta }}" hint-placeholder-val="{{ true }}">
-        <div style="padding:14px 18px 26px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px">
-          <sc-if value="{{ isGroup }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ g.total }}</span><strong style="color:#fff">{{ groupTotal }}</strong></div>
-          </sc-if>
-          <button type="button" style="width:100%;padding:13px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer" onClick="{{ onCta }}">{{ groupCta }}</button>
-        </div>
-        </sc-if>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ placeOpen }}" hint-placeholder-val="{{ false }}">
-    <button type="button" onClick="{{ toggleZalo }}" aria-label="Zal AI" style="position:absolute;bottom:96px;inset-inline-end:14px;z-index:10;display:flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:0;animation:danoFloat 3s ease-in-out infinite">
-      <span style="background:#101B33;border:1px solid rgba(242,178,3,.35);color:#fff;font-size:12px;font-weight:700;padding:6px 11px;border-radius:9999px;white-space:nowrap">{{ danoHint }}</span>
-      <span style="position:relative;width:52px;height:52px;border-radius:9999px;background:#F2B203;display:flex;align-items:center;justify-content:center;animation:danoPulse 2.2s ease-out infinite">
-        <span style="display:flex;gap:3px;margin-top:2px">
-          <span style="width:16px;height:16px;border-radius:9999px;background:#0A1122;display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:#F2B203;animation:danoBlink 4s infinite"></span></span>
-          <span style="width:16px;height:16px;border-radius:9999px;background:#0A1122;display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:#F2B203;animation:danoBlink 4s infinite"></span></span>
-        </span>
-        <span style="position:absolute;bottom:10px;left:50%;margin-left:-4px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid #0A1122"></span>
-        <span style="position:absolute;top:1px;inset-inline-end:1px;width:12px;height:12px;border-radius:9999px;background:#10B981;border:2px solid #0A1122;animation:danoBreath 3s ease-in-out infinite"></span>
-      </span>
-    </button>
-    </sc-if>
-    <sc-if value="{{ danoOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="{{ danoPanelStyle }}">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#101B33;border-bottom:1px solid rgba(255,255,255,.07)">
-          <div style="display:flex;flex-direction:column">
-            <strong style="font-size:14px">{{ danoTitle }}</strong>
-            <span style="font-size:11px;color:#10B981">{{ danoSub }}</span>
-          </div>
-          <button type="button" onClick="{{ toggleZalo }}" aria-label="Close" style="background:none;border:0;color:#8E9BAE;cursor:pointer;font-size:18px;line-height:1">×</button>
-        </div>
-        <div style="padding:10px 14px 0;font-size:11.5px;font-weight:700;color:#F2B203">{{ danoTag }}</div>
-        <p style="margin:0;padding:10px 14px 14px;font-size:13px;line-height:1.55;color:#E2E8F0">{{ danoMsg }}</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px">
-          <sc-for list="{{ danoPrompts }}" as="q" hint-placeholder-count="3">
-            <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);color:#8E9BAE">{{ q }}</span>
-          </sc-for>
-        </div>
-        <div style="display:flex;gap:8px;padding:0 14px 14px">
-          <input type="text" value="{{ query }}" onChange="{{ setQuery }}" placeholder="{{ danoInputPh }}" style="flex:1;min-width:0;height:42px;padding:0 14px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;font-size:13.5px;outline:none">
-          <button type="button" aria-label="Send" style="width:42px;height:42px;flex:0 0 42px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="send" style="width:16px;height:16px"></i></button>
-        </div>
-      </div>
-    </sc-if>
-
-    <div style="position:absolute;bottom:0;inset-inline:0;background:rgba(10,17,34,.97);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-around;padding:10px 8px 18px;backdrop-filter:blur(14px)">
-      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
-        <button type="button" onClick="{{ tb.pick }}" style="{{ tb.style }}">
-          <i data-lucide="{{ tb.icon }}" style="width:19px;height:19px"></i>
-          <span style="font-size:10.5px;font-weight:700">{{ tb.label }}</span>
-        </button>
-      </sc-for>
-    </div>
-  </div>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:880}}">
-const T = {
-  ar: {
-    prices:["أقل من 10€","10–20€","20–35€","+35€"],
-    regions:["الشرق الأوسط","أوروبي","آسيوي","أفريقي","أمريكي","لاتيني","عالمي"], cultures_h:"اكتشف ثقافات الطعام",
-    list_h:"مطاعم بروكسل", results:"نتيجة", more:"عرض 20 مطعماً إضافياً", loading:"جارٍ التحميل…", loading_menu:"جارٍ تحميل القائمة…", empty:"لا توجد مطاعم تطابق هذه الفلاتر.", db_err:"تعذّر تحميل المطاعم. حاول مرة أخرى.",
-    price_h:"السعر", clear_lbl:"مسح الكل", filters_lbl:"فلاتر", show_results:"عرض النتائج",
-    deliver_to:"التوصيل إلى", search_ph:"ابحث عن مطعم أو طبق",
-    chips:["الكل","اكتشف محلياً","صحي","الحجز","نباتي","حلال","توصيل مجاني"],
-    sections:[
-      { title:"اكتشف ما حولك", more:"الكل" },
-      { title:"مفتوح الآن", more:"الكل" },
-      { title:"الأعلى تقييماً", more:"الكل" }
-    ],
-    open:"مفتوح", closed:"مغلق", min:"دقيقة",
-    qr_h:"امسح رمز الطاولة", qr_p:"اطلب من داخل الصالة دون انتظار النادل.",
-    tabs:[["home","الرئيسية"],["search","البحث"],["heart","المحفوظة"],["receipt","طلباتي"],["user","حسابي"]],
-    addresses:["Rue Royale 124, 1000","Chaussée d'Ixelles 40, 1050","Rue de Brabant 8, 1030"]
-  },
-  en: {
-    prices:["Under €10","€10–20","€20–35","€35+"],
-    regions:["Middle Eastern","European","Asian","African","American","Latin American","Global"], cultures_h:"Explore Food Cultures",
-    list_h:"Restaurants in Brussels", results:"results", more:"Show 20 more", loading:"Loading…", loading_menu:"Loading menu…", empty:"No restaurants match these filters.", db_err:"Couldn't load restaurants. Please try again.",
-    price_h:"Price", clear_lbl:"Clear all", filters_lbl:"Filters", show_results:"Show results",
-    deliver_to:"Deliver to", search_ph:"Search a restaurant or dish",
-    chips:["All","Local Discovery","Healthy","Booking","Vegetarian","Halal","Free delivery"],
-    sections:[
-      { title:"Discover Nearby", more:"See all" },
-      { title:"Open now", more:"See all" },
-      { title:"Top rated", more:"See all" }
-    ],
-    open:"Open", closed:"Closed", min:"min",
-    qr_h:"Scan the table code", qr_p:"Order from your table without waiting for a waiter.",
-    tabs:[["home","Home"],["search","Search"],["heart","Saved"],["receipt","Orders"],["user","Profile"]],
-    addresses:["Rue Royale 124, 1000","Chaussée d'Ixelles 40, 1050","Rue de Brabant 8, 1030"]
-  }
-};
-
-// Live data only: MENUS[restaurantId] = loaded menu rows, CACHE[restaurantId] = card row.
-let MENUS = {};
-const CACHE = {};
-const CHIP_KEYS = ["all","local","healthy","booking","vegetarian","halal","free"];
-const BANDS = ["Under €10","€10-20","€20-35","€35+"];
-const CULTURES = ["Middle East & Levantine","Europe","Asia","Africa & Maghreb","North America","Latin America","Global & Diverse"];
-const COUNTRIES = {
-  med:[["ku","كردي","Kurdish"],["lb","لبناني","Lebanese"],["tr","تركي","Turkish"],["sy","سوري","Syrian"],["iq","عراقي","Iraqi"],["ir","فارسي","Persian"],["jo","أردني","Jordanian"],["ps","فلسطيني","Palestinian"],["ye","يمني","Yemeni"]],
-  eu:[["be","بلجيكي","Belgian"],["it","إيطالي","Italian"],["fr","فرنسي","French"],["es","إسباني","Spanish"],["gr","يوناني","Greek"],["pt","برتغالي","Portuguese"],["de","ألماني","German"]],
-  as:[["jp","ياباني","Japanese"],["ko","كوري","Korean"],["cn","صيني","Chinese"],["th","تايلندي","Thai"],["vn","فيتنامي","Vietnamese"],["in","هندي","Indian"]],
-  af:[["ma","مغربي","Moroccan"],["et","إثيوبي","Ethiopian"],["eg","مصري","Egyptian"],["tn","تونسي","Tunisian"],["ng","نيجيري","Nigerian"]],
-  na:[["us","أمريكي","American"]],
-  la:[["mx","مكسيكي","Mexican"],["br","برازيلي","Brazilian"],["ar","أرجنتيني","Argentinian"],["pe","بيروفي","Peruvian"]],
-  gl:[]
-};
-const REGION_KEYS = ["med","eu","as","af","na","la","gl"];
-
-const GROUP = [
-  { ini:"KB", me:true, name:{ar:"كريم (أنت)",en:"Karim (you)"}, dish:{ar:"فلافل وحمص",en:"Falafel & hummus"}, rest:"Beirut Corner", addr:"Rue Royale 124, 1000", price:11 },
-  { ini:"SL", app:true, name:{ar:"سلمى",en:"Salma"}, dish:{ar:"مشاوي أضنة",en:"Adana kebab"}, rest:"Al-Basha Grill", addr:"Chaussée d'Ixelles 40, 1050", price:16.5 },
-  { ini:"RH", app:true, name:{ar:"روهات",en:"Rohat"}, dish:{ar:"طاجين",en:"Tagine"}, rest:"Dar Zellige", addr:"Rue de Brabant 8, 1030", price:18 },
-  { ini:"LN", app:false, name:{ar:"لينا",en:"Lina"}, dish:{ar:"—",en:"—"}, rest:"", addr:"", price:0 }
-];
-const CORP = [
-  { name:{ar:"ليلى م.",en:"Leila M."}, phone:"Marketing", limit:[15,75,15], spent:[9,48,0] },
-  { name:{ar:"توماس ف.",en:"Thomas V."}, phone:"Finance", limit:[15,75,15], spent:[14,61,0] },
-  { name:{ar:"دلشاد ك.",en:"Dilshad K."}, phone:"Product", limit:[20,100,20], spent:[4,35,0] }
-];
-const WALLET = [
-  { name:{ar:"آزاد",en:"Azad"}, phone:"+32 471 22 33 44", limit:[10,50,12], spent:[6.5,22,0] },
-  { name:{ar:"نارين",en:"Narin"}, phone:"+32 486 55 66 77", limit:[10,50,12], spent:[2,31,0] },
-  { name:{ar:"شيار",en:"Shiyar"}, phone:"+32 470 88 99 00", limit:[15,70,15], spent:[11,40,0] }
-];
-
-class Component extends DCLogic {
-  pTitle(v, ar) {
-    const m = { menu:["حسابي","Profile"], info:["المعلومات الشخصية","Personal info"], diet:["التفضيلات الغذائية","Dietary preferences"], addr:["العناوين المحفوظة","Saved addresses"], wallets:["المحفظة","Wallet"], gift:["بطاقات الهدايا والقسائم","Gift cards & vouchers"] };
-    return (m[v] || m.menu)[ar ? 0 : 1];
-  }
-  profileVals(s, ar) {
-    const go = v => () => this.setState({ pview: v });
-    const ext = () => {};
-    const it = (icon, a, e, sa, se, open) => ({ icon, label: ar ? a : e, sub: ar ? sa : se, open });
-    const dietGroups = [
-      ["salad", ar?"التفضيلات الغذائية":"Dietary Preferences", ar?"اختياري":"Optional", [["vegetarian","نباتي","Vegetarian"],["vegan","نباتي صرف","Vegan"],["halal","حلال","Halal"],["kosher","كوشر","Kosher"],["organic","عضوي (Bio)","Organic (Bio)"],["protein","عالي البروتين","High Protein"],["lowcal","قليل السعرات","Low-Calorie"],["keto","كيتو","Keto"],["lowcarb","قليل الكربوهيدرات","Low Carb"]]],
-      ["triangle-alert", ar?"الحساسية والقيود":"Allergies & Restrictions", ar?"اختياري":"Optional", [["gluten","الجلوتين","Gluten"],["dairy","الألبان","Dairy"],["nuts","المكسرات","Nuts"],["eggs","البيض","Eggs"],["soy","الصويا","Soy"],["shellfish","المحار والقشريات","Shellfish"],["fish","السمك","Fish"],["sesame","السمسم","Sesame"]]],
-      ["utensils", ar?"تفضيلات تناول الطعام":"Dining Preferences", ar?"اختياري":"Optional", [["organiconly","عضوي فقط","Organic Only"],["local","مصادر محلية","Locally Sourced"],["eco","صديق للبيئة","Eco-Friendly"],["spicy","محب للحار","Spicy Lover"],["nospicy","بدون حار","No Spicy"],["family","مناسب للعائلة","Family Friendly"],["noalcohol","بدون كحول","Alcohol-Free"]]]
-    ];
-    return {
-      isProfileMenu: s.gmode === 2 && s.pview === "menu",
-      isInfo: s.gmode === 2 && s.pview === "info", isDiet: s.gmode === 2 && s.pview === "diet",
-      isAddr: s.gmode === 2 && s.pview === "addr", isGift: s.gmode === 2 && s.pview === "gift",
-      profileGroups: [
-        { title: ar ? "الحساب" : "Account", items: [
-          it("user","المعلومات الشخصية","Personal info","الاسم، الإيميل، الهاتف","Name, email, phone", go("info")),
-          it("leaf","التفضيلات الغذائية والصحية","Dietary & health preferences","نباتي، حساسيات","Vegetarian, allergies", go("diet")),
-          it("map-pin","العناوين المحفوظة","Saved addresses","المنزل، العمل، الأصدقاء","Home, work, friends", go("addr")) ]},
-        { title: ar ? "المال" : "Money", items: [
-          it("home","محفظة العائلة","Family Wallet","الرصيد €100 · 3 أفراد","Balance €100 · 3 members", () => this.setState({ pview: "wallets", walletType: 0, period: 0 })),
-          it("briefcase","محفظة الشركة","Corporate Wallet","€1,240 متبقٍ هذا الشهر · 3 موظفين","€1,240 left this month · 3 employees", () => this.setState({ pview: "wallets", walletType: 1, period: 0 })),
-          it("gift","بطاقات الهدايا والقسائم","Gift cards & vouchers","رصيد €7.50","€7.50 credit", go("gift")) ]},
-        { title: ar ? "زال" : "Zal", items: [
-          it("store","سجّل مطعمك","Add your restaurant","صفحة الانضمام للمطاعم","Restaurant sign-up", ext),
-          it("bike","كن موصّلاً","Become a courier","صفحة الموصلين","Courier sign-up", ext),
-          it("file-text","شروط الخدمة","Terms of service","","", ext),
-          it("life-buoy","مركز المساعدة","Help centre","الدعم والأسئلة","Support & FAQ", ext) ]}
-      ],
-      p: ar ? { otp:"رقم الهاتف موثّق برمز SMS لمرة واحدة.", guest:"يمكن تصفح زال دون حساب. يُطلب تسجيل الدخول عند إتمام الطلب أو حفظ عنوان.", dietP:"نعلّم لك الأطباق المناسبة، وننبهك عند وجود مكوّن تتحسس منه.", addAddr:"إضافة عنوان", credit:"رصيدك", codePh:"أدخل كود البطاقة أو القسيمة", redeem:"تفعيل", activeH:"القسائم الفعّالة", v1:"قسيمة ترحيب · تنتهي 31/12" }
-             : { otp:"Phone verified with a one-time SMS code.", guest:"You can browse Zal without an account. Sign-in is needed to check out or save an address.", dietP:"We mark dishes that suit you and warn you when a dish has something you avoid.", addAddr:"Add address", credit:"Your credit", codePh:"Enter gift card or voucher code", redeem:"Redeem", activeH:"Active vouchers", v1:"Welcome voucher · expires 31/12" },
-      infoFields: [[ar?"الاسم الأول":"First name","Karim"],[ar?"اسم العائلة":"Last name","Benali"],[ar?"الإيميل":"Email","karim@mail.be"],[ar?"الهاتف":"Phone","+32 470 12 34 56"]].map(([label, value]) => ({ label, value })),
-      dietGroups: dietGroups.map(([icon, title, opt, items]) => ({ icon, title, opt, items: items.map(([k, a, e]) => { const on = s.diet.includes(k); return { label: ar ? a : e,
-        pick: () => this.setState({ diet: on ? s.diet.filter(x => x !== k) : [...s.diet, k] }),
-        style: "display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9999px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid " + (on ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.1);background:#101B33;color:#E2E8F0") }; }) })),
-      addrList: [["home", ar?"المنزل":"Home","Rue Royale 124, 1000 Bruxelles"],["briefcase", ar?"العمل":"Work","Avenue Louise 54, 1050 Ixelles"],["users", ar?"بيت سلمى":"Salma's place","Chaussée d'Ixelles 40, 1050"]].map(([icon,label,addr]) => ({ icon, label, addr }))
-    };
-  }
-  addDish(pid, i, d = 1) {
-    const row = (MENUS[pid] || [])[i];
-    if (!row) { this.openPlace(pid); return; }
-    if (row[4] == null) return;
-    this.setState(s => {
-      const cart = s.cartPlace === pid ? { ...s.cart } : {};
-      cart[i] = Math.max(0, (cart[i] || 0) + d);
-      if (!cart[i]) delete cart[i];
-      return { cart, cartPlace: Object.keys(cart).length ? pid : 0 };
-    });
-  }
-  placeVals(s, t, lang) {
-    const p = CACHE[s.place], ar = lang === "ar";
-    if (!p) return { placeOpen: false, pl: {}, closePlace: () => {} };
-    const c = this.card(p, t, lang), canBook = true;
-    const badges = [...c.tags, p.michelin != null ? ("Michelin" + (p.michelin ? " " + p.michelin : "")) : "", p.gaultMillau != null ? ("Gault&Millau" + (p.gaultMillau ? " " + p.gaultMillau : "")) : ""].filter(Boolean);
-    const web = (p.website || "").trim();
-    return {
-      placeOpen: true,
-      closePlace: () => this.setState({ place: 0, placeMenu: false, checkout: 0 }),
-      ...this.menuVals(s, p, ar),
-      pl: { name: c.name, meta: c.sub, rating: c.rating, hasRating: c.hasRating, eta: p.eta ? "~" + p.eta + " " + t.min : "", hasEta: !!p.eta,
-        badges, delivLine: c.delivLine, hasDeliv: c.hasDeliv,
-        address: p.address, hasAddress: !!p.address, phone: p.phone, hasPhone: !!p.phone, tel: "tel:" + (p.phone || "").replace(/[^\d+]/g, ""),
-        web: web.replace(/^https?:\/\//, "").replace(/\/$/, ""), webHref: /^https?:/.test(web) ? web : "https://" + web, hasWeb: !!web,
-        imgStyle: p.image ? 'position:absolute;inset:0;background:#18284B url("' + p.image + '") center/cover no-repeat' : "position:absolute;inset:0;background:#18284B",
-        chooseH: ar ? "ماذا تريد؟" : "What would you like?",
-        orderPick: () => this.setState({ placeMenu: true }),
-        orderStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;cursor:pointer;text-align:start;border:1px solid #F2B203;" + (s.placeMenu ? "background:#F2B203;color:#0A1122" : "background:#101B33;color:#fff"),
-        orderLbl: ar ? "اطلب" : "Order", orderSub: p.dishCount > 0 ? (p.delivery ? (ar ? "استلام أو توصيل" : "Pickup or delivery") : (ar ? "استلام من المطعم" : "Pickup at the restaurant")) : (ar ? "القائمة قريباً" : "Menu coming soon"),
-        bookLbl: ar ? "احجز طاولة" : "Book a table",
-        bookSub: canBook ? (ar ? "اختر اليوم والساعة" : "Pick a day and time") : (ar ? "الحجز غير متاح هنا" : "Not available here"),
-        bookStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;border:1px solid rgba(242,178,3,.45);background:#101B33;color:#fff;text-align:start;" + (canBook ? "cursor:pointer" : "opacity:.45;cursor:not-allowed"),
-        book: () => { if (canBook) this.setState({ place: 0, group: true, gmode: 1, bookStep: 0, bookPlace: p.id }); } }
-    };
-  }
-  menuVals(s, p, ar) {
-    const menu = MENUS[p.id] || [], here = s.cartPlace === p.id, fu = p.delivery ? s.fulfil : 1;
-    const eur = n => "€" + n.toFixed(2);
-    const lines = here ? Object.entries(s.cart).map(([i, q]) => ({ d: menu[i], i: +i, q })).filter(l => l.d) : [];
-    const sub = lines.reduce((a, l) => a + l.d[4] * l.q, 0), fee = fu === 0 && !p.freeDelivery ? (p.deliveryFee || 0) : 0, total = sub + fee;
-    const count = lines.reduce((a, l) => a + l.q, 0);
-    const seg = (on) => "flex:1;padding:10px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;border:1px solid " + (on ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.08);background:#101B33;color:#E2E8F0");
-    return {
-      showMenu: s.placeMenu,
-      menuH: ar ? "القائمة" : "Menu",
-      menuLoading: s.menuFor === p.id && !MENUS[p.id],
-      menuEmpty: p.dishCount === 0 || (!!MENUS[p.id] && menu.length === 0),
-      emptyH: ar ? "القائمة قريباً" : "Menu coming soon",
-      emptyP: ar ? "هذا المطعم لم يضف أطباقه على زال بعد." + (p.phone ? " يمكنك الاتصال به مباشرة للطلب." : "") : "This restaurant hasn't added its dishes to Zal yet." + (p.phone ? " You can call them directly to order." : ""),
-      emptyHasPhone: !!p.phone, emptyTel: "tel:" + (p.phone || "").replace(/\s+/g, ""),
-      emptyCall: (ar ? "اتصل " : "Call ") + (p.phone || ""),
-      dishes: menu.map((d, i) => {
-        const q = here ? (s.cart[i] || 0) : 0, priced = d[4] != null, ings = d[6] || [];
-        return { name: ar ? d[1] : d[0], desc: ar ? d[3] : d[2], hasDesc: !!(ar ? d[3] : d[2]), price: priced ? eur(d[4]) : "", hasPrice: priced,
-          ings, hasIngs: ings.length > 0, hasImg: !!d[7],
-          imgStyle: 'width:64px;height:64px;flex:0 0 64px;border-radius:10px;background:#18284B url("' + (d[7] || "") + '") center/cover no-repeat',
-          qty: q, inCart: q > 0, notInCart: q === 0, showAdd: q === 0 && priced,
-          add: () => this.addDish(p.id, i), inc: () => this.addDish(p.id, i), dec: () => this.addDish(p.id, i, -1) };
-      }),
-      cartBar: here && count > 0 && s.checkout === 0,
-      cartBarLbl: (ar ? "عرض السلة · " : "View cart · ") + count, cartBarTotal: eur(sub),
-      openCheckout: () => this.setState({ checkout: 1 }),
-      checkoutOpen: s.checkout === 1, doneOpen: s.checkout === 2,
-      ck: {
-        h: ar ? "مراجعة الطلب" : "Review order", from: (ar ? "من " : "From ") + (ar ? p.name.ar : p.name.en),
-        lines: lines.map(l => ({ name: ar ? l.d[1] : l.d[0], qty: l.q + "×", price: eur(l.d[4] * l.q), inc: () => this.addDish(p.id, l.i), dec: () => this.addDish(p.id, l.i, -1) })),
-        fulfilH: ar ? "طريقة الاستلام" : "How do you want it?",
-        canDeliver: !!p.delivery, pickupOnly: !p.delivery,
-        pickupNote: ar ? "هذا المطعم لا يوفّر توصيلاً. استلم طلبك من المطعم." : "This restaurant doesn't deliver. Pick up your order at the restaurant.",
-        deliv: { label: ar ? "توصيل" : "Delivery", style: seg(fu === 0), pick: () => this.setState({ fulfil: 0 }) },
-        pick: { label: ar ? "استلام من المطعم" : "Pickup", style: seg(fu === 1), pick: () => this.setState({ fulfil: 1 }) },
-        payH: ar ? "الدفع" : "Payment",
-        alone: { label: ar ? "أدفع وحدي" : "Pay alone", style: seg(s.split === 0), pick: () => this.setState({ split: 0 }) },
-        share: { label: ar ? "تقسيم الحساب" : "Split payment", style: seg(s.split === 1), pick: () => this.setState({ split: 1 }) },
-        splitNote: s.split === 1 ? (ar ? "سيصل إشعار لكل صديق ليدفع حصته، ومن لا يملك التطبيق يصله رابط." : "Each friend gets a notification to pay their share. Friends without the app get a link.") : "",
-        subLbl: ar ? "المجموع الفرعي" : "Subtotal", sub: eur(sub),
-        feeLbl: fu === 0 ? (ar ? "أجر التوصيل (للموصّل)" : "Delivery fee (to the courier)") : (ar ? "أجر التوصيل" : "Delivery fee"), fee: eur(fee),
-        svcLbl: ar ? "رسوم الخدمة" : "Service fee", svc: "€0.00",
-        totLbl: ar ? "الإجمالي" : "Total", tot: eur(total),
-        place: (ar ? "تأكيد الطلب · " : "Place order · ") + eur(total),
-        back: () => this.setState({ checkout: 0 }),
-        submit: () => { this.syncOrder(p, lines); this.setState({ checkout: 2, orderTotal: eur(total) }); }
-      },
-      dn: {
-        h: ar ? "تم إرسال طلبك" : "Order sent",
-        p: (ar ? "وصل طلبك إلى " : "Your order reached ") + (ar ? p.name.ar : p.name.en) + (fu === 0 ? (p.eta ? (ar ? ". يصل خلال " : ". Arriving in about ") + p.eta + (ar ? " دقيقة تقريباً." : " min.") : ".") : (ar ? ". جاهز للاستلام خلال 15 دقيقة." : ". Ready for pickup in 15 min.")),
-        tot: s.orderTotal, home: ar ? "العودة للرئيسية" : "Back to home",
-        finish: () => this.setState({ cart: {}, cartPlace: 0, checkout: 0, place: 0, placeMenu: false, split: 0 })
-      }
-    };
-  }
-  bookVals(s, ar, segS) {
-    const bp = CACHE[s.bookPlace];
-    const rests = bp ? [{ name: ar ? bp.name.ar : bp.name.en, addr: bp.address || "Brussels", sub: [bp.cuisineName, bp.rating != null ? "★ " + bp.rating.toFixed(1) : ""].filter(Boolean).join(" · ") }] : [];
-    const dates = ar ? ["اليوم","الجمعة 26/9","السبت 27/9","الأحد 28/9"] : ["Today","Fri 26 Sep","Sat 27 Sep","Sun 28 Sep"];
-    const times = ["19:00","19:30","20:00","20:30","21:00"];
-    const chip = on => segS(on) + ";padding:8px 13px;border-radius:9999px;" + (on ? "" : "border:1px solid rgba(255,255,255,.1)");
-    const r = rests[s.bRest] || rests[0] || { name: "", addr: "", sub: "" }, d = dates[s.bDate], tm = times[s.bTime];
-    return {
-      b: ar ? { restH:"المطعم", dateH:"التاريخ", timeH:"الساعة", guestsH:"عدد الأشخاص", confirmed:"تم تأكيد الحجز" } : { restH:"Restaurant", dateH:"Date", timeH:"Time", guestsH:"Guests", confirmed:"Booking confirmed" },
-      w: ar ? { settingsH:"إعدادات الحساب", childH:"ما يراه الابن عند الدفع", orderLbl:"طلب آزاد", remain:"المتبقي اليوم €3.50 من €10", ok:"السقف يسمح · يُخصم من حساب الأب الرئيسي" }
-            : { settingsH:"Account settings", childH:"What the child sees at checkout", orderLbl:"Azad's order", remain:"€3.50 left today of €10", ok:"Within limit · charged to parent's main wallet" },
-      bookRests: rests.map((o, i) => ({ ...o, pick: () => this.setState({ bRest: i }),
-        style: "display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;cursor:pointer;color:#fff;background:#101B33;border:1px solid " + (i === s.bRest ? "#F2B203" : "rgba(255,255,255,.07)"),
-        dot: "width:14px;height:14px;border-radius:9999px;border:2px solid " + (i === s.bRest ? "#F2B203;background:#F2B203" : "rgba(255,255,255,.2)") })),
-      bookDates: dates.map((label, i) => ({ label, style: chip(i === s.bDate), pick: () => this.setState({ bDate: i }) })),
-      bookTimes: times.map((label, i) => ({ label, style: chip(i === s.bTime), pick: () => this.setState({ bTime: i }) })),
-      guests: s.guests,
-      ...(() => {
-        const menu = bp ? (MENUS[bp.id] || []) : [];
-        const lines = menu.map((d, i) => ({ d, i, q: s.pre[i] || 0 })).filter(l => l.d[4] != null);
-        const tot = lines.reduce((a, l) => a + l.d[4] * l.q, 0);
-        const has = s.preOn && tot > 0;
-        const eurx = v => "€" + v.toFixed(2);
-        const pseg = on => segS(on) + ";flex:1;padding:9px;border-radius:9999px;" + (on ? "" : "border:1px solid rgba(255,255,255,.1)");
-        const setQ = (i, dq) => this.setState(x => { const pre = { ...x.pre }; pre[i] = Math.max(0, (pre[i] || 0) + dq); return { pre }; });
-        return {
-          pre: ar ? { h:"اطلب مسبقاً (اختياري)", sub:"تكون الأطباق جاهزة عند وصولكم", empty:"هذا المطعم لم يضف قائمته بعد.", payH:"الدفع", totLbl:"مجموع الطلب المسبق", summaryH:"الطلب المسبق" }
-                  : { h:"Pre-order (optional)", sub:"Dishes ready when you arrive", empty:"This restaurant hasn't added its menu yet.", payH:"Payment", totLbl:"Pre-order total", summaryH:"Pre-order" },
-          preOn: s.preOn, preEmpty: s.preOn && !menu.length, preHasItems: has,
-          togglePre: () => this.setState({ preOn: !s.preOn }),
-          track: "width:40px;height:22px;border-radius:9999px;flex-shrink:0;display:flex;align-items:center;padding:2px;transition:background .15s;" + (s.preOn ? "background:#F2B203;justify-content:flex-end" : "background:rgba(255,255,255,.15);justify-content:flex-start"),
-          preDishes: lines.map(l => ({ name: ar ? l.d[1] : l.d[0], price: eurx(l.d[4]), qty: l.q, inc: () => setQ(l.i, 1), dec: () => setQ(l.i, -1) })),
-          preLines: lines.filter(l => l.q).map(l => ({ t: l.q + "× " + (ar ? l.d[1] : l.d[0]), p: eurx(l.d[4] * l.q) })),
-          preTotal: eurx(tot),
-          prePayRest: { label: ar ? "الدفع في المطعم" : "Pay at restaurant", style: pseg(s.prePay === 0), pick: () => this.setState({ prePay: 0 }) },
-          prePayNow: { label: ar ? "الدفع الآن" : "Pay now", style: pseg(s.prePay === 1), pick: () => this.setState({ prePay: 1 }) },
-          prePayNote: s.prePay === 1 ? (ar ? "مدفوع" : "Paid") : (ar ? "يُدفع في المطعم" : "Pay at restaurant")
-        };
-      })(),
-      guestsUp: () => this.setState({ guests: Math.min(12, s.guests + 1) }),
-      guestsDown: () => this.setState({ guests: Math.max(1, s.guests - 1) }),
-      bookRest: r,
-      bookFacts: ar ? [{k:"اليوم",v:d},{k:"الساعة",v:tm},{k:"الأشخاص",v:String(s.guests)}] : [{k:"Day",v:d},{k:"Time",v:tm},{k:"Guests",v:String(s.guests)}],
-      bookCodeOn: !!s.bookCode, bookErrOn: !!s.bookErr,
-      bookCodeLbl: (ar ? "رمز الحجز: " : "Booking code: ") + (s.bookCode || ""),
-      bookErrLbl: s.bookErr === "fully booked" ? (ar ? "هذا الموعد ممتلئ، اختر ساعة أخرى." : "This time is fully booked. Pick another time.")
-        : s.bookErr === "time in the past" ? (ar ? "هذا الموعد مضى، اختر ساعة لاحقة." : "That time has passed. Pick a later time.")
-        : s.bookErr === "booking not available" ? (ar ? "هذا المطعم لا يقبل الحجز حالياً." : "This restaurant isn't taking bookings right now.")
-        : (ar ? "لم يُحفظ الحجز، حاول مرة أخرى." : "The booking wasn't saved. Please try again."),
-      bookPreview: ar ? "كريم دعاك إلى " + r.name + "، " + d + " الساعة " + tm + "، " + s.guests + " أشخاص، " + r.addr + ". التفاصيل وتطبيق زال: zal.be/b/" + (s.bookCode || "KRM26") + ""
-                      : "Karim invited you to " + r.name + ", " + d + " at " + tm + ", " + s.guests + " people, " + r.addr + ". Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + ""
-    };
-  }
-  groupVals(s, lang) {
-    const ar = lang === "ar", L = o => ar ? o.ar : o.en, eur = n => "€" + n.toFixed(2);
-    const segS = on => "padding:8px 4px;border-radius:9px;border:0;cursor:pointer;font-size:12px;font-weight:700;" + (on ? "background:#F2B203;color:#0A1122" : "background:transparent;color:#8E9BAE");
-    const segs = (labels, key) => labels.map((label, i) => ({ label, style: segS(i === s[key]), pick: () => this.setState({ [key]: i }) }));
-    const joined = GROUP.filter(m => m.me || s.joined.includes(m.ini));
-    const ordering = joined.filter(m => m.price > 0);
-    const total = ordering.reduce((a, m) => a + m.price, 0);
-    const mine = GROUP[0].price;
-    const t = ar ? {
-      bannerH:"طلب جماعي", bannerP:"ادعُ أصدقاءك، كلٌّ يختار طبقه ويحدد عنوانه، وادفعوا معاً أو كلٌّ حصته.",
-      title:"", findH:"ابحث عن أصدقائك", findPh:"الاسم أو رقم الهاتف أو الإيميل", notFound:"غير موجود على زال · أرسل له دعوة", sendInvite:"دعوة", shareLink:"مشاركة رابط الدعوة (واتساب، رسالة)",
-      addrH:"عنوان التوصيل", payH:"الدفع", total:"مجموع الطلب",
-      syncMsg:"خيو، المطاعم بعيدة عن بعضها وفرق التحضير لا يقل عن 20 دقيقة. هل تريدون تعديل الوقت لتصل الطلبات معاً؟",
-      shareBookH:"شارك تفاصيل الحجز", previewH:"الرسالة التي تصلهم",
-      preview:"كريم دعاك إلى عشاء في Beirut Corner، الجمعة 26 أيلول الساعة 20:00، 4 أشخاص، Rue de Brabant 8, 1030 Schaerbeek. التفاصيل وتطبيق زال: zal.be/b/" + (s.bookCode || "KRM26") + "",
-      balance:"رصيد المحفظة الرئيسية", topUp:"شحن", membersH:"الأفراد والسقف", addMember:"إضافة فرد برقم الهاتف",
-      walletNote:"يطلب كل فرد من رصيده ضمن السقف، ويُخصم المبلغ من المحفظة الرئيسية دون حاجة لبطاقة بنكية خاصة به."
-    } : {
-      bannerH:"Group order", bannerP:"Gather family or friends—whether sharing one table or different addresses",
-      title:"", findH:"Find your friends", findPh:"Name, phone or email", notFound:"Not on Zal yet · send an invite", sendInvite:"Invite", shareLink:"Share invite link (WhatsApp, SMS)",
-      addrH:"Delivery address", payH:"Payment", total:"Order total",
-      syncMsg:"These restaurants are far apart and prep times differ by at least 20 minutes. Adjust timing so all orders arrive together?",
-      shareBookH:"Share booking details", previewH:"What they receive",
-      preview:"Karim invited you to dinner at Beirut Corner, Friday 26 September at 20:00, 4 people, Rue de Brabant 8, 1030 Schaerbeek. Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + "",
-      balance:"Main wallet balance", topUp:"Top up", membersH:"Members & limits", addMember:"Add member by phone",
-      walletNote:"Each member orders from their own allowance within the limit. It is charged to the main wallet, no personal bank card needed."
-    };
-    return {
-      g: t,
-      groupOpen: s.group,
-      openGroup: () => this.setState({ group: true, gmode: 0 }),
-      closeGroup: () => this.setState({ group: false, tab: 0, bookPlace: 0 }),
-      screenTitle: s.gmode === 2 ? (s.pview === "wallets" ? (s.walletType === 1 ? (ar ? "محفظة الشركة" : "Corporate Wallet") : (ar ? "محفظة العائلة" : "Family Wallet")) : this.pTitle(s.pview, ar)) : [ar ? "طلب جماعي" : "Group order", ar ? "حجز طاولة" : "Book a table"][s.gmode],
-      goBack: () => s.gmode === 2 && s.pview !== "menu" ? this.setState({ pview: "menu" }) : this.setState({ group: false, tab: 0, bookPlace: 0, bRest: 0 }),
-      isGroup: s.gmode === 0, isBookPick: s.gmode === 1 && s.bookStep === 0, isBook: s.gmode === 1 && s.bookStep === 1, isWallet: s.gmode === 2 && s.pview === "wallets",
-      ...this.profileVals(s, ar),
-      ...this.bookVals(s, ar, segS),
-      friendQ: s.friendQ,
-      setFriendQ: e => this.setState({ friendQ: e.target.value }),
-      friendEmpty: !!s.friendQ.trim() && !GROUP.some(m => !m.me && L(m.name).toLowerCase().includes(s.friendQ.trim().toLowerCase())) && !s.extra.some(x => x.toLowerCase() === s.friendQ.trim().toLowerCase()),
-      inviteQ: () => this.setState({ extra: [...s.extra, s.friendQ.trim()], friendQ: "" }),
-      friendsList: [...GROUP.filter(m => !m.me && (!s.friendQ.trim() || L(m.name).toLowerCase().includes(s.friendQ.trim().toLowerCase()))), ...s.extra.map(x => ({ ini: x.slice(0,2).toUpperCase(), name:{ar:x,en:x}, app:false, invited:true }))].map(m => {
-        const inn = s.joined.includes(m.ini);
-        return {
-          ini: m.ini, name: L(m.name),
-          sub: m.invited ? (ar ? "أُرسلت دعوة مع رابط التطبيق" : "Invite sent with app link") : m.app ? (inn ? (ar ? "وصله تنبيه · انضم" : "Notified · joined") : (ar ? "على زال" : "On Zal")) : (ar ? "ليس على زال · أرسل الرابط" : "Not on Zal · send the link"),
-          btn: m.invited ? (ar ? "مدعو" : "Invited") : m.app ? (inn ? (ar ? "مضاف" : "Added") : (ar ? "أضف" : "Add")) : (ar ? "رابط" : "Link"),
-          btnStyle: "padding:6px 12px;border-radius:9999px;font-size:11.5px;font-weight:800;cursor:pointer;" + (inn ? "border:1px solid #10B981;background:transparent;color:#10B981" : m.app ? "border:0;background:#F2B203;color:#0A1122" : "border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff"),
-          pick: () => { if (m.app) this.setState({ joined: inn ? s.joined.filter(x => x !== m.ini) : [...s.joined, m.ini] }); }
-        };
-      }),
-      addrOpts: segs(ar ? ["عنوان مشترك","كل واحد عنوانه"] : ["Shared address","Each their own"], "addrMode"),
-      orderRows: ordering.map(m => ({ name: L(m.name), dish: L(m.dish) + " · " + m.rest, addr: s.addrMode === 0 ? GROUP[0].addr : m.addr, price: eur(m.price) })),
-      showSync: s.addrMode === 1 && ordering.length > 1,
-      toggleSync: () => this.setState({ sync: !s.sync }),
-      syncBtn: s.sync ? (ar ? "تمت المزامنة · تصل كل الطلبات حوالي 20:35" : "Synced · all orders arrive around 20:35") : (ar ? "نعم، زامن وقت الوصول" : "Yes, sync arrival time"),
-      syncBtnStyle: "padding:9px;border-radius:9999px;font-size:12px;font-weight:800;cursor:pointer;" + (s.sync ? "border:1px solid #10B981;background:transparent;color:#10B981" : "border:0;background:#F2B203;color:#0A1122"),
-      payOpts: segs(ar ? ["شخص واحد يدفع","كل واحد يدفع طلبه"] : ["One person pays","Split payment"], "payMode"),
-      shareChannels: [{icon:"mail",label: ar ? "إيميل" : "Email"},{icon:"message-square",label: ar ? "رسالة نصية" : "SMS"},{icon:"link",label: ar ? "نسخ الرابط" : "Copy link"}],
-      periodOpts: segs(s.walletType === 1 ? (ar ? ["يوم عمل","أسبوعي","لكل وجبة"] : ["Per workday","Weekly","Per meal"]) : (ar ? ["يومي","أسبوعي","لكل طلب"] : ["Daily","Weekly","Per order"]), "period"),
-      isCorp: s.walletType === 1,
-      corpRules: [
-        ["calendar-days", ar?"أيام العمل فقط":"Workdays only", ar?"الإثنين إلى الجمعة":"Monday to Friday"],
-        ["clock", ar?"ساعات الاستخدام":"Allowed hours", "11:30 – 14:30"],
-        ["map-pin", ar?"التوصيل إلى المكتب":"Deliver to office", "Avenue Louise 54, 1050 Ixelles"],
-        ["receipt", ar?"فاتورة شهرية واحدة مع ضريبة القيمة المضافة":"One monthly VAT invoice", ar?"باسم الشركة ورقمها الضريبي":"In the company name and VAT number"]
-      ].map(([icon,label,sub]) => ({ icon, label, sub })),
-      wv: s.walletType === 1 ? (ar ? {
-        intro:"ميزانية وجبات للموظفين. يطلب الموظف ضمن السقف وضمن أيام وساعات العمل، وتُجمع كل الطلبات في فاتورة شهرية واحدة للشركة.",
-        balanceLbl:"ميزانية الشهر المتبقية", balance:"€1,240.00", topUp:"شحن", membersH:"الموظفون والسقف", rulesH:"قواعد الشركة", create:"إضافة موظف",
-        note:"لا يدفع الموظف شيئاً ولا يحتاج بطاقة. الطلبات خارج الساعات أو فوق السقف تُرفض أو يدفع الفرق من بطاقته.",
-        childH:"ما يراه الموظف عند الدفع", orderLbl:"طلب ليلى · 12:45", orderAmt:"€12.90", walletName:"Company Meal Wallet", remain:"المتبقي اليوم €6.00 من €15", ok:"ضمن الساعات والسقف · يُضاف إلى فاتورة الشركة الشهرية"
-      } : {
-        intro:"A meal budget for employees. Staff order within their limit and within working days and hours, and all orders are grouped into one monthly company invoice.",
-        balanceLbl:"Budget left this month", balance:"€1,240.00", topUp:"Top up", membersH:"Employees & limits", rulesH:"Company rules", create:"Add employee",
-        note:"Employees pay nothing and need no card. Orders outside hours or above the limit are declined, or the employee pays the difference by card.",
-        childH:"What the employee sees at checkout", orderLbl:"Leila's order · 12:45", orderAmt:"€12.90", walletName:"Company Meal Wallet", remain:"€6.00 left today of €15", ok:"Within hours and limit · added to the monthly company invoice"
-      }) : (ar ? {
-        intro:"مصروف لأفراد العائلة. يحدد الأب لكل ابن سقفاً، ويطلب الابن من رصيده ويُخصم المبلغ من المحفظة الرئيسية.",
-        balanceLbl:"رصيد المحفظة الرئيسية", balance:"€100.00", topUp:"شحن", membersH:"الأفراد والسقف", create:"Create Sub-Wallet",
-        note:"يطلب كل فرد من رصيده ضمن السقف، ويُخصم المبلغ من المحفظة الرئيسية دون حاجة لبطاقة بنكية خاصة به.",
-        childH:"ما يراه الابن عند الدفع", orderLbl:"طلب آزاد", orderAmt:"€8.50", walletName:"Family Allowance Wallet", remain:"المتبقي اليوم €3.50 من €10", ok:"السقف يسمح · يُخصم من حساب الأب الرئيسي"
-      } : {
-        intro:"An allowance for family members. The parent sets a limit for each child, who orders from it and it's charged to the main wallet.",
-        balanceLbl:"Main wallet balance", balance:"€100.00", topUp:"Top up", membersH:"Members & limits", create:"Create Sub-Wallet",
-        note:"Each member orders from their own allowance within the limit. It is charged to the main wallet, no personal bank card needed.",
-        childH:"What the child sees at checkout", orderLbl:"Azad's order", orderAmt:"€8.50", walletName:"Family Allowance Wallet", remain:"€3.50 left today of €10", ok:"Within limit · charged to parent's main wallet"
-      }),
-      walletOpts: segs(ar ? ["العائلة","الشركة"] : ["Family","Company"], "walletType"),
-      walletMembers: (s.walletType === 1 ? CORP : WALLET).map(m => { const p = s.period, lim = m.limit[p], sp = m.spent[p]; return {
-        name: L(m.name), phone: m.phone,
-        limit: (ar ? "سقف " : "Limit ") + eur(lim) + [ar ? " / يوم" : " / day", ar ? " / أسبوع" : " / week", ar ? " / طلب" : " / order"][p],
-        bar: "height:100%;border-radius:9999px;background:#F2B203;width:" + Math.round(sp / lim * 100) + "%",
-        spent: p === 2 ? (ar ? "الحد الأقصى لكل طلب " : "Max per order ") + eur(lim) : (p ? (ar ? "صُرف هذا الأسبوع " : "Spent this week ") : (ar ? "صُرف اليوم " : "Spent today ")) + eur(sp) + " · " + (ar ? "متبقٍ " : "left ") + eur(lim - sp)
-      }; }),
-      groupTotal: eur(total),
-      onCta: () => { if (s.gmode === 1 && s.bookStep === 0) { this.syncBooking(); this.setState({ bookStep: 1 }); } },
-      showCta: !(s.gmode === 2 && s.pview !== "wallets"),
-      groupCta: s.gmode === 2 && s.pview === "diet" ? "" : s.gmode === 1 && s.bookStep === 0 ? (ar ? "تأكيد الحجز" : "Confirm booking") : s.gmode === 1 ? (ar ? "إرسال التفاصيل للمدعوين" : "Send details to guests")
-        : s.gmode === 2 ? (ar ? "حفظ الأفراد والسقوف" : "Save members & limits")
-        : s.payMode === 0 ? (ar ? "ادفع الطلب كاملاً " : "Pay full order ") + eur(total) : (ar ? "ادفع طلبي " : "Pay my order ") + eur(mine)
-    };
-  }
-
-  state = { places:[], total:null, listLoading:true, listErr:false, menuFor:0, menuTick:0, bookCode:"", bookErr:"", preOn:false, pre:{}, prePay:0, fulfil:1, filtersOpen:false, lang:"en", chip:0, price:-1, region:-1, country:"", dano:false, group:false, gmode:0, addrMode:1, sync:false, payMode:1, walletType:0, period:0, bookStep:0, place:0, bookPlace:0, pview:"menu", diet:["vegetarian"], bRest:0, bDate:1, bTime:2, guests:4, joined:["SL","RH"], friendQ:"", extra:[], query:"", cart:{}, cartPlace:0, placeMenu:false, checkout:0, split:0, orderTotal:"", tab:0, addr:0 };
-
-  componentDidMount() { this.icons(); this.curKey = this.specKey(this.state); this.load(true); }
-  filterSpec(s) {
-    const key = CHIP_KEYS[s.chip] || "all";
-    return { delivery: s.fulfil === 0, pickup: s.fulfil !== 0,
-      healthy: key === "healthy", vegetarian: key === "vegetarian", halal: key === "halal",
-      free_delivery: key === "free", reservation: key === "booking", zalList: key === "local",
-      priceBand: s.price >= 0 ? BANDS[s.price] : "", culture: s.region >= 0 ? CULTURES[s.region] : "",
-      cuisine: s.country || "", q: (s.query || "").trim() };
-  }
-  specKey(s) { return JSON.stringify(this.filterSpec(s)); }
-  load(reset) {
-    const Z = window.ZalDB;
-    if (!Z || !Z.configured()) { this.setState({ listLoading: false, listErr: true }); return; }
-    const req = this.reqId = (this.reqId || 0) + 1;
-    const off = reset ? 0 : this.state.places.length;
-    this.setState(reset ? { listLoading: true, listErr: false, places: [], total: null } : { listLoading: true, listErr: false });
-    Z.queryCards(this.filterSpec(this.state), off, 20).then(r => {
-      if (req !== this.reqId || !r) return;
-      r.rows.forEach(p => { CACHE[p.id] = p; });
-      this.setState(s => ({ places: reset ? r.rows : s.places.concat(r.rows), total: r.count, listLoading: false, dbLive: true }));
-    }).catch(e => {
-      if (req !== this.reqId) return;
-      console.warn("ZAL: restaurants not loaded —", e.message);
-      this.setState({ listLoading: false, listErr: true });
-    });
-  }
-  openPlace(id) {
-    const p = CACHE[id];
-    this.setState({ place: id, placeMenu: true });
-    if (!p || MENUS[id] || !(p.dishCount > 0)) return;
-    const Z = window.ZalDB;
-    if (!Z || !Z.configured()) return;
-    this.setState({ menuFor: id });
-    Z.loadMenu(id).then(rows => { MENUS[id] = rows || []; this.setState(s => ({ menuTick: s.menuTick + 1 })); })
-      .catch(e => { console.warn("ZAL: menu not loaded —", e.message); MENUS[id] = []; this.setState(s => ({ menuTick: s.menuTick + 1 })); });
-  }
-  syncBooking() {
-    const Z = window.ZalDB, s = this.state;
-    this.setState({ bookCode: "", bookErr: "" });
-    if (!Z || !Z.configured() || !s.dbLive || !s.bookPlace) return;
-    const p = CACHE[s.bookPlace];
-    if (!p) return;
-    const at = new Date(); at.setDate(at.getDate() + [0, 3, 4, 5][s.bDate || 0]);
-    const [hh, mm] = ["19:00","19:30","20:00","20:30","21:00"][s.bTime || 0].split(":").map(Number);
-    at.setHours(hh, mm, 0, 0);
-    const menu = MENUS[p.id] || [];
-    const pre = s.preOn ? Object.entries(s.pre).filter(([i, q]) => q > 0 && menu[i] && menu[i][5]).map(([i, q]) => ({ menu_item_id: menu[i][5], qty: q })) : [];
-    Z.bookTable(p.id, at.toISOString(), s.guests, pre, s.prePay === 1 ? "now" : "at_restaurant")
-      .then(r => this.setState({ bookCode: r ? r.share_code : "" }))
-      .catch(e => { console.warn("ZAL: booking not saved —", e.message); this.setState({ bookErr: e.message }); });
-  }
-  syncOrder(p, lines) {
-    const Z = window.ZalDB;
-    if (!Z || !Z.configured() || !this.state.dbLive) return;
-    const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id: l.d[5], qty: l.q }));
-    if (!items.length) return;
-    Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
-      .then(id => this.setState({ dbOrderId: id }))
-      .catch(e => console.warn("ZAL: order not saved —", e.message));
-  }
-  componentDidUpdate() {
-    this.icons();
-    const k = this.specKey(this.state);
-    if (k !== this.curKey) { this.curKey = k; clearTimeout(this.tmr); this.tmr = setTimeout(() => this.load(true), 280); }
-  }
-  componentWillUnmount() { clearTimeout(this.tmr); }
-  delivLine(p, ar) {
-    const e = n => "€" + n.toFixed(2);
-    if (!p.delivery) return "";
-    if (p.freeDelivery) return ar ? "توصيل مجاني" : "Free delivery";
-    const parts = [(ar ? "توصيل" : "Delivery") + (p.deliveryFee != null ? " " + e(p.deliveryFee) : "")];
-    if (p.minOrder != null) parts.push((ar ? "حد أدنى " : "min ") + e(p.minOrder));
-    return parts.join(" · ");
-  }
-  icons() { if (window.lucide) setTimeout(() => window.lucide.createIcons(), 0); }
-
-  card(p, t, lang) {
-    const ar = lang === "ar";
-    const tags = [p.halal && (ar ? "حلال" : "Halal"), p.healthy && (ar ? "صحي" : "Healthy"), p.vegetarian && (ar ? "نباتي" : "Vegetarian")].filter(Boolean);
-    return {
-      name: p.name[lang] || p.name.en, tags,
-      sub: [p.cuisineName, ...tags].filter(Boolean).join(" · "),
-      hasRating: p.rating != null, rating: p.rating != null ? p.rating.toFixed(1) : "",
-      hasPrice: p.priceMin != null, price: p.priceMin != null ? (ar ? "أطباق من " : "Dish from ") + "€" + p.priceMin.toFixed(2) : "",
-      delivLine: this.delivLine(p, ar), hasDeliv: !!p.delivery,
-      hasOpen: p.open != null, openLabel: p.open ? t.open : t.closed,
-      openStyle: "font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:9999px;" +
-        (p.open ? "background:rgba(16,185,129,.92);color:#04241a" : "background:rgba(10,17,34,.9);color:#8E9BAE;border:1px solid rgba(255,255,255,.12)"),
-      hasImg: !!p.image, noImg: !p.image,
-      imgStyle: 'position:absolute;inset:0;background:#18284B url("' + p.image + '") center/cover no-repeat'
-    };
-  }
-
-  renderVals() {
-    const s = this.state, lang = s.lang, t = T[lang], rtl = lang === "ar";
-    const fseg = on => "padding:6px 11px;border-radius:9999px;border:0;font-size:11.5px;font-weight:800;cursor:pointer;" + (on ? "background:#F2B203;color:#0A1122" : "background:transparent;color:#CBD5E1");
-    const sub = on => "flex:0 0 auto;padding:6px 13px;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " +
-      (on ? "#F2B203;background:rgba(242,178,3,.14);color:#F2B203" : "rgba(255,255,255,.08);background:transparent;color:#8E9BAE");
-
-    const cards = s.places.map(p => ({ ...this.card(p, t, lang), open: () => this.openPlace(p.id) }));
-    const hasMore = !s.listLoading && !s.listErr && s.total != null && s.places.length < s.total;
-
-    return {
-      dir: rtl ? "rtl" : "ltr", t,
-      langLabel: lang === "ar" ? "EN" : "ع",
-      toggleLang: () => this.setState({ lang: lang === "ar" ? "en" : "ar" }),
-      openAccount: () => this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }),
-      ...this.placeVals(s, t, lang),
-      ...this.groupVals(s, lang),
-      danoOpen: s.dano,
-      toggleZalo: () => this.setState({ dano: !s.dano }),
-      danoHint: (() => { const p = CACHE[s.place]; const n = p ? (lang === "ar" ? p.name.ar : p.name.en) : ""; return lang === "ar" ? "اسأل جرسون " + n : "Ask " + n + "'s waiter"; })(),
-      danoTitle: (() => { const p = s.place ? CACHE[s.place] : null; return p ? (lang === "ar" ? "جرسون " + p.name.ar : p.name.en + " waiter") : "Zal AI"; })(),
-      danoPanelStyle: s.place ? "position:absolute;bottom:148px;inset-inline:14px;z-index:9;background:#0A1122;border:1px solid rgba(242,178,3,.35);border-radius:16px;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);overflow:hidden"
-        : "position:absolute;top:44px;bottom:0;inset-inline:0;z-index:30;background:#0A1122;border-top:1px solid rgba(242,178,3,.35);border-radius:18px 18px 0 0;overflow:auto;display:flex;flex-direction:column",
-      danoInputPh: lang === "ar" ? "اكتب طبقاً أو مطعماً أو اسأل سؤالاً..." : "Type a dish, a restaurant, or ask anything...",
-      askPh: lang === "ar" ? "مو متأكد شو تاكل؟ اسأل Zal AI" : "Not sure what to eat? Ask ZAL AI",
-      openAsk: () => this.setState({ dano: true }),
-      addrLbl: s.fulfil === 0 ? t.deliver_to : (lang === "ar" ? "الاستلام قرب" : "Pick up near"),
-      fulPickup: { label: lang === "ar" ? "استلام" : "Pickup", style: fseg(s.fulfil !== 0), pick: () => this.setState({ fulfil: 1 }) },
-      fulDeliv: { label: lang === "ar" ? "توصيل" : "Delivery", style: fseg(s.fulfil === 0), pick: () => this.setState({ fulfil: 0 }) },
-      danoSub: lang === "ar" ? "رفيقك في عالم الطعام" : "Your Food Companion",
-      danoTag: lang === "ar" ? "اكتشف المطاعم • احجز طاولة • اطلب طعامك" : "Find restaurants • Book tables • Order food",
-      danoMsg: lang === "ar" ? "أهلاً، أنا Zal AI. أساعدك تختار طبقك، أشرح المكونات والحساسية، وأحجز لك طاولة." : "Hi, I'm Zal AI. I can help you pick a dish, explain ingredients and allergens, or book you a table.",
-      danoPrompts: lang === "ar" ? ["اقترح طبقاً", "مكونات الطبق", "احجز طاولة"] : ["Suggest a dish", "Ingredients", "Book a table"],
-      address: t.addresses[s.addr],
-      cycleAddress: () => this.setState({ addr: (s.addr + 1) % t.addresses.length }),
-      query: s.query, setQuery: e => this.setState({ query: e.target.value }),
-      cartCount: Object.values(s.cart).reduce((a, b) => a + b, 0),
-      openCart: () => { if (s.cartPlace) this.setState({ place: s.cartPlace, placeMenu: true, checkout: 1 }); },
-      chips: t.chips.map((label, i) => ({
-        label, icon: ["layout-grid","compass","salad","utensils","sprout","badge-check","bike"][i],
-        style: "flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;border:1px solid " +
-          (i === s.chip ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:#8E9BAE"),
-        pick: () => this.setState({ chip: i })
-      })),
-      cards, hasMore, loadMore: () => this.load(false),
-      listLoading: s.listLoading, listErr: s.listErr, listEmpty: !s.listLoading && !s.listErr && s.places.length === 0,
-      countLbl: s.total != null ? s.total.toLocaleString("en-US") + " " + t.results : "",
-      filtersOpen: s.filtersOpen,
-      openFilters: () => this.setState({ filtersOpen: true }),
-      closeFilters: () => this.setState({ filtersOpen: false }),
-      clearFilters: () => this.setState({ price: -1, region: -1, country: "" }),
-      filterBtnLbl: (() => { const n = (s.price >= 0 ? 1 : 0) + (s.region >= 0 ? 1 : 0) + (s.country ? 1 : 0); return t.filters_lbl + (n ? " · " + n : ""); })(),
-      filterBtnStyle: "flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:64px;padding:9px 12px;border-radius:14px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " + ((s.price >= 0 || s.region >= 0) ? "#F2B203;background:rgba(242,178,3,.14);color:#F2B203" : "rgba(255,255,255,.12);background:transparent;color:#E2E8F0"),
-      showResultsLbl: t.show_results,
-      priceChips: t.prices.map((label, i) => ({ label, style: sub(i === s.price), pick: () => this.setState({ price: s.price === i ? -1 : i }) })),
-      regionChips: t.regions.map((label, i) => ({ label, style: sub(i === s.region), pick: () => this.setState({ region: s.region === i ? -1 : i, country:"" }) })),
-      hasCountries: s.region >= 0 && COUNTRIES[REGION_KEYS[s.region]].length > 0,
-      countryChips: s.region >= 0 ? COUNTRIES[REGION_KEYS[s.region]].map(([k, ar, en]) => ({ label: lang === "ar" ? ar : en, style: sub(s.country === en), pick: () => this.setState({ country: s.country === en ? "" : en }) })) : [],
-      tabs: t.tabs.map(([icon, label], i) => ({
-        icon, label,
-        style: "display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:4px 10px;font-size:12px;font-weight:" + (i === s.tab ? "700" : "500") + ";color:" + (i === s.tab ? "#FFFFFF" : "#8E9BAE"),
-        pick: () => i === 4 ? this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }) : this.setState({ tab: i })
-      }))
-    };
-  }
-}
-</script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) { updateUserSession(session.user); }
+            loadRestaurants();
+        });
+    </script>
 </body>
 </html>
