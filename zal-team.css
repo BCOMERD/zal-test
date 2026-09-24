@@ -1,0 +1,259 @@
+#zal-team-bar,
+#zal-team-dialog {
+  font-family: Inter, Tajawal, system-ui, sans-serif;
+  color: #f4f6fb;
+  font-size: 15px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+#zal-team-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2147483000;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  background: #101b33;
+  border-bottom: 1px solid #344057;
+  min-height: 46px;
+}
+body {
+  padding-top: 48px !important;
+}
+#zal-team-bar button,
+#zal-team-bar select {
+  font: inherit;
+  background: #f2b203;
+  color: #0a1122;
+  border: 0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+#zal-team-bar .zt-label {
+  font-size: 12px;
+  color: #c4ccdb;
+  max-width: 22vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#zal-team-dialog {
+  position: fixed;
+  inset: 0;
+  max-width: 1100px;
+  width: calc(100% - 24px);
+  max-height: calc(100dvh - 24px);
+  height: fit-content;
+  margin: auto;
+  background: #0a1122;
+  border: 1px solid #40506e;
+  border-radius: 18px;
+  padding: 0;
+  z-index: 2147483646;
+  overflow: auto;
+}
+#zal-team-dialog::backdrop {
+  background: #030714cf;
+}
+#zal-team-dialog * {
+  box-sizing: border-box;
+}
+#zal-team-dialog header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #101b33;
+  padding: 16px;
+  border-bottom: 1px solid #33405b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#zal-team-dialog nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 18px;
+}
+#zal-team-dialog main {
+  padding: 8px 20px 24px;
+  max-height: 76dvh;
+  overflow: auto;
+}
+#zal-team-dialog h2 {
+  font-size: 23px;
+  margin: 0 0 14px;
+}
+#zal-team-dialog h3 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+#zal-team-dialog p {
+  margin: 8px 0;
+}
+#zal-team-dialog button {
+  font: inherit;
+  cursor: pointer;
+  color: #f4f6fb;
+  background: #23314c;
+  border: 1px solid #465573;
+  border-radius: 9px;
+  padding: 9px 14px;
+}
+#zal-team-dialog button.primary,
+#zal-team-dialog nav button.active {
+  background: #f2b203;
+  color: #0a1122;
+  border-color: #f2b203;
+  font-weight: 700;
+}
+#zal-team-dialog button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+#zal-team-dialog button:focus-visible,
+#zal-team-dialog input:focus-visible,
+#zal-team-dialog select:focus-visible,
+#zal-team-dialog textarea:focus-visible {
+  outline: 3px solid #f2b203;
+  outline-offset: 3px;
+}
+#zal-team-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  margin: 10px 0;
+}
+#zal-team-dialog input,
+#zal-team-dialog select,
+#zal-team-dialog textarea {
+  font: inherit;
+  width: 100%;
+  color: #fff;
+  background: #101b33;
+  border: 1px solid #465573;
+  border-radius: 9px;
+  padding: 11px;
+  min-height: 44px;
+}
+#zal-team-dialog textarea {
+  min-height: 80px;
+}
+#zal-team-dialog input[type="checkbox"] {
+  width: 20px;
+  min-height: 20px;
+}
+#zal-team-dialog .zt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+#zal-team-dialog .zt-card {
+  background: #101b33;
+  border: 1px solid #34415d;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+#zal-team-dialog .zt-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+#zal-team-dialog .zt-muted {
+  color: #b0bdd3;
+  font-size: 13px;
+}
+#zal-team-dialog .zt-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: #2b3b54;
+  color: #f2d574;
+  font-size: 12px;
+}
+#zal-team-dialog .zt-notice {
+  background: #243248;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 8px 20px;
+  color: #fff;
+}
+#zal-team-dialog .zt-notice.error {
+  background: #512131;
+}
+#zal-team-dialog .zt-notice:empty {
+  display: none;
+}
+#zal-team-dialog .zt-chat {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 12px;
+  border-radius: 10px;
+  background: #192940;
+  margin-bottom: 10px;
+}
+#zal-team-dialog .zt-chat.user {
+  background: #334026;
+}
+#zal-team-dialog .zt-timeline {
+  padding-inline-start: 22px;
+  color: #b8c8e0;
+  font-size: 13px;
+}
+#zal-team-dialog .zt-total {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f2b203;
+}
+#zal-team-dialog .zt-auth {
+  max-width: 460px;
+  margin: auto;
+}
+#zal-team-dialog .zt-sources a {
+  color: #f2d574;
+}
+#zal-team-dialog a {
+  color: #f2d574;
+}
+@media (max-width: 550px) {
+  #zal-team-bar {
+    gap: 5px;
+    padding-inline: 5px;
+  }
+  #zal-team-bar button {
+    font-size: 12px;
+    padding: 6px;
+  }
+  #zal-team-bar .zt-label {
+    display: none;
+  }
+  #zal-team-dialog {
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  #zal-team-dialog main {
+    padding: 8px 12px 20px;
+  }
+  #zal-team-dialog nav {
+    padding: 10px;
+    gap: 5px;
+  }
+  #zal-team-dialog nav button {
+    padding: 7px;
+    font-size: 12px;
+  }
+}
+
+#zal-team-dialog ul {
+  padding-inline-start: 22px;
+}
