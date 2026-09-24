@@ -22,7 +22,7 @@
       refresh: "Refresh",
       test: "TEAM TEST · No real payments",
       authHint:
-        "Use your own email. Confirm the email before signing in. Password: at least 8 characters.",
+        "Use any email. No confirmation email needed: you are signed in right away. Password: at least 8 characters.",
       confirm: "Check your email to confirm your account, then sign in.",
       reset:
         "If this email has an account, a password reset link will be sent.",
@@ -129,7 +129,7 @@
       refresh: "تحديث",
       test: "تجربة الفريق · لا دفع حقيقي",
       authHint:
-        "استخدم بريدك وفعّله من رسالة التأكيد قبل الدخول. كلمة المرور 8 أحرف على الأقل.",
+        "استخدم أي بريد. لا حاجة لتأكيد البريد، يتم الدخول مباشرة. كلمة المرور 8 أحرف على الأقل.",
       confirm: "راجع بريدك لتأكيد الحساب، ثم سجّل الدخول.",
       reset: "إذا كان البريد مسجلاً فستصلك رسالة استعادة كلمة المرور.",
       newPassword: "كلمة المرور الجديدة",
