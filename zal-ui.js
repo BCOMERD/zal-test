@@ -136,26 +136,26 @@
     frame(mode === "customer" ? "ZAL" : what[0], `
       <div style="max-width:420px;margin:0 auto">
       <p class="zu-h">${esc(signup ? T("Create account", "إنشاء حساب") : what[0])}</p><p class="zu-sub">${esc(what[1])}</p>
-      <form data-f="auth"><span class="zu-lbl">${T("Email", "البريد الإلكتروني")}</span><input class="zu-in" name="email" type="email" required autocomplete="email">
+      <form data-f="auth">${signup ? `<div class="zu-row" style="align-items:flex-start"><div style="flex:1"><span class="zu-lbl">${T("First name", "الاسم الأول")}</span><input class="zu-in" name="first" required autocomplete="given-name"></div>
+      <div style="flex:1"><span class="zu-lbl">${T("Last name", "اسم العائلة")}</span><input class="zu-in" name="last" required autocomplete="family-name"></div></div>` : ""}<span class="zu-lbl">${T("Email", "البريد الإلكتروني")}</span><input class="zu-in" name="email" type="email" required autocomplete="email">
       <span class="zu-lbl">${T("Password", "كلمة المرور")}</span><input class="zu-in" name="password" type="password" minlength="8" required autocomplete="${signup ? "new-password" : "current-password"}">
       <button class="zu-btn">${signup ? T("Create account", "إنشاء الحساب") : T("Sign in", "تسجيل الدخول")}</button></form>
       <div class="zu-row zu-between" style="margin-top:10px"><button class="zu-link" data-a="${signup ? "signin" : "signup"}">${signup ? T("I already have an account", "لدي حساب") : T("Create an account", "إنشاء حساب جديد")}</button>
       ${signup ? "" : `<button class="zu-link" data-a="forgot" style="color:${MUTE}">${T("Forgot password?", "نسيت كلمة المرور؟")}</button>`}</div>
-      ${mode === "customer" ? `<div class="zu-card" style="margin-top:22px"><div class="zu-row zu-between"><span>${T("Own a restaurant?", "عندك مطعم؟")}</span><button class="zu-link" data-a="mode" data-m="restaurant">${T("Partner with ZAL", "انضم كشريك")}</button></div>
-        <div class="zu-row zu-between"><span>${T("Want to deliver?", "تحب توصّل؟")}</span><button class="zu-link" data-a="mode" data-m="driver">${T("Become a courier", "انضم كسائق")}</button></div></div>`
-        : `<button class="zu-link" style="margin-top:14px" data-a="mode" data-m="customer">${T("← I'm a customer", "← أنا زبون")}</button>`}
       <p class="zu-sub" style="margin-top:18px;font-size:12px">${T("Beta: payments are simulated, no real money is charged.", "نسخة تجريبية: الدفع وهمي ولا تُسحب أموال حقيقية.")}</p></div>`);
   }
   async function authSubmit(f, btn) {
     const email = f.email.value.trim(), password = f.password.value;
     await guard(async () => {
       const r = view === "signup"
-        ? await sb.auth.signUp({ email, password, options: { data: { role: mode } } })
+        ? await sb.auth.signUp({ email, password, options: { data: { role: mode, first_name: f.first.value.trim(), last_name: f.last.value.trim(),
+            full_name: (f.first.value.trim() + " " + f.last.value.trim()).trim() } } })
         : await sb.auth.signInWithPassword({ email, password });
       if (r.error) throw r.error;
       if (!r.data.session) { toast(T("Check your email to confirm, then sign in.", "راجع بريدك للتأكيد ثم سجّل الدخول.")); return; }
       user = r.data.user; await load();
-      if (IS_APP && role() === "customer") { close(); toast(T("Welcome to ZAL!", "أهلاً بك في زال!")); return; }
+      const first = user.user_metadata?.first_name;
+      if (IS_APP && role() === "customer") { close(); toast(first ? T(`Welcome, ${first}!`, `أهلاً ${first}!`) : T("Welcome to ZAL!", "أهلاً بك في زال!")); return; }
       view = home(); render();
     }, btn);
   }
@@ -179,7 +179,8 @@
     frame(T("My ZAL", "حسابي"), body, { tabs: [["orders", "bag", T("Orders", "طلباتي")], ["wallet", "wallet", T("Wallet", "المحفظة")], ["ai", "spark", "Zal AI"], ["me", "cog", T("Account", "الحساب")]] });
   }
   function profile() {
-    return `<p class="zu-h">${T("Account", "الحساب")}</p><div class="zu-card"><span class="zu-lbl">${T("Email", "البريد")}</span><p style="margin:6px 0 0">${esc(user.email)}</p></div>
+    const name = user.user_metadata?.full_name || "";
+    return `<p class="zu-h">${T("Account", "الحساب")}</p>${name ? `<div class="zu-card"><span class="zu-lbl">${T("Name", "الاسم")}</span><p style="margin:6px 0 0">${esc(name)}</p></div>` : ""}<div class="zu-card"><span class="zu-lbl">${T("Email", "البريد")}</span><p style="margin:6px 0 0">${esc(user.email)}</p></div>
       <button class="zu-btn ghost" data-a="logout">${T("Sign out", "تسجيل الخروج")}</button>`;
   }
 
