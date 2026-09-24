@@ -325,6 +325,9 @@
     return r.data;
   }
   function updateBar() {
+    const testMode = new URLSearchParams(location.search).get("team") === "1";
+    bar.hidden = !testMode;
+    if (!testMode) return;
     bar.innerHTML = `<strong>ZAL</strong><span class="zt-label">${esc(t("test"))}</span>${btn(user ? "account" : "login", "open-account")}${btn("catalog", "open-catalog")}${btn("ai", "open-ai")}<select aria-label="Language" data-language>${Object.keys(
       words,
     )
