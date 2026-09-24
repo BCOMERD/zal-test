@@ -369,8 +369,10 @@
       .querySelectorAll("nav button")
       .forEach((b) => b.classList.toggle("active", b.dataset.view === view));
   }
+  let wantRole = "customer";
   async function open(v = "account", restaurantId = "") {
     lastFocus = document.activeElement;
+    if (!user && ["restaurant", "driver"].includes(v)) wantRole = v;  // "Partner with us" / "Become a courier"
     view = v;
     if (restaurantId) aiRestaurant = restaurantId;
     shell();
@@ -383,7 +385,7 @@
     if (v === "ai") await loadAIOptions();
   }
   function authView() {
-    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<label class="zt-field"><span>${esc({ en: "I am a", ar: "أنا", fr: "Je suis", nl: "Ik ben" }[lang] || "I am a")}</span><select name="role">${["customer", "restaurant", "driver"].map((r) => `<option value="${r}">${esc(roleLabel(r))}</option>`).join("")}</select></label><div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}${btn("resend", "resend")}</div></form>`}</div>`;
+    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<label class="zt-field"><span>${esc({ en: "I am a", ar: "أنا", fr: "Je suis", nl: "Ik ben" }[lang] || "I am a")}</span><select name="role">${["customer", "restaurant", "driver"].map((r) => `<option value="${r}" ${r === wantRole ? "selected" : ""}>${esc(roleLabel(r))}</option>`).join("")}</select></label><div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}${btn("resend", "resend")}</div></form>`}</div>`;
   }
   function orderCard(o, role) {
     const customer = o.customer_id === user?.id;
