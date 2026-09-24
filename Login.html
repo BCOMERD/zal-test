@@ -1,0 +1,146 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2870
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="ar" dir="rtl">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>\uc0\u1605 \u1606 \u1589 \u1577  \u1586 \u1575 \u1604  - Zal App</title>\
+    <!-- \uc0\u1605 \u1603 \u1578 \u1576 \u1577  Tailwind CSS \u1604 \u1604 \u1578 \u1589 \u1605 \u1610 \u1605  \u1575 \u1604 \u1587 \u1585 \u1610 \u1593  -->\
+    <script src="https://cdn.tailwindcss.com"></script>\
+    <!-- \uc0\u1605 \u1603 \u1578 \u1576 \u1577  Supabase \u1604 \u1604 \u1585 \u1576 \u1591  \u1576 \u1602 \u1575 \u1593 \u1583 \u1577  \u1575 \u1604 \u1576 \u1610 \u1575 \u1606 \u1575 \u1578  \u1608 \u1575 \u1604 \u1605 \u1589 \u1575 \u1583 \u1602 \u1577  -->\
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\
+</head>\
+<body class="bg-gray-950 text-white font-sans antialiased min-h-screen flex flex-col justify-between">\
+\
+    <!-- \uc0\u1575 \u1604 \u1607 \u1610 \u1583 \u1585  (\u1585 \u1571 \u1587  \u1575 \u1604 \u1589 \u1601 \u1581 \u1577 ) -->\
+    <header class="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center shadow-md">\
+        <div class="flex items-center space-x-3 space-x-reverse">\
+            <span class="text-2xl font-black text-red-500 tracking-wider">ZAL <span class="text-white text-sm font-light">\uc0\u1586 \u1575 \u1604 </span></span>\
+        </div>\
+        <div id="user-info-header" class="text-sm text-gray-400">\
+            <!-- \uc0\u1587 \u1610 \u1578 \u1605  \u1578 \u1581 \u1583 \u1610 \u1579 \u1607  \u1578 \u1604 \u1602 \u1575 \u1574 \u1610 \u1575 \u1611  \u1581 \u1587 \u1576  \u1581 \u1575 \u1604 \u1577  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  -->\
+        </div>\
+    </header>\
+\
+    <!-- \uc0\u1575 \u1604 \u1605 \u1581 \u1578 \u1608 \u1609  \u1575 \u1604 \u1585 \u1574 \u1610 \u1587 \u1610  -->\
+    <main class="container mx-auto px-4 py-8 max-w-md flex-grow">\
+        \
+        <!-- \uc0\u1602 \u1587 \u1605  \u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  / \u1573 \u1606 \u1588 \u1575 \u1569  \u1575 \u1604 \u1581 \u1587 \u1575 \u1576  (\u1610 \u1592 \u1607 \u1585  \u1604 \u1604 \u1605 \u1587 \u1578 \u1582 \u1583 \u1605  \u1594 \u1610 \u1585  \u1575 \u1604 \u1605 \u1587 \u1580 \u1604 ) -->\
+        <div id="auth-section" class="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">\
+            <h2 class="text-xl font-bold mb-4 text-center text-red-400">\uc0\u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  \u1573 \u1604 \u1609  \u1605 \u1606 \u1589 \u1577  \u1586 \u1575 \u1604 </h2>\
+            <div class="space-y-4">\
+                <div>\
+                    <label class="block text-sm text-gray-400 mb-1">\uc0\u1575 \u1604 \u1576 \u1585 \u1610 \u1583  \u1575 \u1604 \u1573 \u1604 \u1603 \u1578 \u1585 \u1608 \u1606 \u1610 </label>\
+                    <input type="email" id="email" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-500" placeholder="name@example.com">\
+                </div>\
+                <div>\
+                    <label class="block text-sm text-gray-400 mb-1">\uc0\u1603 \u1604 \u1605 \u1577  \u1575 \u1604 \u1605 \u1585 \u1608 \u1585 </label>\
+                    <input type="password" id="password" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-500" placeholder="\'95\'95\'95\'95\'95\'95\'95\'95">\
+                </div>\
+                <div class="flex space-x-2 space-x-reverse pt-2">\
+                    <button onclick="handleSignIn()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-200">\uc0\u1583 \u1582 \u1608 \u1604 </button>\
+                    <button onclick="handleSignUp()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-3 rounded-lg border border-gray-700 transition duration-200">\uc0\u1581 \u1587 \u1575 \u1576  \u1580 \u1583 \u1610 \u1583 </button>\
+                </div>\
+            </div>\
+        </div>\
+\
+        <!-- \uc0\u1604 \u1608 \u1581 \u1577  \u1575 \u1604 \u1578 \u1581 \u1603 \u1605  \u1575 \u1604 \u1583 \u1575 \u1582 \u1604 \u1610 \u1577  \u1576 \u1593 \u1583  \u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  (\u1578 \u1592 \u1607 \u1585  \u1604 \u1604 \u1605 \u1587 \u1578 \u1582 \u1583 \u1605  \u1575 \u1604 \u1605 \u1587 \u1580 \u1604 ) -->\
+        <div id="dashboard-section" class="hidden space-y-6">\
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl text-center">\
+                <h3 class="text-lg font-semibold text-gray-300">\uc0\u1605 \u1585 \u1581 \u1576 \u1575 \u1611  \u1576 \u1603  \u1601 \u1610  \u1581 \u1587 \u1575 \u1576 \u1603 </h3>\
+                <p id="logged-user-email" class="text-red-400 font-mono mt-1 mb-6"></p>\
+                \
+                <div class="bg-gray-800 p-4 rounded-xl mb-6 text-right border border-gray-700">\
+                    <div class="flex justify-between items-center">\
+                        <span class="text-gray-400">\uc0\u1585 \u1589 \u1610 \u1583  \u1575 \u1604 \u1605 \u1581 \u1601 \u1592 \u1577 :</span>\
+                        <span class="text-xl font-bold text-green-400">\'800.00</span>\
+                    </div>\
+                </div>\
+\
+                <button onclick="handleSignOut()" class="w-full bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/50 font-bold py-3 rounded-lg transition duration-200">\
+                    \uc0\u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1582 \u1585 \u1608 \u1580 \
+                </button>\
+            </div>\
+        </div>\
+\
+    </main>\
+\
+    <!-- \uc0\u1575 \u1604 \u1601 \u1608 \u1578 \u1585  -->\
+    <footer class="bg-gray-900 border-t border-gray-800 text-center py-4 text-xs text-gray-500">\
+        &copy; 2026 Zal Platform - Popular Eats. All rights reserved.\
+    </footer>\
+\
+    <!-- \uc0\u1603 \u1608 \u1583  \u1575 \u1604 \u1580 \u1575 \u1601 \u1575 \u1587 \u1603 \u1585 \u1610 \u1576 \u1578  \u1604 \u1604 \u1585 \u1576 \u1591  \u1605 \u1593  Supabase -->\
+    <script>\
+        // \uc0\u1573 \u1593 \u1583 \u1575 \u1583 \u1575 \u1578  \u1575 \u1604 \u1575 \u1578 \u1589 \u1575 \u1604  \u1576 \u1605 \u1588 \u1585 \u1608 \u1593 \u1603  \u1601 \u1610  Supabase\
+        const SUPABASE_URL = 'https://lhvnhmkhnwxwadpqabsd.supabase.co';\
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxodm5obWtoc3d4d2FkcHFhYnNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMDI2MTUsImV4cCI6MjA1Njc3ODYxNX0.xxxxxx'; // \uc0\u1575 \u1587 \u1578 \u1576 \u1583 \u1604  \u1607 \u1584 \u1575  \u1576 \u1575 \u1604 \u1605 \u1601 \u1578 \u1575 \u1581  \u1575 \u1604 \u1593 \u1575 \u1605  \u1575 \u1604 \u1581 \u1602 \u1610 \u1602 \u1610  \u1604 \u1583 \u1610 \u1603  \u1573 \u1606  \u1575 \u1581 \u1578 \u1580 \u1578 \
+\
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);\
+\
+        // \uc0\u1575 \u1604 \u1578 \u1581 \u1602 \u1602  \u1605 \u1606  \u1581 \u1575 \u1604 \u1577  \u1575 \u1604 \u1605 \u1587 \u1578 \u1582 \u1583 \u1605  \u1593 \u1606 \u1583  \u1601 \u1578 \u1581  \u1575 \u1604 \u1589 \u1601 \u1581 \u1577 \
+        async function checkSession() \{\
+            const \{ data: \{ session \} \} = await supabaseClient.auth.getSession();\
+            const authSection = document.getElementById('auth-section');\
+            const dashboardSection = document.getElementById('dashboard-section');\
+            const headerInfo = document.getElementById('user-info-header');\
+            const loggedEmail = document.getElementById('logged-user-email');\
+\
+            if (session) \{\
+                authSection.classList.add('hidden');\
+                dashboardSection.classList.remove('hidden');\
+                headerInfo.innerText = session.user.email;\
+                loggedEmail.innerText = session.user.email;\
+            \} else \{\
+                authSection.classList.remove('hidden');\
+                dashboardSection.classList.add('hidden');\
+                headerInfo.innerText = '';\
+            \}\
+        \}\
+\
+        // \uc0\u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604 \
+        async function handleSignIn() \{\
+            const email = document.getElementById('email').value;\
+            const password = document.getElementById('password').value;\
+\
+            const \{ data, error \} = await supabaseClient.auth.signInWithPassword(\{ email, password \});\
+            if (error) \{\
+                alert('\uc0\u1582 \u1591 \u1571  \u1601 \u1610  \u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604 : ' + error.message);\
+            \} else \{\
+                alert('\uc0\u1578 \u1605  \u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  \u1576 \u1606 \u1580 \u1575 \u1581 !');\
+                checkSession();\
+            \}\
+        \}\
+\
+        // \uc0\u1573 \u1606 \u1588 \u1575 \u1569  \u1581 \u1587 \u1575 \u1576  \u1580 \u1583 \u1610 \u1583 \
+        async function handleSignUp() \{\
+            const email = document.getElementById('email').value;\
+            const password = document.getElementById('password').value;\
+\
+            const \{ data, error \} = await supabaseClient.auth.signUp(\{ email, password \});\
+            if (error) \{\
+                alert('\uc0\u1582 \u1591 \u1571  \u1601 \u1610  \u1573 \u1606 \u1588 \u1575 \u1569  \u1575 \u1604 \u1581 \u1587 \u1575 \u1576 : ' + error.message);\
+            \} else \{\
+                alert('\uc0\u1578 \u1605  \u1573 \u1606 \u1588 \u1575 \u1569  \u1575 \u1604 \u1581 \u1587 \u1575 \u1576  \u1576 \u1606 \u1580 \u1575 \u1581 ! \u1610 \u1605 \u1603 \u1606 \u1603  \u1575 \u1604 \u1583 \u1582 \u1608 \u1604  \u1575 \u1604 \u1570 \u1606 .');\
+                checkSession();\
+            \}\
+        \}\
+\
+        // \uc0\u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1582 \u1585 \u1608 \u1580 \
+        async function handleSignOut() \{\
+            await supabaseClient.auth.signOut();\
+            alert('\uc0\u1578 \u1605  \u1578 \u1587 \u1580 \u1610 \u1604  \u1575 \u1604 \u1582 \u1585 \u1608 \u1580  \u1576 \u1606 \u1580 \u1575 \u1581 .');\
+            checkSession();\
+        \}\
+\
+        // \uc0\u1578 \u1588 \u1594 \u1610 \u1604  \u1575 \u1604 \u1578 \u1581 \u1602 \u1602  \u1593 \u1606 \u1583  \u1575 \u1604 \u1578 \u1581 \u1605 \u1610 \u1604 \
+        window.onload = checkSession;\
+    </script>\
+</body>\
+</html>}
