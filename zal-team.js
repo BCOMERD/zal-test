@@ -9,7 +9,7 @@
       driver: "Driver",
       wallet: "Wallet",
       ai: "Zal AI",
-      catalog: "Test restaurants",
+      catalog: "Restaurants",
       close: "Close",
       login: "Sign in",
       signup: "Create account",
@@ -35,8 +35,8 @@
       address: "Address",
       city: "City",
       vehicle: "Vehicle",
-      registerRestaurant: "Register a test restaurant",
-      registerDriver: "Register as a test driver",
+      registerRestaurant: "Register your restaurant",
+      registerDriver: "Become a ZAL driver",
       dish: "Dish name",
       description: "Description",
       price: "Price (€)",
@@ -46,7 +46,7 @@
       pickup: "Pickup",
       tip: "Driver tip (€)",
       note: "Order note",
-      place: "Create test order",
+      place: "Place order",
       pay: "Simulate payment",
       accept: "Accept",
       ready: "Ready",
@@ -55,14 +55,14 @@
       cancel: "Cancel",
       collect: "Picked up — on the way",
       available: "Available deliveries",
-      balance: "Test balance",
+      balance: "Balance (beta)",
       pending: "Pending",
       accepted: "Preparing",
       completed: "Completed",
       cancelled: "Cancelled",
       unpaid: "Unpaid",
-      paid: "Test payment confirmed",
-      refunded: "Test payment refunded",
+      paid: "Paid (beta, simulated)",
+      refunded: "Refunded",
       assigned: "Driver assigned",
       on_the_way: "On the way",
       delivered: "Delivered",
@@ -116,7 +116,7 @@
       driver: "السائق",
       wallet: "المحفظة",
       ai: "زال AI",
-      catalog: "مطاعم التجربة",
+      catalog: "المطاعم",
       close: "إغلاق",
       login: "دخول",
       signup: "إنشاء حساب",
@@ -141,8 +141,8 @@
       address: "العنوان",
       city: "المدينة",
       vehicle: "وسيلة التوصيل",
-      registerRestaurant: "تسجيل مطعم تجريبي",
-      registerDriver: "تسجيل سائق تجريبي",
+      registerRestaurant: "سجّل مطعمك",
+      registerDriver: "انضم كسائق في زال",
       dish: "اسم الطبق",
       description: "الوصف",
       price: "السعر باليورو",
@@ -152,7 +152,7 @@
       pickup: "استلام من المطعم",
       tip: "إكرامية السائق باليورو",
       note: "ملاحظة الطلب",
-      place: "إنشاء طلب تجريبي",
+      place: "تأكيد الطلب",
       pay: "محاكاة الدفع",
       accept: "قبول",
       ready: "جاهز",
@@ -161,14 +161,14 @@
       cancel: "إلغاء",
       collect: "استلمت الطعام — في الطريق",
       available: "طلبات التوصيل المتاحة",
-      balance: "الرصيد التجريبي",
+      balance: "الرصيد (نسخة تجريبية)",
       pending: "بانتظار القبول",
       accepted: "قيد التحضير",
       completed: "مكتمل",
       cancelled: "ملغي",
       unpaid: "غير مدفوع",
-      paid: "تم الدفع التجريبي",
-      refunded: "أُعيد الدفع التجريبي",
+      paid: "مدفوع (دفع تجريبي)",
+      refunded: "تم الاسترجاع",
       assigned: "تم تعيين السائق",
       on_the_way: "في الطريق",
       delivered: "تم التسليم",
@@ -325,7 +325,7 @@
     return r.data;
   }
   function updateBar() {
-    const testMode = new URLSearchParams(location.search).get("team") === "1";
+    const testMode = new URLSearchParams(location.search).get("debug") === "1";
     bar.hidden = !testMode;
     if (!testMode) return;
     bar.innerHTML = `<strong>ZAL</strong><span class="zt-label">${esc(t("test"))}</span>${btn(user ? "account" : "login", "open-account")}${btn("catalog", "open-catalog")}${btn("ai", "open-ai")}<select aria-label="Language" data-language>${Object.keys(
@@ -337,19 +337,32 @@
       )
       .join("")}</select>`;
   }
+  // one app, three kinds of users: each only sees their own screens
+  function role() {
+    const r = user?.user_metadata?.role;
+    if (data?.restaurants?.length) return "restaurant";
+    if (data?.driver) return "driver";
+    return ["restaurant", "driver"].includes(r) ? r : "customer";
+  }
+  function tabsFor(r) {
+    if (!user) return ["account"];
+    return { restaurant: ["restaurant", "wallet", "ai", "account"], driver: ["driver", "wallet", "account"],
+             customer: ["orders", "wallet", "ai", "account"] }[r];
+  }
+  function home() {
+    const r = role();
+    return r === "restaurant" ? "restaurant" : r === "driver" ? "driver" : null;
+  }
+  const ROLE_LABEL = { customer: { en: "Customer", ar: "زبون", fr: "Client", nl: "Klant" },
+                       restaurant: { en: "Restaurant owner", ar: "صاحب مطعم", fr: "Restaurateur", nl: "Restauranthouder" },
+                       driver: { en: "Driver", ar: "سائق", fr: "Livreur", nl: "Bezorger" } };
+  const roleLabel = (r) => ROLE_LABEL[r][lang] || ROLE_LABEL[r].en;
   function shell() {
     dialog.dir = lang === "ar" ? "rtl" : "ltr";
-    dialog.querySelector("header strong").textContent = t("test");
+    dialog.querySelector("header strong").textContent = user ? "ZAL · " + roleLabel(role()) : "ZAL";
+    dialog.classList.toggle("zt-full", !!(user && home()));
     dialog.querySelector("[data-action=close]").textContent = t("close");
-    dialog.querySelector("nav").innerHTML = [
-      "account",
-      "orders",
-      "restaurant",
-      "driver",
-      "wallet",
-      "catalog",
-      "ai",
-    ]
+    dialog.querySelector("nav").innerHTML = tabsFor(role())
       .map((k) => btn(k, "tab", `data-view="${k}"`))
       .join("");
     dialog
@@ -370,7 +383,7 @@
     if (v === "ai") await loadAIOptions();
   }
   function authView() {
-    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}${btn("resend", "resend")}</div></form>`}</div>`;
+    return `<div class="zt-auth"><h2>${esc(t(recovery ? "newPassword" : user ? "account" : "login"))}</h2>${recovery ? `<form data-form="password">${field("newPassword", "password", "password", 'required minlength="8" autocomplete="new-password"')}<button class="primary">${esc(t("savePassword"))}</button></form>` : user ? `<p>${esc(user.email)}</p><p class="zt-muted">${esc(t("privacy"))}</p>${btn("logout", "logout")}<p class="zt-muted">${esc(t("location"))}</p>` : `<p class="zt-muted">${esc(t("authHint"))}</p><form data-form="auth">${field("email", "email", "email", 'required autocomplete="email"')}${field("password", "password", "password", 'required minlength="8" autocomplete="current-password"')}<label class="zt-field"><span>${esc({ en: "I am a", ar: "أنا", fr: "Je suis", nl: "Ik ben" }[lang] || "I am a")}</span><select name="role">${["customer", "restaurant", "driver"].map((r) => `<option value="${r}">${esc(roleLabel(r))}</option>`).join("")}</select></label><div class="zt-row"><button class="primary" name="intent" value="login">${esc(t("login"))}</button><button name="intent" value="signup">${esc(t("signup"))}</button></div><div class="zt-row" style="margin-top:16px">${btn("forgot", "forgot")}${btn("resend", "resend")}</div></form>`}</div>`;
   }
   function orderCard(o, role) {
     const customer = o.customer_id === user?.id;
@@ -461,14 +474,14 @@
           .join("") || `<p>${esc(t("empty"))}</p>`
       }`;
     if (view === "restaurant")
-      main.innerHTML = `<h2>${esc(t("restaurant"))}</h2>${btn("refresh", "refresh")}<p class="zt-muted">${esc(t("allOrders"))}</p><div class="zt-grid"><section><form data-form="restaurant" class="zt-card"><h3>${esc(t("registerRestaurant"))}</h3>${field("name", "name", "text", 'required minlength="2" maxlength="120"')}${field("cuisine", "cuisine", "text", 'required minlength="2" maxlength="120"')}${field("address", "address", "text", 'required minlength="3" maxlength="500"')}<label>${esc(t("delivery"))}<input type="checkbox" name="delivery" checked></label><button class="primary">${esc(t("registerRestaurant"))}</button></form>${restaurants.length ? `<form data-form="dish" class="zt-card"><h3>${esc(t("addDish"))}</h3><label>${esc(t("restaurant"))}<select name="restaurant">${restaurants.map((r) => `<option value="${r.id}">${esc(r.name)}</option>`).join("")}</select></label>${field("dish", "name", "text", 'required minlength="2" maxlength="160"')}${field("description", "description", "text", 'maxlength="2000"')}${field("price", "price", "number", 'required min="0.01" max="1000" step="0.01"')}${field("ingredients", "ingredients", "text", 'maxlength="1000"')}<button class="primary">${esc(t("addDish"))}</button></form>` : ""}</section><section><h3>${esc(t("owner"))}</h3>${
+      main.innerHTML = `<h2>${esc(t("restaurant"))}</h2>${btn("refresh", "refresh")}<p class="zt-muted">${esc(t("allOrders"))}</p><div class="zt-grid"><section>${restaurants.length ? "" : `<form data-form="restaurant" class="zt-card"><h3>${esc(t("registerRestaurant"))}</h3>${field("name", "name", "text", 'required minlength="2" maxlength="120"')}${field("cuisine", "cuisine", "text", 'required minlength="2" maxlength="120"')}${field("address", "address", "text", 'required minlength="3" maxlength="500"')}<label>${esc(t("delivery"))}<input type="checkbox" name="delivery" checked></label><button class="primary">${esc(t("registerRestaurant"))}</button></form>`}${restaurants.length ? `<form data-form="dish" class="zt-card"><h3>${esc(t("addDish"))}</h3><label>${esc(t("restaurant"))}<select name="restaurant">${restaurants.map((r) => `<option value="${r.id}">${esc(r.name)}</option>`).join("")}</select></label>${field("dish", "name", "text", 'required minlength="2" maxlength="160"')}${field("description", "description", "text", 'maxlength="2000"')}${field("price", "price", "number", 'required min="0.01" max="1000" step="0.01"')}${field("ingredients", "ingredients", "text", 'maxlength="1000"')}<button class="primary">${esc(t("addDish"))}</button></form>` : ""}</section><section><h3>${esc(t("owner"))}</h3>${
         orders
           .filter((o) => restaurants.some((r) => r.id === o.restaurant_id))
           .map((o) => orderCard(o, "owner"))
           .join("") || `<p>${esc(t("empty"))}</p>`
       }${restaurants.map((r) => `<div class="zt-card"><strong>${esc(r.name)}</strong><p>${esc(r.address)}</p>${btn("menu", "manage-menu", `data-id="${r.id}"`)} ${btn("ai", "restaurant-ai", `data-id="${r.id}"`)}</div>`).join("")}</section></div>`;
     if (view === "driver")
-      main.innerHTML = `<h2>${esc(t("driver"))}</h2><div class="zt-grid"><section><form data-form="driver" class="zt-card"><h3>${esc(t("registerDriver"))}</h3>${field("name", "name", "text", `required minlength="2" maxlength="120" value="${esc(data.driver?.display_name || "")}"`)}${field("city", "city", "text", `required minlength="2" maxlength="120" value="${esc(data.driver?.city || "")}"`)}<label>${esc(t("vehicle"))}<select name="vehicle"><option value="bike">🚲 Bike</option><option value="scooter">🛵 Scooter</option><option value="car">🚗 Car</option><option value="walk">🚶 Walk</option></select></label><button class="primary">${esc(t("registerDriver"))}</button></form><h3>${esc(t("available"))}</h3>${(data.available_deliveries || []).map((o) => `<article class="zt-card"><strong>${esc(o.restaurant_name)}</strong><p>${esc(o.restaurant_address)}</p><p>${money(Number(o.delivery_fee) + Number(o.tip))}</p>${btn("claim", "order", `data-id="${o.id}" data-op="claim"`, true)}</article>`).join("") || `<p>${esc(t("empty"))}</p>`}</section><section><h3>${esc(t("driverOrders"))}</h3>${
+      main.innerHTML = `<h2>${esc(t("driver"))}</h2><div class="zt-grid"><section>${data.driver ? "" : `<form data-form="driver" class="zt-card"><h3>${esc(t("registerDriver"))}</h3>${field("name", "name", "text", `required minlength="2" maxlength="120" value="${esc(data.driver?.display_name || "")}"`)}${field("city", "city", "text", `required minlength="2" maxlength="120" value="${esc(data.driver?.city || "")}"`)}<label>${esc(t("vehicle"))}<select name="vehicle"><option value="bike">🚲 Bike</option><option value="scooter">🛵 Scooter</option><option value="car">🚗 Car</option><option value="walk">🚶 Walk</option></select></label><button class="primary">${esc(t("registerDriver"))}</button></form>`}<h3>${esc(t("available"))}</h3>${(data.available_deliveries || []).map((o) => `<article class="zt-card"><strong>${esc(o.restaurant_name)}</strong><p>${esc(o.restaurant_address)}</p><p>${money(Number(o.delivery_fee) + Number(o.tip))}</p>${btn("claim", "order", `data-id="${o.id}" data-op="claim"`, true)}</article>`).join("") || `<p>${esc(t("empty"))}</p>`}</section><section><h3>${esc(t("driverOrders"))}</h3>${
         orders
           .filter((o) => o.driver_id === user.id)
           .map((o) => orderCard(o, "driver"))
@@ -669,6 +682,7 @@
                 password,
                 options: {
                   emailRedirectTo: new URL("app.html", location.href).href,
+                  data: { role: v("role") || "customer" },
                 },
               })
             : await client.auth.signInWithPassword({ email, password });
@@ -676,9 +690,10 @@
         if (result.data.session) {
           user = result.data.user;
           updateBar();
-          view = checkout ? "checkout" : "account";
-          render();
-          message(t("signedIn"));
+          await refresh(true).catch(() => {});
+          if (checkout) { view = "checkout"; render(); }
+          else if (home()) await open(home());
+          else { dialog.close(); window.dispatchEvent(new Event("zal-signed-in")); }
         } else message(t("confirm"));
         break;
       }
@@ -808,7 +823,7 @@
     bar.id = "zal-team-bar";
     dialog = document.createElement("dialog");
     dialog.id = "zal-team-dialog";
-    dialog.setAttribute("aria-label", "ZAL team test");
+    dialog.setAttribute("aria-label", "ZAL");
     dialog.innerHTML =
       '<header><strong></strong><button type="button" data-action="close">Close</button></header><nav></nav><div class="zt-notice" role="status" aria-live="polite"></div><main></main>';
     document.body.append(bar, dialog);
@@ -869,7 +884,15 @@
       )
         refresh(true);
     }, 15000);
-    window.ZalTeam = { open, ask, startCheckout, getUser: () => user };
+    window.ZalTeam = { open, ask, startCheckout, getUser: () => user, home: () => home() };
+    document.addEventListener("click", (e) => {
+      const acc = e.target.closest('button[aria-label="Account"]');
+      const bell = e.target.closest("button")?.querySelector('[data-lucide="bell"], .lucide-bell');
+      if (!acc && !bell) return;
+      e.preventDefault(); e.stopPropagation();
+      if (!user) return open("account");
+      open(bell ? (home() || "orders") : (home() || "orders"));
+    }, true);
     window.dispatchEvent(new Event("zal-team-ready"));
     if (location.hash === "#account") open("account");
     return true;

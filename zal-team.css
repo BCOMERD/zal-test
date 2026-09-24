@@ -261,3 +261,6 @@ body {
 #zal-team-dialog ul {
   padding-inline-start: 22px;
 }
+
+/* restaurant owners and drivers: full-screen dashboard like a real app */
+#zal-team-dialog.zt-full { width:100vw; height:100dvh; max-width:none; max-height:none; margin:0; border-radius:0; inset:0; }

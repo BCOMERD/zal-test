@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-<link rel="stylesheet" href="zal-team.css">
-<script defer src="zal-team.js"></script>
+<link rel="stylesheet" href="zal-team.css?v=1790285238">
+<script defer src="zal-team.js?v=1790285238"></script>
 </head>
 <body>
 <x-dc>
@@ -24,8 +24,8 @@
   @keyframes danoBlink { 0%,92%,100% { transform:scaleY(1) } 96% { transform:scaleY(.1) } }
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="zal-config.js"></script>
-  <script src="zal-supabase.js"></script>
+  <script src="zal-config.js?v=1790285238"></script>
+  <script src="zal-supabase.js?v=1790285238"></script>
 </helmet>
 
 <div dir="{{ dir }}" style="background:#060B16;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;color:#fff">
@@ -802,7 +802,7 @@ class Component extends DCLogic {
       }),
       cartBar: here && count > 0 && s.checkout === 0,
       cartBarLbl: (ar ? "عرض السلة · " : "View cart · ") + count, cartBarTotal: eur(sub),
-      openCheckout: () => this.setState({ checkout: 1 }),
+      openCheckout: () => { if (window.ZalTeam && !window.ZalTeam.getUser()) return window.ZalTeam.open("account"); this.setState({ checkout: 1 }); },
       checkoutOpen: s.checkout === 1, doneOpen: s.checkout === 2,
       ck: {
         h: ar ? "مراجعة الطلب" : "Review order", from: (ar ? "من " : "From ") + (ar ? p.name.ar : p.name.en),
@@ -822,7 +822,7 @@ class Component extends DCLogic {
         totLbl: ar ? "الإجمالي" : "Total", tot: eur(total),
         place: (ar ? "تأكيد الطلب · " : "Place order · ") + eur(total),
         back: () => this.setState({ checkout: 0 }),
-        submit: () => { this.syncOrder(p, lines); this.setState({ checkout: 2, orderTotal: eur(total) }); }
+        submit: () => { this.syncOrder(p, lines).then(ok => { if (ok) this.setState({ checkout: 2, orderTotal: eur(total) }); }); }
       },
       dn: {
         h: ar ? "تم إرسال طلبك" : "Order sent",
@@ -1044,12 +1044,12 @@ class Component extends DCLogic {
   }
   syncOrder(p, lines) {
     const Z = window.ZalDB;
-    if (!Z || !Z.configured() || !this.state.dbLive) return;
+    if (!Z || !Z.configured() || !this.state.dbLive) return Promise.resolve(true);
     const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id: l.d[5], qty: l.q }));
-    if (!items.length) return;
-    Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
-      .then(id => this.setState({ dbOrderId: id }))
-      .catch(e => console.warn("ZAL: order not saved —", e.message));
+    if (!items.length) return Promise.resolve(true);
+    return Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
+      .then(id => { this.setState({ dbOrderId: id }); return true; })
+      .catch(e => { alert(e.message); return false; });
   }
   componentDidUpdate() {
     this.icons();

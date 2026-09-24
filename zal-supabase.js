@@ -188,14 +188,24 @@
   }
 
   // items: [{ menu_item_id, qty }]
-  async function placeOrder(restaurantId, items, fulfilment) {
+  // Orders from the app's own screens go to the restaurant owner's and driver's dashboards.
+  // Payment is simulated (beta): the order is marked paid right after it is created.
+  async function placeOrder(restaurantId, items, fulfilment, address, note, tip) {
     const c = db();
     if (!c) return null;
-    const { data, error } = await c.rpc("zal_place_order", {
-      p_restaurant_id: restaurantId, p_items: items, p_fulfilment: fulfilment
+    const { data: s } = await c.auth.getSession();
+    if (!s.session) {
+      window.ZalTeam?.open("account");
+      throw new Error("Please sign in or create an account to order.");
+    }
+    const { data: id, error } = await c.rpc("zal_team_place_order", {
+      p_restaurant_id: restaurantId, p_items: items, p_fulfilment: fulfilment || "pickup",
+      p_address: address || null, p_note: note || null, p_request_id: crypto.randomUUID(), p_tip: tip || 0
     });
     if (error) throw error;
-    return data;
+    const pay = await c.rpc("zal_team_order_action", { p_order_id: id, p_action: "pay" });
+    if (pay.error) throw pay.error;
+    return id;
   }
 
   // pre: [{ menu_item_id, qty }] or null; prePay: "at_restaurant" | "now"
