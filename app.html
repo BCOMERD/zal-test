@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="robots" content="noindex, nofollow">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-<link rel="stylesheet" href="zal-team.css">
-<script defer src="zal-team.js"></script>
 </head>
 <body>
 <x-dc>
@@ -308,7 +306,7 @@
               <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.addrH }}</span>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
               <sc-for list="{{ addrOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-            </div>
+              </div>
               <sc-for list="{{ orderRows }}" as="m" hint-placeholder-count="3">
                 <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px">
                   <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
@@ -333,7 +331,7 @@
               <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.payH }}</span>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
               <sc-for list="{{ payOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-            </div>
+              </div>
             </div>
           </sc-if>
 
@@ -571,15 +569,15 @@
           <button type="button" onClick="{{ toggleZalo }}" aria-label="Close" style="background:none;border:0;color:#8E9BAE;cursor:pointer;font-size:18px;line-height:1">×</button>
         </div>
         <div style="padding:10px 14px 0;font-size:11.5px;font-weight:700;color:#F2B203">{{ danoTag }}</div>
-        <p style="margin:0;padding:10px 14px 14px;font-size:13px;line-height:1.55;color:#E2E8F0">{{ danoMsg }}</p>
+        <p id="zalo-response-msg" style="margin:0;padding:10px 14px 14px;font-size:13px;line-height:1.55;color:#E2E8F0">{{ danoMsg }}</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px">
           <sc-for list="{{ danoPrompts }}" as="q" hint-placeholder-count="3">
             <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);color:#8E9BAE">{{ q }}</span>
           </sc-for>
         </div>
         <div style="display:flex;gap:8px;padding:0 14px 14px">
-          <input type="text" value="{{ query }}" onChange="{{ setQuery }}" placeholder="{{ danoInputPh }}" style="flex:1;min-width:0;height:42px;padding:0 14px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;font-size:13.5px;outline:none">
-          <button type="button" aria-label="Send" style="width:42px;height:42px;flex:0 0 42px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="send" style="width:16px;height:16px"></i></button>
+          <input type="text" id="zalo-query-input" value="{{ query }}" onChange="{{ setQuery }}" placeholder="{{ danoInputPh }}" style="flex:1;min-width:0;height:42px;padding:0 14px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;font-size:13.5px;outline:none">
+          <button type="button" onClick="sendZalAIQuery()" aria-label="Send" style="width:42px;height:42px;flex:0 0 42px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="send" style="width:16px;height:16px"></i></button>
         </div>
       </div>
     </sc-if>
@@ -595,6 +593,38 @@
   </div>
 </div>
 </x-dc>
+<script>
+async function sendZalAIQuery() {
+    const inputEl = document.getElementById('zalo-query-input');
+    const msgEl = document.getElementById('zalo-response-msg');
+    if (!inputEl || !inputEl.value.trim()) return;
+    
+    const queryText = inputEl.value.trim();
+    msgEl.innerText = "جاري البحث في المنيوهات الحقيقية...";
+
+    try {
+        const response = await fetch('https://lhvnhmkhnwxwadpqabsd.supabase.co/functions/v1/bright-worker', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: queryText })
+        });
+
+        const data = await response.json();
+        if (data && data.response) {
+            msgEl.innerText = data.response;
+        } else if (data && data.message) {
+            msgEl.innerText = data.message;
+        } else {
+            msgEl.innerText = "عذراً، لم أتمكن من العثور على طلبك بدقة في المطاعم الحقيقية.";
+        }
+    } catch (err) {
+        console.error("Zal AI Error:", err);
+        msgEl.innerText = "حدث خطأ في الاتصال بخدمة الذكاء الاصطناعي.";
+    }
+}
+</script>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:880}}">
 const T = {
   ar: {
@@ -633,7 +663,6 @@ const T = {
   }
 };
 
-// Live data only: MENUS[restaurantId] = loaded menu rows, CACHE[restaurantId] = card row.
 let MENUS = {};
 const CACHE = {};
 const CHIP_KEYS = ["all","local","healthy","booking","vegetarian","halal","free"];
@@ -691,8 +720,8 @@ class Component extends DCLogic {
           it("leaf","التفضيلات الغذائية والصحية","Dietary & health preferences","نباتي، حساسيات","Vegetarian, allergies", go("diet")),
           it("map-pin","العناوين المحفوظة","Saved addresses","المنزل، العمل، الأصدقاء","Home, work, friends", go("addr")) ]},
         { title: ar ? "المال" : "Money", items: [
-          it("home","محفظة العائلة","Family Wallet","الرصيد من العمليات التجريبية","Balance from test transactions", () => window.ZalTeam?.open("wallet")),
-          it("briefcase","محفظة الشركة","Corporate Wallet","عرض المحفظة التجريبية","View test wallet", () => window.ZalTeam?.open("wallet")),
+          it("home","محفظة العائلة","Family Wallet","الرصيد €100 · 3 أفراد","Balance €100 · 3 members", () => this.setState({ pview: "wallets", walletType: 0, period: 0 })),
+          it("briefcase","محفظة الشركة","Corporate Wallet","€1,240 متبقٍ هذا الشهر · 3 موظفين","€1,240 left this month · 3 employees", () => this.setState({ pview: "wallets", walletType: 1, period: 0 })),
           it("gift","بطاقات الهدايا والقسائم","Gift cards & vouchers","رصيد €7.50","€7.50 credit", go("gift")) ]},
         { title: ar ? "زال" : "Zal", items: [
           it("store","سجّل مطعمك","Add your restaurant","صفحة الانضمام للمطاعم","Restaurant sign-up", ext),
@@ -701,7 +730,7 @@ class Component extends DCLogic {
           it("life-buoy","مركز المساعدة","Help centre","الدعم والأسئلة","Support & FAQ", ext) ]}
       ],
       p: ar ? { otp:"رقم الهاتف موثّق برمز SMS لمرة واحدة.", guest:"يمكن تصفح زال دون حساب. يُطلب تسجيل الدخول عند إتمام الطلب أو حفظ عنوان.", dietP:"نعلّم لك الأطباق المناسبة، وننبهك عند وجود مكوّن تتحسس منه.", addAddr:"إضافة عنوان", credit:"رصيدك", codePh:"أدخل كود البطاقة أو القسيمة", redeem:"تفعيل", activeH:"القسائم الفعّالة", v1:"قسيمة ترحيب · تنتهي 31/12" }
-             : { otp:"Phone verified with a one-time SMS code.", guest:"You can browse Zal without an account. Sign-in is needed to check out or save an address.", dietP:"We mark dishes that suit you and warn you when a dish has something you avoid.", addAddr:"Add address", credit:"Your credit", codePh:"Enter gift card or voucher code", redeem:"Redeem", activeH:"Active vouchers", v1:"Welcome voucher · expires 31/12" },
+            : { otp:"Phone verified with a one-time SMS code.", guest:"You can browse Zal without an account. Sign-in is needed to check out or save an address.", dietP:"We mark dishes that suit you and warn you when a dish has something you avoid.", addAddr:"Add address", credit:"Your credit", codePh:"Enter gift card or voucher code", redeem:"Redeem", activeH:"Active vouchers", v1:"Welcome voucher · expires 31/12" },
       infoFields: [[ar?"الاسم الأول":"First name","Karim"],[ar?"اسم العائلة":"Last name","Benali"],[ar?"الإيميل":"Email","karim@mail.be"],[ar?"الهاتف":"Phone","+32 470 12 34 56"]].map(([label, value]) => ({ label, value })),
       dietGroups: dietGroups.map(([icon, title, opt, items]) => ({ icon, title, opt, items: items.map(([k, a, e]) => { const on = s.diet.includes(k); return { label: ar ? a : e,
         pick: () => this.setState({ diet: on ? s.diet.filter(x => x !== k) : [...s.diet, k] }),
@@ -784,14 +813,14 @@ class Component extends DCLogic {
         payH: ar ? "الدفع" : "Payment",
         alone: { label: ar ? "أدفع وحدي" : "Pay alone", style: seg(s.split === 0), pick: () => this.setState({ split: 0 }) },
         share: { label: ar ? "تقسيم الحساب" : "Split payment", style: seg(s.split === 1), pick: () => this.setState({ split: 1 }) },
-        splitNote: s.split === 1 ? (ar ? "تقسيم الدفع معاينة تصميم فقط. الدفع التجريبي بحساب واحد." : "Group split payments are a design preview. Test checkout uses a single payer.") : "",
+        splitNote: s.split === 1 ? (ar ? "سيصل إشعار لكل صديق ليدفع حصته، ومن لا يملك التطبيق يصله رابط." : "Each friend gets a notification to pay their share. Friends without the app get a link.") : "",
         subLbl: ar ? "المجموع الفرعي" : "Subtotal", sub: eur(sub),
         feeLbl: fu === 0 ? (ar ? "أجر التوصيل (للموصّل)" : "Delivery fee (to the courier)") : (ar ? "أجر التوصيل" : "Delivery fee"), fee: eur(fee),
         svcLbl: ar ? "رسوم الخدمة" : "Service fee", svc: "€0.00",
         totLbl: ar ? "الإجمالي" : "Total", tot: eur(total),
         place: (ar ? "تأكيد الطلب · " : "Place order · ") + eur(total),
         back: () => this.setState({ checkout: 0 }),
-        submit: () => this.syncOrder(p, lines)
+        submit: () => { this.syncOrder(p, lines); this.setState({ checkout: 2, orderTotal: eur(total) }); }
       },
       dn: {
         h: ar ? "تم إرسال طلبك" : "Order sent",
@@ -851,7 +880,7 @@ class Component extends DCLogic {
         : s.bookErr === "booking not available" ? (ar ? "هذا المطعم لا يقبل الحجز حالياً." : "This restaurant isn't taking bookings right now.")
         : (ar ? "لم يُحفظ الحجز، حاول مرة أخرى." : "The booking wasn't saved. Please try again."),
       bookPreview: ar ? "كريم دعاك إلى " + r.name + "، " + d + " الساعة " + tm + "، " + s.guests + " أشخاص، " + r.addr + ". التفاصيل وتطبيق زال: zal.be/b/" + (s.bookCode || "KRM26") + ""
-                      : "Karim invited you to " + r.name + ", " + d + " at " + tm + ", " + s.guests + " people, " + r.addr + ". Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + ""
+            : "Karim invited you to " + r.name + ", " + d + " at " + tm + ", " + s.guests + " people, " + r.addr + ". Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + ""
     };
   }
   groupVals(s, lang) {
@@ -878,8 +907,8 @@ class Component extends DCLogic {
       syncMsg:"These restaurants are far apart and prep times differ by at least 20 minutes. Adjust timing so all orders arrive together?",
       shareBookH:"Share booking details", previewH:"What they receive",
       preview:"Karim invited you to dinner at Beirut Corner, Friday 26 September at 20:00, 4 people, Rue de Brabant 8, 1030 Schaerbeek. Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + "",
-      balance:"Main wallet balance", topUp:"Top up", membersH:"Members & limits", addMember:"Add member by phone",
-      walletNote:"Each member orders from their own allowance within the limit. It is charged to the main wallet, no personal bank card needed."
+      balance:"Main wallet balance", topUp:"Top up", membersH:"Members & limits", rulesH:"Company rules", create:"Add employee",
+      walletNote:"Employees pay nothing and need no card. Orders outside hours or above the limit are declined, or the employee pays the difference by card."
     };
     return {
       g: t,
@@ -1012,12 +1041,13 @@ class Component extends DCLogic {
       .catch(e => { console.warn("ZAL: booking not saved —", e.message); this.setState({ bookErr: e.message }); });
   }
   syncOrder(p, lines) {
-    if (!window.ZalTeam) { alert("Account service is loading. Please retry."); return; }
-    const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id:l.d[5], qty:l.q, name:l.d[0], price:Number(l.d[4]) }));
-    if (!items.length) { alert("Choose an available dish first."); return; }
-    window.ZalTeam.startCheckout(p, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup", id => {
-      this.setState({ dbOrderId:id, cart:{}, cartPlace:0, checkout:0, place:0, placeMenu:false });
-    });
+    const Z = window.ZalDB;
+    if (!Z || !Z.configured() || !this.state.dbLive) return;
+    const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id: l.d[5], qty: l.q }));
+    if (!items.length) return;
+    Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
+      .then(id => this.setState({ dbOrderId: id }))
+      .catch(e => console.warn("ZAL: order not saved —", e.message));
   }
   componentDidUpdate() {
     this.icons();
@@ -1065,11 +1095,11 @@ class Component extends DCLogic {
       dir: rtl ? "rtl" : "ltr", t,
       langLabel: lang === "ar" ? "EN" : "ع",
       toggleLang: () => this.setState({ lang: lang === "ar" ? "en" : "ar" }),
-      openAccount: () => window.ZalTeam?.open("account"),
+      openAccount: () => this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }),
       ...this.placeVals(s, t, lang),
       ...this.groupVals(s, lang),
       danoOpen: s.dano,
-      toggleZalo: () => window.ZalTeam?.open("ai", s.place || ""),
+      toggleZalo: () => this.setState({ dano: !s.dano }),
       danoHint: (() => { const p = CACHE[s.place]; const n = p ? (lang === "ar" ? p.name.ar : p.name.en) : ""; return lang === "ar" ? "اسأل جرسون " + n : "Ask " + n + "'s waiter"; })(),
       danoTitle: (() => { const p = s.place ? CACHE[s.place] : null; return p ? (lang === "ar" ? "جرسون " + p.name.ar : p.name.en + " waiter") : "Zal AI"; })(),
       danoPanelStyle: s.place ? "position:absolute;bottom:148px;inset-inline:14px;z-index:9;background:#0A1122;border:1px solid rgba(242,178,3,.35);border-radius:16px;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);overflow:hidden"
@@ -1112,7 +1142,7 @@ class Component extends DCLogic {
       tabs: t.tabs.map(([icon, label], i) => ({
         icon, label,
         style: "display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:4px 10px;font-size:12px;font-weight:" + (i === s.tab ? "700" : "500") + ";color:" + (i === s.tab ? "#FFFFFF" : "#8E9BAE"),
-        pick: () => i === 4 ? window.ZalTeam?.open("account") : i === 3 ? window.ZalTeam?.open("orders") : this.setState({ tab:i })
+        pick: () => i === 4 ? this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }) : this.setState({ tab: i })
       }))
     };
   }
