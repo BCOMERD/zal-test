@@ -1,0 +1,3 @@
+project_id = "lhvnhmkhnwxwadpqabsd"
+[functions.zal-ai]
+verify_jwt = false

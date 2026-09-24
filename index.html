@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<link rel="stylesheet" href="zal-team.css">
+<script defer src="zal-team.js"></script>
 </head>
 <body>
 <x-dc>
@@ -122,7 +124,7 @@
                 <i data-lucide="check" style="width:14px;height:14px"></i>{{ t.badge_original_price }}
               </span>
             </div>
-            <button type="button" onClick="{{ addPreviewDish }}" style="background:#F2B203;color:#0A1122;font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:9999px;cursor:pointer;white-space:nowrap">17.50 €</button>
+            <button type="button" onClick="{{ addPreviewDish }}" style="background:#F2B203;color:#0A1122;font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:9999px;cursor:pointer;white-space:nowrap">{{ browseMenuLbl }}</button>
           </div>
         </div>
       </div>
@@ -898,7 +900,7 @@
           <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin-bottom:16px">
             <span>{{ t.cart_total }}</span><span style="color:#F2B203">{{ cartTotal }}</span>
           </div>
-          <button type="button" onClick="{{ checkout }}" style="width:100%;background:#F2B203;color:#0A1122;font-weight:800;font-size:14px;padding:13px;border-radius:9999px;cursor:pointer;border:0">{{ t.cart_checkout }}</button>
+          <button type="button" onClick="{{ checkout }}" style="width:100%;background:#F2B203;color:#0A1122;font-weight:800;font-size:14px;padding:13px;border-radius:9999px;cursor:pointer;border:0">{{ browseMenuLbl }}</button>
         </div>
       </div>
     </div>
@@ -1526,8 +1528,8 @@ class Component extends DCLogic {
       showHome: s.view === "home", showRegister: s.view === "register", showAbout: s.view === "about",
       goAbout: () => this.setState({ view:"about" }),
       goHome: () => this.setState({ view:"home" }),
-      goRegister: () => this.setState({ view:"register", step:1 }),
-      goCourier: () => this.setState({ view:"courier", courierSent:false }),
+      goRegister: () => window.ZalTeam?.open("restaurant"),
+      goCourier: () => window.ZalTeam?.open("driver"),
       showCourier: s.view === "courier",
       c: CR[s.lang] || CR.en,
       x: (() => {
@@ -1543,7 +1545,7 @@ class Component extends DCLogic {
       courierForm: !s.courierSent, courierDone: s.courierSent,
       courierAgreed: s.courierAgreed,
       toggleCourierAgree: () => this.setState({ courierAgreed: !s.courierAgreed }),
-      submitCourier: () => this.setState({ courierSent:true }),
+      submitCourier: () => window.ZalTeam?.open("driver"),
 
       pillars: [
         { icon:"bike", title:t.pillar_courier_title, desc:t.pillar_courier_desc, items:[{text:t.pc_1},{text:t.pc_2},{text:t.pc_3}] },
@@ -1599,13 +1601,14 @@ class Component extends DCLogic {
       termsCountLabel: (EX[s.lang] || EX.en).agr_confirm.replace("0/5", s.termsOn.filter(Boolean).length + "/5"),
       agrBtnStyle: "font-weight:800;font-size:15px;padding:14px 30px;border-radius:9999px;border:0;background:" + (s.termsOn.every(Boolean) ? "#F2B203" : "rgba(242,178,3,.25)") + ";color:" + (s.termsOn.every(Boolean) ? "#0A1122" : "#8E9BAE") + ";cursor:" + (s.termsOn.every(Boolean) ? "pointer" : "not-allowed"),
 
+      browseMenuLbl: L("Browse menus","تصفح المنيوهات","Voir les menus","Menu’s bekijken"),
       cartOpen: s.cartOpen, cartCount: s.cart.length, cartEmpty: s.cart.length === 0,
       cartItems: s.cart.map((c, i) => ({ key:i, title:c.title, priceLabel:c.price.toFixed(2) + " €", remove: () => this.removeItem(i) })),
       cartTotal: s.cart.reduce((a, c) => a + c.price, 0).toFixed(2) + " €",
-      toggleCart: () => this.setState({ cartOpen: !s.cartOpen }),
+      toggleCart: () => window.location.assign("app.html"),
       stop: e => e.stopPropagation(),
-      checkout: () => this.setState({ cart:[], cartOpen:false }),
-      addPreviewDish: () => this.addItem(t.dish_preview_title, 17.5),
+      checkout: () => window.location.assign("app.html"),
+      addPreviewDish: () => window.location.assign("app.html"),
 
       chatOpen: s.chatOpen, chatLog, chatDraft: s.chatDraft,
       toggleChat: () => this.setState({ chatOpen: !s.chatOpen }),
@@ -1618,11 +1621,11 @@ class Component extends DCLogic {
         : s.lang === "fr" ? ["Trouver un plat","Inscrire un restaurant","Devenir coursier","Suivre ma commande"]
         : s.lang === "nl" ? ["Eten vinden","Restaurant aanmelden","Koerier worden","Bestelling volgen"]
         : ["Find food","Register a restaurant","Become a courier","Track my order"]).map((label, i) => ({ label,
-          pick: () => { if (i === 1) this.setState({ view:"register", step:1, chatOpen:false }); else if (i === 2) this.setState({ view:"courier", courierSent:false, chatOpen:false }); else this.setState({ chatDraft:label }, () => this.send()); } })),
-      toggleRec: () => { if (s.rec) { const b = s.chat.length ? s.chat : [{ who:"ai", text:t.ai_welcome }]; this.setState({ rec:false, chat: b.concat([{ who:"user", text: (s.lang === "ar" ? "رسالة صوتية · 0:06" : "Voice message · 0:06") }]) }); setTimeout(() => this.setState(x => ({ chat: x.chat.concat([{ who:"ai", text:t.ai_reply }]) })), 600); } else this.setState({ rec:true }); },
+          pick: () => { if (i === 1) window.ZalTeam?.open("restaurant"); else if (i === 2) window.ZalTeam?.open("driver"); else if (i === 3) window.ZalTeam?.open("orders"); else this.setState({ chatDraft:label }, () => this.send()); } })),
+      toggleRec: () => window.ZalTeam?.open("ai"),
       micStyle: "width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" + (s.rec ? "background:#EF4444;color:#fff;border:0" : "background:#0A1122;color:#F2B203;border:1px solid rgba(242,178,3,.35)"),
       calling: s.calling,
-      startCall: () => this.setState({ calling:true }),
+      startCall: () => window.ZalTeam?.open("ai"),
       endCall: () => this.setState({ calling:false }),
       callLbl: s.lang === "ar" ? "مكالمة صوتية مع زال AI · 00:12" : "Voice call with Zal AI · 00:12",
       endCallLbl: s.lang === "ar" ? "إنهاء" : "End"
@@ -1631,12 +1634,17 @@ class Component extends DCLogic {
 
   addItem(title, price) { this.setState(s => ({ cart: s.cart.concat([{ title, price }]) })); }
   removeItem(i) { this.setState(s => ({ cart: s.cart.filter((_, idx) => idx !== i) })); }
-  send() {
+  async send() {
     const text = this.state.chatDraft.trim();
-    if (!text) return;
-    const base = this.state.chat.length ? this.state.chat : [{ who:"ai", text:this.t().ai_welcome }];
-    this.setState({ chat: base.concat([{ who:"user", text }]), chatDraft:"" });
-    setTimeout(() => this.setState(s => ({ chat: s.chat.concat([{ who:"ai", text:this.t().ai_reply }]) })), 500);
+    if (!text || this.aiBusy) return;
+    this.aiBusy = true;
+    this.setState(s => ({ chat:s.chat.concat([{who:"user",text}]),chatDraft:"" }));
+    try {
+      if (!window.ZalTeam) throw new Error("Account service is loading. Please retry.");
+      const answer = await window.ZalTeam.ask(text, null);
+      this.setState(s => ({chat:s.chat.concat([{who:"ai",text:answer}])}));
+    } catch(e) { this.setState(s => ({chat:s.chat.concat([{who:"ai",text:e.message}])})); }
+    finally { this.aiBusy=false; }
   }
 }
 </script>

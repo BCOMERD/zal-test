@@ -1,0 +1,20 @@
+{
+  "name": "zal-team-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/database.mjs && node tests/ai.mjs",
+    "test:ui": "node tests/ui.mjs",
+    "check": "node --check zal-team.js && node tests/check-scripts.mjs"
+  },
+  "devDependencies": {
+    "@babel/standalone": "7.29.0",
+    "@electric-sql/pglite": "0.5.8",
+    "@playwright/test": "1.63.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

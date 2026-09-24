@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<link rel="stylesheet" href="zal-team.css">
+<script defer src="zal-team.js"></script>
 </head>
 <body>
 <x-dc>
@@ -689,8 +691,8 @@ class Component extends DCLogic {
           it("leaf","التفضيلات الغذائية والصحية","Dietary & health preferences","نباتي، حساسيات","Vegetarian, allergies", go("diet")),
           it("map-pin","العناوين المحفوظة","Saved addresses","المنزل، العمل، الأصدقاء","Home, work, friends", go("addr")) ]},
         { title: ar ? "المال" : "Money", items: [
-          it("home","محفظة العائلة","Family Wallet","الرصيد €100 · 3 أفراد","Balance €100 · 3 members", () => this.setState({ pview: "wallets", walletType: 0, period: 0 })),
-          it("briefcase","محفظة الشركة","Corporate Wallet","€1,240 متبقٍ هذا الشهر · 3 موظفين","€1,240 left this month · 3 employees", () => this.setState({ pview: "wallets", walletType: 1, period: 0 })),
+          it("home","محفظة العائلة","Family Wallet","الرصيد من العمليات التجريبية","Balance from test transactions", () => window.ZalTeam?.open("wallet")),
+          it("briefcase","محفظة الشركة","Corporate Wallet","عرض المحفظة التجريبية","View test wallet", () => window.ZalTeam?.open("wallet")),
           it("gift","بطاقات الهدايا والقسائم","Gift cards & vouchers","رصيد €7.50","€7.50 credit", go("gift")) ]},
         { title: ar ? "زال" : "Zal", items: [
           it("store","سجّل مطعمك","Add your restaurant","صفحة الانضمام للمطاعم","Restaurant sign-up", ext),
@@ -782,14 +784,14 @@ class Component extends DCLogic {
         payH: ar ? "الدفع" : "Payment",
         alone: { label: ar ? "أدفع وحدي" : "Pay alone", style: seg(s.split === 0), pick: () => this.setState({ split: 0 }) },
         share: { label: ar ? "تقسيم الحساب" : "Split payment", style: seg(s.split === 1), pick: () => this.setState({ split: 1 }) },
-        splitNote: s.split === 1 ? (ar ? "سيصل إشعار لكل صديق ليدفع حصته، ومن لا يملك التطبيق يصله رابط." : "Each friend gets a notification to pay their share. Friends without the app get a link.") : "",
+        splitNote: s.split === 1 ? (ar ? "تقسيم الدفع معاينة تصميم فقط. الدفع التجريبي بحساب واحد." : "Group split payments are a design preview. Test checkout uses a single payer.") : "",
         subLbl: ar ? "المجموع الفرعي" : "Subtotal", sub: eur(sub),
         feeLbl: fu === 0 ? (ar ? "أجر التوصيل (للموصّل)" : "Delivery fee (to the courier)") : (ar ? "أجر التوصيل" : "Delivery fee"), fee: eur(fee),
         svcLbl: ar ? "رسوم الخدمة" : "Service fee", svc: "€0.00",
         totLbl: ar ? "الإجمالي" : "Total", tot: eur(total),
         place: (ar ? "تأكيد الطلب · " : "Place order · ") + eur(total),
         back: () => this.setState({ checkout: 0 }),
-        submit: () => { this.syncOrder(p, lines); this.setState({ checkout: 2, orderTotal: eur(total) }); }
+        submit: () => this.syncOrder(p, lines)
       },
       dn: {
         h: ar ? "تم إرسال طلبك" : "Order sent",
@@ -1010,13 +1012,12 @@ class Component extends DCLogic {
       .catch(e => { console.warn("ZAL: booking not saved —", e.message); this.setState({ bookErr: e.message }); });
   }
   syncOrder(p, lines) {
-    const Z = window.ZalDB;
-    if (!Z || !Z.configured() || !this.state.dbLive) return;
-    const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id: l.d[5], qty: l.q }));
-    if (!items.length) return;
-    Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
-      .then(id => this.setState({ dbOrderId: id }))
-      .catch(e => console.warn("ZAL: order not saved —", e.message));
+    if (!window.ZalTeam) { alert("Account service is loading. Please retry."); return; }
+    const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id:l.d[5], qty:l.q, name:l.d[0], price:Number(l.d[4]) }));
+    if (!items.length) { alert("Choose an available dish first."); return; }
+    window.ZalTeam.startCheckout(p, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup", id => {
+      this.setState({ dbOrderId:id, cart:{}, cartPlace:0, checkout:0, place:0, placeMenu:false });
+    });
   }
   componentDidUpdate() {
     this.icons();
@@ -1064,11 +1065,11 @@ class Component extends DCLogic {
       dir: rtl ? "rtl" : "ltr", t,
       langLabel: lang === "ar" ? "EN" : "ع",
       toggleLang: () => this.setState({ lang: lang === "ar" ? "en" : "ar" }),
-      openAccount: () => this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }),
+      openAccount: () => window.ZalTeam?.open("account"),
       ...this.placeVals(s, t, lang),
       ...this.groupVals(s, lang),
       danoOpen: s.dano,
-      toggleZalo: () => this.setState({ dano: !s.dano }),
+      toggleZalo: () => window.ZalTeam?.open("ai", s.place || ""),
       danoHint: (() => { const p = CACHE[s.place]; const n = p ? (lang === "ar" ? p.name.ar : p.name.en) : ""; return lang === "ar" ? "اسأل جرسون " + n : "Ask " + n + "'s waiter"; })(),
       danoTitle: (() => { const p = s.place ? CACHE[s.place] : null; return p ? (lang === "ar" ? "جرسون " + p.name.ar : p.name.en + " waiter") : "Zal AI"; })(),
       danoPanelStyle: s.place ? "position:absolute;bottom:148px;inset-inline:14px;z-index:9;background:#0A1122;border:1px solid rgba(242,178,3,.35);border-radius:16px;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);overflow:hidden"
@@ -1111,7 +1112,7 @@ class Component extends DCLogic {
       tabs: t.tabs.map(([icon, label], i) => ({
         icon, label,
         style: "display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:4px 10px;font-size:12px;font-weight:" + (i === s.tab ? "700" : "500") + ";color:" + (i === s.tab ? "#FFFFFF" : "#8E9BAE"),
-        pick: () => i === 4 ? this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }) : this.setState({ tab: i })
+        pick: () => i === 4 ? window.ZalTeam?.open("account") : i === 3 ? window.ZalTeam?.open("orders") : this.setState({ tab:i })
       }))
     };
   }
