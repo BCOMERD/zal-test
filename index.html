@@ -18,6 +18,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="zal-config.js?v=5"></script>
 <script src="zal-supabase.js?v=5"></script>
+<script src="zal-voice.js?v=6"></script>
 <link rel="stylesheet" href="_ds/morik-design-system-bdd3a3af-fc10-410a-9035-8650790d6fda/tokens/colors.css">
 <style>
   :root, :root[data-zal-theme="Morik Ink"] {
@@ -1753,9 +1754,11 @@ class Component extends DCLogic {
       toggleRec: () => this.voice(),
       micStyle: "width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" + (s.rec ? "background:#EF4444;color:var(--z-text);border:0" : "background:var(--z-bg);color:var(--z-accent-text);border:1px solid color-mix(in srgb, var(--z-accent) 35%, transparent)"),
       calling: s.calling,
-      startCall: () => this.setState({ calling:true }),
-      endCall: () => this.setState({ calling:false }),
-      callLbl: s.lang === "ar" ? "مكالمة صوتية مع زال AI · 00:12" : "Voice call with Zal AI · 00:12",
+      startCall: () => this.startCall(),
+      endCall: () => { window.ZalVoice && ZalVoice.endCall(); clearInterval(this.callT); this.setState({ calling:false }); },
+      callLbl: (s.lang === "ar" ? { listening:"زال يسمعك… تكلّم", thinking:"زال يفكّر…", speaking:"زال يتكلّم…" }[s.callState] || "جارٍ الاتصال…"
+        : { listening:"Zal is listening… speak now", thinking:"Zal is thinking…", speaking:"Zal is speaking…" }[s.callState] || "Connecting…")
+        + " · " + String(Math.floor((s.callSecs || 0) / 60)).padStart(2, "0") + ":" + String((s.callSecs || 0) % 60).padStart(2, "0"),
       endCallLbl: s.lang === "ar" ? "إنهاء" : "End"
     };
   }
@@ -1778,16 +1781,28 @@ class Component extends DCLogic {
     } catch (e) { answer = this.state.lang === "ar" ? "عذراً، ما قدرت أجاوب الآن. جرّب بعد لحظة." : "Sorry, I couldn't answer right now. Please try again in a moment."; }
     this.aiBusy = false;
     this.setState(s => ({ chat: s.chat.slice(0, -1).concat([{ who:"ai", text: answer }]) }));
+    return answer;
+  }
+  // voice call: listen → answer → speak, until hang-up
+  startCall() {
+    const V = window.ZalVoice, ar = this.state.lang === "ar";
+    if (!V || !V.supported) { const b = this.state.chat.length ? this.state.chat : [{ who:"ai", text:this.t().ai_welcome }];
+      return this.setState({ chat: b.concat([{ who:"ai", text: ar ? "المكالمة الصوتية تحتاج متصفح Chrome أو Edge أو Safari، مع السماح باستخدام الميكروفون." : "Voice calls need Chrome, Edge or Safari with microphone access allowed." }]) }); }
+    clearInterval(this.callT); this.setState({ calling:true, callSecs:0, callState:"" });
+    this.callT = setInterval(() => this.setState(s => ({ callSecs: (s.callSecs || 0) + 1 })), 1000);
+    V.startCall({ lang: this.state.lang, greeting: ar ? "أهلاً، أنا زال. شو حابب تاكل اليوم؟" : "Hi, I'm Zal. What would you like to eat today?",
+      ask: q => this.send(q), onState: st => { if (st === "ended") { clearInterval(this.callT); this.setState({ calling:false }); } else this.setState({ callState: st }); } });
   }
   // voice: browser speech-to-text, then the same chat
-  voice() {
-    const R = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!R) return this.setState({ chatOpen:true });
-    if (this.rec) { this.rec.stop(); return; }
-    const r = this.rec = new R(); r.lang = { ar:"ar-SA", fr:"fr-BE", nl:"nl-BE" }[this.state.lang] || "en-GB";
-    r.onresult = e => this.send(e.results[0][0].transcript);
-    r.onend = () => { this.rec = null; this.setState({ rec:false }); };
-    this.setState({ rec:true }); r.start();
+  async voice() {
+    const V = window.ZalVoice, ar = this.state.lang === "ar";
+    if (this.state.rec) { V && V.stopListen(); return; }
+    if (!V || !V.supported) { const b = this.state.chat.length ? this.state.chat : [{ who:"ai", text:this.t().ai_welcome }];
+      return this.setState({ chat: b.concat([{ who:"ai", text: ar ? "الرسائل الصوتية تحتاج متصفح Chrome أو Edge أو Safari، مع السماح باستخدام الميكروفون." : "Voice messages need Chrome, Edge or Safari with microphone access allowed." }]) }); }
+    this.setState({ rec:true });
+    let q = ""; try { q = await V.listen(this.state.lang); } catch (e) {}
+    this.setState({ rec:false });
+    if (q) { const a = await this.send(q); if (a) V.speak(a, this.state.lang); }
   }
   val(id) { const el = document.getElementById(id); return el ? String(el.value || "").trim() : ""; }
   opt(id) { const el = document.getElementById(id); return el && el.selectedOptions[0] ? el.selectedOptions[0].textContent.trim() : ""; }
