@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="robots" content="noindex, nofollow">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<title>ZAL</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-<script defer src="zal-ui.js?v=1790290400"></script>
+<template id="__bundler_thumbnail" data-bg-color="#0A192F"><svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#0A192F"/><text x="200" y="235" text-anchor="middle" font-family="serif" font-size="110" font-weight="700" fill="#FFD000">ZAL</text></svg></template>
 </head>
 <body>
 <x-dc>
@@ -12,7 +14,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="_ds/morik-design-system-bdd3a3af-fc10-410a-9035-8650790d6fda/tokens/colors.css">
 <style>
+  :root, :root[data-zal-theme="Morik Ink"] {
+    --z-bg:var(--ink-950,#0a0908); --z-bg-deep:#060504; --z-surface:var(--ink-900,#121009); --z-surface-2:var(--ink-850,#181510); --z-inset:var(--ink-800,#211d15);
+    --z-fg:var(--stone-100,#f4efe4); --z-text:var(--stone-100,#f4efe4); --z-text-2:var(--stone-300,#cbc0a7); --z-muted:var(--stone-500,#948a72);
+    --z-accent:var(--sun-500,#f7b733); --z-accent-hi:var(--sun-400,#ffc94d); --z-accent-text:var(--sun-500,#f7b733); --z-on-accent:#0A192F; --z-ok:#7ba05b;
+  }
+  :root[data-zal-theme="Navy Night"] {
+    --z-bg:#0A192F; --z-bg-deep:#06101F; --z-surface:#0F2140; --z-surface-2:#13284D; --z-inset:#1B3461;
+    --z-fg:#F4EFE4; --z-text:#F4EFE4; --z-text-2:#D5DAE3; --z-muted:#9AA7BD;
+    --z-accent:#FFD000; --z-accent-hi:#FFDD40; --z-accent-text:#FFD000; --z-on-accent:#0A192F; --z-ok:#34D399;
+  }
+  :root[data-zal-theme="Stone Day"] {
+    --z-bg:#F4EFE4; --z-bg-deep:#E6DDC9; --z-surface:#FFFFFF; --z-surface-2:#FBF8F1; --z-inset:#E6DDC9;
+    --z-fg:#0A192F; --z-text:#0A192F; --z-text-2:#15294A; --z-muted:#3E5275;
+    --z-accent:#FFD000; --z-accent-hi:#FFDD40; --z-accent-text:#0A192F; --z-on-accent:#0A192F; --z-ok:#1F7A55;
+  }
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Tajawal','Inter',sans-serif; -webkit-font-smoothing:antialiased; }
   ::-webkit-scrollbar { display:none; }
   .zal-row { display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:4px; }
@@ -23,14 +41,14 @@
   @keyframes danoBlink { 0%,92%,100% { transform:scaleY(1) } 96% { transform:scaleY(.1) } }
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="zal-config.js?v=1790290400"></script>
-  <script src="zal-supabase.js?v=1790290400"></script>
+  <script src="zal-config.js?v=5"></script>
+  <script src="zal-supabase.js?v=5"></script>
 </helmet>
 
-<div dir="{{ dir }}" style="background:#060B16;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;color:#fff">
-  <div style="width:390px;max-width:100%;background:#0A1122;border:1px solid rgba(255,255,255,.08);border-radius:36px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.9);display:flex;flex-direction:column;height:820px;position:relative">
+<div dir="{{ dir }}" style="background:var(--z-bg-deep);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;color:var(--z-text)">
+  <div style="width:390px;max-width:100%;background:var(--z-bg);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);border-radius:36px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.9);display:flex;flex-direction:column;height:820px;position:relative">
 
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 22px 4px;font-size:12.5px;font-weight:700;color:#8E9BAE">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 22px 4px;font-size:12.5px;font-weight:700;color:var(--z-muted)">
       <span>9:41</span>
       <div style="display:flex;gap:6px;align-items:center">
         <i data-lucide="signal" style="width:14px;height:14px"></i>
@@ -39,22 +57,22 @@
       </div>
     </div>
 
-    <div style="padding:8px 18px 14px;background:#0A1122;border-bottom:1px solid rgba(255,255,255,.06)">
+    <div style="padding:8px 18px 14px;background:var(--z-bg);border-bottom:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
         <div style="display:flex;align-items:center;gap:4px;user-select:none" dir="ltr">
-          <span style="width:30px;height:30px;border-radius:9999px;background:#F2B203;color:#0A1122;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:900;font-size:17px">Z</span>
-          <span style="font-family:Georgia,serif;font-weight:700;font-size:22px;color:#fff;letter-spacing:.5px">AL</span>
+          <span style="width:30px;height:30px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:900;font-size:17px">Z</span>
+          <span style="font-family:Georgia,serif;font-weight:700;font-size:22px;color:var(--z-text);letter-spacing:.5px">AL</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);color:var(--z-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
             <i data-lucide="bell" style="width:17px;height:17px"></i>
-            <span style="position:absolute;top:-2px;inset-inline-end:-2px;width:9px;height:9px;background:#EF4444;border:2px solid #0A1122;border-radius:9999px"></span>
+            <span style="position:absolute;top:-2px;inset-inline-end:-2px;width:9px;height:9px;background:#EF4444;border:2px solid var(--z-bg);border-radius:9999px"></span>
           </button>
-          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <button type="button" onClick="{{ openCart }}" style="position:relative;width:38px;height:38px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);color:var(--z-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
             <i data-lucide="shopping-bag" style="width:17px;height:17px"></i>
-            <span style="position:absolute;top:-4px;inset-inline-end:-4px;background:#F2B203;color:#0A1122;font-size:10px;font-weight:900;min-width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span>
+            <span style="position:absolute;top:-4px;inset-inline-end:-4px;background:var(--z-accent);color:var(--z-on-accent);font-size:10px;font-weight:900;min-width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ cartCount }}</span>
           </button>
-          <button type="button" onClick="{{ openAccount }}" aria-label="Account" style="width:38px;height:38px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <button type="button" onClick="{{ openAccount }}" aria-label="Account" style="width:38px;height:38px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);color:var(--z-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
             <i data-lucide="user" style="width:17px;height:17px"></i>
           </button>
         </div>
@@ -62,23 +80,23 @@
 
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <button type="button" onClick="{{ cycleAddress }}" style="background:none;border:0;cursor:pointer;text-align:start;padding:0;min-width:0;flex:1">
-          <div style="font-size:11px;color:#8E9BAE;font-weight:700;margin-bottom:2px">{{ addrLbl }}</div>
-          <div style="display:flex;align-items:center;gap:5px;color:#fff">
-            <i data-lucide="map-pin" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i>
+          <div style="font-size:11px;color:var(--z-muted);font-weight:700;margin-bottom:2px">{{ addrLbl }}</div>
+          <div style="display:flex;align-items:center;gap:5px;color:var(--z-text)">
+            <i data-lucide="map-pin" style="width:15px;height:15px;color:var(--z-accent-text);flex-shrink:0"></i>
             <span style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ address }}</span>
             <i data-lucide="chevron-down" style="width:14px;height:14px;opacity:.6;flex-shrink:0"></i>
           </div>
         </button>
-        <div style="display:flex;flex-shrink:0;background:#101B33;border:1px solid rgba(255,255,255,.08);border-radius:9999px;padding:3px">
+        <div style="display:flex;flex-shrink:0;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);border-radius:9999px;padding:3px">
           <button type="button" onClick="{{ fulPickup.pick }}" style="{{ fulPickup.style }}">{{ fulPickup.label }}</button>
           <button type="button" onClick="{{ fulDeliv.pick }}" style="{{ fulDeliv.style }}">{{ fulDeliv.label }}</button>
         </div>
       </div>
 
-      <button type="button" onClick="{{ openAsk }}" style="width:100%;display:flex;align-items:center;gap:9px;background:#101B33;border:1px solid rgba(242,178,3,.3);border-radius:12px;padding:0 14px;height:44px;margin-bottom:12px;cursor:pointer;text-align:start">
-        <i data-lucide="search" style="width:16px;height:16px;color:#F2B203;flex-shrink:0"></i>
-        <span style="flex:1;min-width:0;color:#CBD5E1;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ askPh }}</span>
-        <i data-lucide="sparkles" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i>
+      <button type="button" onClick="{{ openAsk }}" style="width:100%;display:flex;align-items:center;gap:9px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-accent) 30%, transparent);border-radius:12px;padding:0 14px;height:44px;margin-bottom:12px;cursor:pointer;text-align:start">
+        <i data-lucide="search" style="width:16px;height:16px;color:var(--z-accent-text);flex-shrink:0"></i>
+        <span style="flex:1;min-width:0;color:var(--z-text-2);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ askPh }}</span>
+        <i data-lucide="sparkles" style="width:15px;height:15px;color:var(--z-accent-text);flex-shrink:0"></i>
       </button>
 
       <div class="zal-row">
@@ -91,8 +109,8 @@
           <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
         </sc-for>
       </div>
-      <div style="display:flex;align-items:center;gap:7px;margin:16px 0 8px;color:#fff">
-        <i data-lucide="globe" stroke-width="2" style="width:17px;height:17px;color:#F2B203"></i>
+      <div style="display:flex;align-items:center;gap:7px;margin:16px 0 8px;color:var(--z-text)">
+        <i data-lucide="globe" stroke-width="2" style="width:17px;height:17px;color:var(--z-accent-text)"></i>
         <strong style="font-size:14px">{{ t.cultures_h }}</strong>
       </div>
       <div class="zal-row">
@@ -101,7 +119,7 @@
         </sc-for>
       </div>
       <sc-if value="{{ hasCountries }}" hint-placeholder-val="{{ false }}">
-        <div class="zal-row" style="margin-top:8px;padding-inline-start:10px;border-inline-start:2px solid rgba(242,178,3,.4)">
+        <div class="zal-row" style="margin-top:8px;padding-inline-start:10px;border-inline-start:2px solid color-mix(in srgb, var(--z-accent) 40%, transparent)">
           <sc-for list="{{ countryChips }}" as="c" hint-placeholder-count="5">
             <button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.label }}</button>
           </sc-for>
@@ -110,69 +128,69 @@
     </div>
 
     <div style="flex:1;overflow-y:auto;padding:18px 0 90px">
-      <button type="button" onClick="{{ openGroup }}" style="margin:0 18px 22px;width:calc(100% - 36px);display:flex;align-items:center;gap:12px;text-align:start;background:#F2B203;border:0;border-radius:14px;padding:14px;cursor:pointer;color:#0A1122">
-        <span style="width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:#0A1122;color:#F2B203;display:flex;align-items:center;justify-content:center"><i data-lucide="users" style="width:19px;height:19px"></i></span>
+      <button type="button" onClick="{{ openGroup }}" style="margin:0 18px 22px;width:calc(100% - 36px);display:flex;align-items:center;gap:12px;text-align:start;background:var(--z-accent);border:0;border-radius:14px;padding:14px;cursor:pointer;color:var(--z-on-accent)">
+        <span style="width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:var(--z-bg);color:var(--z-accent-text);display:flex;align-items:center;justify-content:center"><i data-lucide="users" style="width:19px;height:19px"></i></span>
         <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
-          <strong style="font-size:14px;font-weight:900;color:#0A1122">{{ g.bannerH }}</strong>
-          <span style="font-size:12.5px;font-weight:600;color:#0A1122;line-height:1.45">{{ g.bannerP }}</span>
+          <strong style="font-size:14px;font-weight:900;color:var(--z-on-accent)">{{ g.bannerH }}</strong>
+          <span style="font-size:12.5px;font-weight:600;color:var(--z-on-accent);line-height:1.45">{{ g.bannerP }}</span>
         </span>
-        <i data-lucide="chevron-right" style="width:18px;height:18px;color:#0A1122"></i>
+        <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--z-on-accent)"></i>
       </button>
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 18px;margin-bottom:12px">
-        <h3 style="font-size:16px;font-weight:800;color:#fff;margin:0">{{ t.list_h }}</h3>
-        <span style="font-size:12px;color:#8E9BAE;font-weight:700">{{ countLbl }}</span>
+        <h3 style="font-size:16px;font-weight:800;color:var(--z-text);margin:0">{{ t.list_h }}</h3>
+        <span style="font-size:12px;color:var(--z-muted);font-weight:700">{{ countLbl }}</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;padding:0 18px">
         <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
-          <div onClick="{{ c.open }}" style="display:flex;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;cursor:pointer">
-            <div style="position:relative;width:108px;flex:0 0 108px;min-height:122px;background:#18284B">
+          <div onClick="{{ c.open }}" style="display:flex;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:16px;overflow:hidden;cursor:pointer">
+            <div style="position:relative;width:108px;flex:0 0 108px;min-height:122px;background:var(--z-inset)">
               <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ false }}"><div style="{{ c.imgStyle }}" role="img" aria-label="{{ c.name }}"></div></sc-if>
-              <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#3A4A6B"><i data-lucide="utensils" style="width:26px;height:26px"></i></div></sc-if>
-              <sc-if value="{{ c.hasRating }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;bottom:7px;inset-inline-start:7px;background:rgba(10,17,34,.9);color:#F2B203;font-size:11px;font-weight:800;padding:3px 8px;border-radius:9999px">★ {{ c.rating }}</span></sc-if>
+              <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--z-inset)"><i data-lucide="utensils" style="width:26px;height:26px"></i></div></sc-if>
+              <sc-if value="{{ c.hasRating }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;bottom:7px;inset-inline-start:7px;background:color-mix(in srgb, var(--z-bg) 90%, transparent);color:var(--z-accent-text);font-size:11px;font-weight:800;padding:3px 8px;border-radius:9999px">★ {{ c.rating }}</span></sc-if>
             </div>
             <div style="flex:1;min-width:0;padding:11px 12px;display:flex;flex-direction:column;gap:5px">
-              <h4 style="font-size:14px;font-weight:800;color:#fff;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</h4>
-              <p style="font-size:11.5px;color:#8E9BAE;margin:0;line-height:1.4">{{ c.sub }}</p>
-              <sc-if value="{{ c.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:#CBD5E1;display:inline-flex;align-items:center;gap:5px"><i data-lucide="bike" style="width:13px;height:13px;color:#F2B203;flex-shrink:0"></i>{{ c.delivLine }}</span></sc-if>
+              <h4 style="font-size:14px;font-weight:800;color:var(--z-text);margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</h4>
+              <p style="font-size:11.5px;color:var(--z-muted);margin:0;line-height:1.4">{{ c.sub }}</p>
+              <sc-if value="{{ c.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:var(--z-text-2);display:inline-flex;align-items:center;gap:5px"><i data-lucide="bike" style="width:13px;height:13px;color:var(--z-accent-text);flex-shrink:0"></i>{{ c.delivLine }}</span></sc-if>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto">
                 <sc-if value="{{ c.hasOpen }}" hint-placeholder-val="{{ false }}"><span style="{{ c.openStyle }}">{{ c.openLabel }}</span></sc-if>
-                <sc-if value="{{ c.hasPrice }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;background:#F2B203;color:#0A1122;font-weight:800;font-size:11.5px;padding:5px 11px;border-radius:9999px;white-space:nowrap">{{ c.price }}</span></sc-if>
+                <sc-if value="{{ c.hasPrice }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;background:var(--z-accent);color:var(--z-on-accent);font-weight:800;font-size:11.5px;padding:5px 11px;border-radius:9999px;white-space:nowrap">{{ c.price }}</span></sc-if>
               </div>
             </div>
           </div>
         </sc-for>
-        <sc-if value="{{ listLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#8E9BAE">{{ t.loading }}</div></sc-if>
-        <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;text-align:center;font-size:13px;color:#8E9BAE;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">{{ t.empty }}</div></sc-if>
+        <sc-if value="{{ listLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:var(--z-muted)">{{ t.loading }}</div></sc-if>
+        <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;text-align:center;font-size:13px;color:var(--z-muted);background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:14px">{{ t.empty }}</div></sc-if>
         <sc-if value="{{ listErr }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#FCA5A5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:12px">{{ t.db_err }}</div></sc-if>
-        <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ loadMore }}" style="padding:12px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:13px;font-weight:800;cursor:pointer">{{ t.more }}</button></sc-if>
+        <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ loadMore }}" style="padding:12px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);font-size:13px;font-weight:800;cursor:pointer">{{ t.more }}</button></sc-if>
       </div>
 
     </div>
 
     <sc-if value="{{ placeOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:8;background:#0A1122;display:flex;flex-direction:column">
+      <div style="position:absolute;inset:0;z-index:8;background:var(--z-bg);display:flex;flex-direction:column">
         <div style="position:relative;height:230px;flex:0 0 230px">
           <div style="{{ pl.imgStyle }}" role="img" aria-label="{{ pl.name }}"></div>
-          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,17,34,.35) 0%,rgba(10,17,34,0) 40%,rgba(10,17,34,1) 100%)"></div>
-          <button type="button" onClick="{{ closePlace }}" aria-label="Back" style="position:absolute;top:50px;inset-inline-start:18px;width:36px;height:36px;border-radius:9999px;background:rgba(10,17,34,.8);border:1px solid rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb, var(--z-bg) 35%, transparent) 0%,color-mix(in srgb, var(--z-bg) 0%, transparent) 40%,color-mix(in srgb, var(--z-bg) 100%, transparent) 100%)"></div>
+          <button type="button" onClick="{{ closePlace }}" aria-label="Back" style="position:absolute;top:50px;inset-inline-start:18px;width:36px;height:36px;border-radius:9999px;background:color-mix(in srgb, var(--z-bg) 80%, transparent);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
         </div>
         <div style="flex:1;overflow-y:auto;padding:0 18px 20px;display:flex;flex-direction:column;gap:14px;margin-top:-30px;position:relative">
           <div style="display:flex;flex-direction:column;gap:4px">
-            <h2 style="margin:0;font-size:22px;font-weight:900;color:#fff">{{ pl.name }}</h2>
-            <span style="font-size:12.5px;color:#8E9BAE">{{ pl.meta }}</span>
+            <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--z-text)">{{ pl.name }}</h2>
+            <span style="font-size:12.5px;color:var(--z-muted)">{{ pl.meta }}</span>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <sc-if value="{{ pl.hasRating }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#F2B203;background:rgba(242,178,3,.1);border:1px solid rgba(242,178,3,.3);padding:5px 10px;border-radius:9999px">★ {{ pl.rating }}</span></sc-if>
-            <sc-for list="{{ pl.badges }}" as="bd" hint-placeholder-count="2"><span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px">{{ bd }}</span></sc-for>
-            <sc-if value="{{ pl.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px"><i data-lucide="bike" style="width:13px;height:13px"></i>{{ pl.delivLine }}</span></sc-if>
-            <sc-if value="{{ pl.hasEta }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#E2E8F0;background:#101B33;border:1px solid rgba(255,255,255,.08);padding:5px 10px;border-radius:9999px"><i data-lucide="clock" style="width:13px;height:13px"></i>{{ pl.eta }}</span></sc-if>
+            <sc-if value="{{ pl.hasRating }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--z-accent-text);background:color-mix(in srgb, var(--z-accent) 10%, transparent);border:1px solid color-mix(in srgb, var(--z-accent) 30%, transparent);padding:5px 10px;border-radius:9999px">★ {{ pl.rating }}</span></sc-if>
+            <sc-for list="{{ pl.badges }}" as="bd" hint-placeholder-count="2"><span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--z-text-2);background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);padding:5px 10px;border-radius:9999px">{{ bd }}</span></sc-for>
+            <sc-if value="{{ pl.hasDeliv }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--z-text-2);background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);padding:5px 10px;border-radius:9999px"><i data-lucide="bike" style="width:13px;height:13px"></i>{{ pl.delivLine }}</span></sc-if>
+            <sc-if value="{{ pl.hasEta }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--z-text-2);background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);padding:5px 10px;border-radius:9999px"><i data-lucide="clock" style="width:13px;height:13px"></i>{{ pl.eta }}</span></sc-if>
           </div>
-          <div style="display:flex;flex-direction:column;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px">
-            <sc-if value="{{ pl.hasAddress }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:flex-start;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;line-height:1.45"><i data-lucide="map-pin" style="width:15px;height:15px;color:#F2B203;flex-shrink:0;margin-top:1px"></i><span>{{ pl.address }}</span></div></sc-if>
-            <sc-if value="{{ pl.hasPhone }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.tel }}" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;text-decoration:none;border-top:1px solid rgba(255,255,255,.05)"><i data-lucide="phone" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i><span>{{ pl.phone }}</span></a></sc-if>
-            <sc-if value="{{ pl.hasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.webHref }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:#E2E8F0;text-decoration:none;border-top:1px solid rgba(255,255,255,.05);overflow:hidden"><i data-lucide="globe" style="width:15px;height:15px;color:#F2B203;flex-shrink:0"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pl.web }}</span></a></sc-if>
+          <div style="display:flex;flex-direction:column;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px">
+            <sc-if value="{{ pl.hasAddress }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:flex-start;gap:10px;padding:11px 12px;font-size:12.5px;color:var(--z-text-2);line-height:1.45"><i data-lucide="map-pin" style="width:15px;height:15px;color:var(--z-accent-text);flex-shrink:0;margin-top:1px"></i><span>{{ pl.address }}</span></div></sc-if>
+            <sc-if value="{{ pl.hasPhone }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.tel }}" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:var(--z-text-2);text-decoration:none;border-top:1px solid color-mix(in srgb, var(--z-fg) 5%, transparent)"><i data-lucide="phone" style="width:15px;height:15px;color:var(--z-accent-text);flex-shrink:0"></i><span>{{ pl.phone }}</span></a></sc-if>
+            <sc-if value="{{ pl.hasWeb }}" hint-placeholder-val="{{ false }}"><a href="{{ pl.webHref }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:12.5px;color:var(--z-text-2);text-decoration:none;border-top:1px solid color-mix(in srgb, var(--z-fg) 5%, transparent);overflow:hidden"><i data-lucide="globe" style="width:15px;height:15px;color:var(--z-accent-text);flex-shrink:0"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pl.web }}</span></a></sc-if>
           </div>
-          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE;margin-top:6px">{{ pl.chooseH }}</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted);margin-top:6px">{{ pl.chooseH }}</span>
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
             <button type="button" onClick="{{ pl.orderPick }}" style="{{ pl.orderStyle }}">
               <i data-lucide="shopping-bag" stroke-width="2" style="width:22px;height:22px"></i>
@@ -180,40 +198,40 @@
               <span style="font-size:11px;font-weight:600">{{ pl.orderSub }}</span>
             </button>
             <button type="button" onClick="{{ pl.book }}" style="{{ pl.bookStyle }}">
-              <i data-lucide="utensils" stroke-width="2" style="width:22px;height:22px;color:#F2B203"></i>
+              <i data-lucide="utensils" stroke-width="2" style="width:22px;height:22px;color:var(--z-accent-text)"></i>
               <strong style="font-size:14px">{{ pl.bookLbl }}</strong>
-              <span style="font-size:11px;font-weight:600;color:#8E9BAE">{{ pl.bookSub }}</span>
+              <span style="font-size:11px;font-weight:600;color:var(--z-muted)">{{ pl.bookSub }}</span>
             </button>
           </div>
           <sc-if value="{{ showMenu }}" hint-placeholder-val="{{ false }}">
-            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE;margin-top:6px">{{ menuH }}</span>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted);margin-top:6px">{{ menuH }}</span>
             <sc-if value="{{ menuEmpty }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">
-                <strong style="font-size:14px;color:#fff">{{ emptyH }}</strong>
-                <span style="font-size:12.5px;line-height:1.5;color:#CBD5E1">{{ emptyP }}</span>
+              <div style="display:flex;flex-direction:column;gap:10px;padding:16px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:14px">
+                <strong style="font-size:14px;color:var(--z-text)">{{ emptyH }}</strong>
+                <span style="font-size:12.5px;line-height:1.5;color:var(--z-text-2)">{{ emptyP }}</span>
                 <sc-if value="{{ emptyHasPhone }}" hint-placeholder-val="{{ false }}">
-                  <a href="{{ emptyTel }}" style="align-self:flex-start;display:flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:9999px;background:#F2B203;color:#0A1122;font-size:13px;font-weight:800;text-decoration:none"><i data-lucide="phone" style="width:15px;height:15px"></i>{{ emptyCall }}</a>
+                  <a href="{{ emptyTel }}" style="align-self:flex-start;display:flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);font-size:13px;font-weight:800;text-decoration:none"><i data-lucide="phone" style="width:15px;height:15px"></i>{{ emptyCall }}</a>
                 </sc-if>
               </div>
             </sc-if>
-            <sc-if value="{{ menuLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:#8E9BAE">{{ t.loading_menu }}</div></sc-if>
+            <sc-if value="{{ menuLoading }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;text-align:center;font-size:12.5px;color:var(--z-muted)">{{ t.loading_menu }}</div></sc-if>
             <sc-for list="{{ dishes }}" as="d" hint-placeholder-count="3">
-              <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px">
+              <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:14px">
                 <sc-if value="{{ d.hasImg }}" hint-placeholder-val="{{ false }}"><div style="{{ d.imgStyle }}" role="img" aria-label="{{ d.name }}"></div></sc-if>
                 <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
-                  <strong style="font-size:13.5px;color:#fff">{{ d.name }}</strong>
-                  <sc-if value="{{ d.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:#8E9BAE;line-height:1.45">{{ d.desc }}</span></sc-if>
-                  <sc-if value="{{ d.hasIngs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px"><sc-for list="{{ d.ings }}" as="ig" hint-placeholder-count="3"><span style="font-size:10.5px;font-weight:600;color:#CBD5E1;background:#18284B;border:1px solid rgba(255,255,255,.06);padding:2px 8px;border-radius:9999px">{{ ig }}</span></sc-for></div></sc-if>
-                  <sc-if value="{{ d.hasPrice }}" hint-placeholder-val="{{ true }}"><strong style="font-size:13px;color:#F2B203;margin-top:2px">{{ d.price }}</strong></sc-if>
+                  <strong style="font-size:13.5px;color:var(--z-text)">{{ d.name }}</strong>
+                  <sc-if value="{{ d.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:var(--z-muted);line-height:1.45">{{ d.desc }}</span></sc-if>
+                  <sc-if value="{{ d.hasIngs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px"><sc-for list="{{ d.ings }}" as="ig" hint-placeholder-count="3"><span style="font-size:10.5px;font-weight:600;color:var(--z-text-2);background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent);padding:2px 8px;border-radius:9999px">{{ ig }}</span></sc-for></div></sc-if>
+                  <sc-if value="{{ d.hasPrice }}" hint-placeholder-val="{{ true }}"><strong style="font-size:13px;color:var(--z-accent-text);margin-top:2px">{{ d.price }}</strong></sc-if>
                 </div>
                 <sc-if value="{{ d.showAdd }}" hint-placeholder-val="{{ true }}">
-                  <button type="button" onClick="{{ d.add }}" aria-label="Add" style="width:34px;height:34px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:16px;height:16px"></i></button>
+                  <button type="button" onClick="{{ d.add }}" aria-label="Add" style="width:34px;height:34px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:16px;height:16px"></i></button>
                 </sc-if>
                 <sc-if value="{{ d.inCart }}" hint-placeholder-val="{{ false }}">
                   <div style="display:flex;align-items:center;gap:8px">
-                    <button type="button" onClick="{{ d.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:14px;height:14px"></i></button>
-                    <strong style="font-size:13px;color:#fff;min-width:14px;text-align:center">{{ d.qty }}</strong>
-                    <button type="button" onClick="{{ d.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
+                    <button type="button" onClick="{{ d.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:14px;height:14px"></i></button>
+                    <strong style="font-size:13px;color:var(--z-text);min-width:14px;text-align:center">{{ d.qty }}</strong>
+                    <button type="button" onClick="{{ d.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:14px;height:14px"></i></button>
                   </div>
                 </sc-if>
               </div>
@@ -221,166 +239,179 @@
           </sc-if>
         </div>
         <sc-if value="{{ cartBar }}" hint-placeholder-val="{{ false }}">
-          <div style="padding:12px 18px 26px;background:#0A1122;border-top:1px solid rgba(255,255,255,.07)">
-            <button type="button" onClick="{{ openCheckout }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:14px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer"><span>{{ cartBarLbl }}</span><span>{{ cartBarTotal }}</span></button>
+          <div style="padding:12px 18px 26px;background:var(--z-bg);border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent)">
+            <button type="button" onClick="{{ openCheckout }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:14px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:14px;font-weight:800;cursor:pointer"><span>{{ cartBarLbl }}</span><span>{{ cartBarTotal }}</span></button>
           </div>
         </sc-if>
         <sc-if value="{{ checkoutOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;inset:0;z-index:2;background:#0A1122;display:flex;flex-direction:column">
+          <div style="position:absolute;inset:0;z-index:2;background:var(--z-bg);display:flex;flex-direction:column">
             <div style="display:flex;align-items:center;gap:12px;padding:50px 18px 12px">
-              <button type="button" onClick="{{ ck.back }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
-              <div style="display:flex;flex-direction:column"><strong style="font-size:17px;color:#fff">{{ ck.h }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ ck.from }}</span></div>
+              <button type="button" onClick="{{ ck.back }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
+              <div style="display:flex;flex-direction:column"><strong style="font-size:17px;color:var(--z-text)">{{ ck.h }}</strong><span style="font-size:11.5px;color:var(--z-muted)">{{ ck.from }}</span></div>
             </div>
             <div style="flex:1;overflow-y:auto;padding:6px 18px 16px;display:flex;flex-direction:column;gap:14px">
-              <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:6px 12px">
+              <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:14px;padding:6px 12px">
                 <sc-for list="{{ ck.lines }}" as="l" hint-placeholder-count="2">
-                  <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-                    <strong style="font-size:12.5px;color:#F2B203;min-width:22px">{{ l.qty }}</strong>
-                    <span style="flex:1;font-size:13px;color:#fff">{{ l.name }}</span>
-                    <button type="button" onClick="{{ l.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:13px;height:13px"></i></button>
-                    <button type="button" onClick="{{ l.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(242,178,3,.5);background:transparent;color:#F2B203;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:13px;height:13px"></i></button>
-                    <strong style="font-size:13px;color:#fff;min-width:56px;text-align:end">{{ l.price }}</strong>
+                  <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid color-mix(in srgb, var(--z-fg) 5%, transparent)">
+                    <strong style="font-size:12.5px;color:var(--z-accent-text);min-width:22px">{{ l.qty }}</strong>
+                    <span style="flex:1;font-size:13px;color:var(--z-text)">{{ l.name }}</span>
+                    <button type="button" onClick="{{ l.dec }}" aria-label="Less" style="width:28px;height:28px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="minus" style="width:13px;height:13px"></i></button>
+                    <button type="button" onClick="{{ l.inc }}" aria-label="More" style="width:28px;height:28px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="plus" style="width:13px;height:13px"></i></button>
+                    <strong style="font-size:13px;color:var(--z-text);min-width:56px;text-align:end">{{ l.price }}</strong>
                   </div>
                 </sc-for>
               </div>
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ ck.fulfilH }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ ck.fulfilH }}</span>
               <div style="display:flex;gap:8px"><sc-if value="{{ ck.canDeliver }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ ck.deliv.pick }}" style="{{ ck.deliv.style }}">{{ ck.deliv.label }}</button></sc-if><button type="button" onClick="{{ ck.pick.pick }}" style="{{ ck.pick.style }}">{{ ck.pick.label }}</button></div>
-              <sc-if value="{{ ck.pickupOnly }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:11.5px;line-height:1.5;color:#8E9BAE">{{ ck.pickupNote }}</p></sc-if>
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ ck.payH }}</span>
+              <sc-if value="{{ ck.pickupOnly }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:11.5px;line-height:1.5;color:var(--z-muted)">{{ ck.pickupNote }}</p></sc-if>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ ck.payH }}</span>
               <div style="display:flex;gap:8px"><button type="button" onClick="{{ ck.alone.pick }}" style="{{ ck.alone.style }}">{{ ck.alone.label }}</button><button type="button" onClick="{{ ck.share.pick }}" style="{{ ck.share.style }}">{{ ck.share.label }}</button></div>
-              <p style="margin:0;font-size:11.5px;line-height:1.5;color:#8E9BAE">{{ ck.splitNote }}</p>
-              <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.subLbl }}</span><span style="color:#fff">{{ ck.sub }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.feeLbl }}</span><span style="color:#fff">{{ ck.fee }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ ck.svcLbl }}</span><span style="color:#10B981;font-weight:700">{{ ck.svc }}</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:#fff;margin-top:4px"><span>{{ ck.totLbl }}</span><span style="color:#F2B203">{{ ck.tot }}</span></div>
+              <p style="margin:0;font-size:11.5px;line-height:1.5;color:var(--z-muted)">{{ ck.splitNote }}</p>
+              <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);padding-top:12px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--z-muted)"><span>{{ ck.subLbl }}</span><span style="color:var(--z-text)">{{ ck.sub }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--z-muted)"><span>{{ ck.feeLbl }}</span><span style="color:var(--z-text)">{{ ck.fee }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--z-muted)"><span>{{ ck.svcLbl }}</span><span style="color:var(--z-ok);font-weight:700">{{ ck.svc }}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:var(--z-text);margin-top:4px"><span>{{ ck.totLbl }}</span><span style="color:var(--z-accent-text)">{{ ck.tot }}</span></div>
               </div>
             </div>
-            <div style="padding:12px 18px 26px;border-top:1px solid rgba(255,255,255,.07)">
-              <button type="button" onClick="{{ ck.submit }}" style="width:100%;padding:14px;border-radius:14px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer">{{ ck.place }}</button>
+            <div style="padding:12px 18px 26px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent)">
+              <sc-if value="{{ hasCkErr }}" hint-placeholder-val="{{ false }}"><p style="margin:0 0 8px;font-size:13px;color:#EF4444;font-weight:600">{{ ckErr }}</p></sc-if>
+              <button type="button" onClick="{{ ck.submit }}" style="width:100%;padding:14px;border-radius:14px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:14px;font-weight:800;cursor:pointer">{{ ck.place }}</button>
             </div>
           </div>
         </sc-if>
         <sc-if value="{{ doneOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;inset:0;z-index:3;background:#0A1122;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;text-align:center">
-            <div style="width:64px;height:64px;border-radius:9999px;background:rgba(16,185,129,.14);border:1px solid #10B981;display:flex;align-items:center;justify-content:center"><i data-lucide="check" style="width:30px;height:30px;color:#10B981"></i></div>
-            <h2 style="margin:0;font-size:21px;font-weight:900;color:#fff">{{ dn.h }}</h2>
-            <p style="margin:0;font-size:13px;line-height:1.55;color:#8E9BAE;max-width:280px">{{ dn.p }}</p>
-            <strong style="font-size:20px;color:#F2B203">{{ dn.tot }}</strong>
-            <button type="button" onClick="{{ dn.finish }}" style="margin-top:8px;padding:12px 26px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:13.5px;font-weight:800;cursor:pointer">{{ dn.home }}</button>
+          <div style="position:absolute;inset:0;z-index:3;background:var(--z-bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:30px;text-align:center">
+            <div style="width:64px;height:64px;border-radius:9999px;background:rgba(16,185,129,.14);border:1px solid #10B981;display:flex;align-items:center;justify-content:center"><i data-lucide="check" style="width:30px;height:30px;color:var(--z-ok)"></i></div>
+            <h2 style="margin:0;font-size:21px;font-weight:900;color:var(--z-text)">{{ dn.h }}</h2>
+            <p style="margin:0;font-size:13px;line-height:1.55;color:var(--z-muted);max-width:280px">{{ dn.p }}</p>
+            <strong style="font-size:20px;color:var(--z-accent-text)">{{ dn.tot }}</strong>
+            <button type="button" onClick="{{ dn.finish }}" style="margin-top:8px;padding:12px 26px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:13.5px;font-weight:800;cursor:pointer">{{ dn.home }}</button>
           </div>
         </sc-if>
             </div>
     </sc-if>
 
-    <sc-if value="{{ groupOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;z-index:9;background:#0A1122;display:flex;flex-direction:column">
+    <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:11;background:var(--z-bg);display:flex;flex-direction:column">
         <div style="display:flex;align-items:center;gap:12px;padding:52px 18px 12px">
-          <button type="button" onClick="{{ goBack }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:#101B33;border:1px solid rgba(255,255,255,.07);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
+          <button type="button" onClick="{{ closeAcct }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);color:var(--z-text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700">‹</button>
+          <strong style="font-size:18px;color:var(--z-text)">{{ acctTitle }}</strong>
+        </div>
+        <div style="flex:1;min-height:0;padding:0 18px 18px;display:flex;flex-direction:column">
+          <dc-import name="Zal Account" lang="{{ appLang }}" theme="{{ curTheme }}" on-lang="{{ setLangCode }}" on-theme="{{ setThemeName }}" hint-size="100%,100%" style="flex:1;min-height:0"></dc-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ groupOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:9;background:var(--z-bg);display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;gap:12px;padding:52px 18px 12px">
+          <button type="button" onClick="{{ goBack }}" aria-label="Back" style="width:36px;height:36px;border-radius:9999px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);color:var(--z-text);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button>
           <strong style="font-size:16px">{{ screenTitle }}</strong>
         </div>
         <div style="flex:1;overflow-y:auto;padding:4px 18px 20px;display:flex;flex-direction:column;gap:16px">
 
           <sc-if value="{{ isGroup }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.findH }}</span>
-              <div style="display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33">
-                <i data-lucide="search" style="width:15px;height:15px;color:#8E9BAE"></i>
-                <input value="{{ friendQ }}" onChange="{{ setFriendQ }}" placeholder="{{ g.findPh }}" style="flex:1;min-width:0;background:transparent;border:0;outline:none;color:#fff;font-size:13px"></input>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ g.findH }}</span>
+              <div style="display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:10px;border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);background:var(--z-surface)">
+                <i data-lucide="search" style="width:15px;height:15px;color:var(--z-muted)"></i>
+                <input value="{{ friendQ }}" onChange="{{ setFriendQ }}" placeholder="{{ g.findPh }}" style="flex:1;min-width:0;background:transparent;border:0;outline:none;color:var(--z-text);font-size:13px"></input>
               </div>
               <sc-if value="{{ friendEmpty }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px dashed rgba(242,178,3,.4);border-radius:12px;padding:10px 12px">
-                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ friendQ }}</strong><span style="font-size:11px;color:#8E9BAE">{{ g.notFound }}</span></span>
-                  <button type="button" onClick="{{ inviteQ }}" style="padding:6px 12px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:11.5px;font-weight:800;cursor:pointer">{{ g.sendInvite }}</button>
+                <div style="display:flex;align-items:center;gap:10px;background:var(--z-surface);border:1px dashed color-mix(in srgb, var(--z-accent) 40%, transparent);border-radius:12px;padding:10px 12px">
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ friendQ }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ g.notFound }}</span></span>
+                  <button type="button" onClick="{{ inviteQ }}" style="padding:6px 12px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:11.5px;font-weight:800;cursor:pointer">{{ g.sendInvite }}</button>
                 </div>
               </sc-if>
               <sc-for list="{{ friendsList }}" as="m" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px">
-                  <span style="width:32px;height:32px;flex:0 0 32px;border-radius:9999px;background:#18284B;color:#F2B203;font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ m.ini }}</span>
-                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ m.sub }}</span></span>
+                <div style="display:flex;align-items:center;gap:10px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:10px 12px">
+                  <span style="width:32px;height:32px;flex:0 0 32px;border-radius:9999px;background:var(--z-inset);color:var(--z-accent-text);font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ m.ini }}</span>
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ m.sub }}</span></span>
                   <button type="button" onClick="{{ m.pick }}" style="{{ m.btnStyle }}">{{ m.btn }}</button>
                 </div>
               </sc-for>
-              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="link" style="width:15px;height:15px"></i>{{ g.shareLink }}</button>
+              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="link" style="width:15px;height:15px"></i>{{ g.shareLink }}</button>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.addrH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ g.addrH }}</span>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:4px">
               <sc-for list="{{ addrOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-              </div>
+            </div>
               <sc-for list="{{ orderRows }}" as="m" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:10px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 12px">
+                <div style="display:flex;align-items:center;gap:10px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:10px 12px">
                   <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
                     <strong style="font-size:13px">{{ m.name }}</strong>
-                    <span style="font-size:11px;color:#8E9BAE">{{ m.dish }}</span>
-                    <span style="font-size:11px;color:#8E9BAE">{{ m.addr }}</span>
+                    <span style="font-size:11px;color:var(--z-muted)">{{ m.dish }}</span>
+                    <span style="font-size:11px;color:var(--z-muted)">{{ m.addr }}</span>
                   </span>
                   <strong style="font-size:13px">{{ m.price }}</strong>
                 </div>
               </sc-for>
             </div>
             <sc-if value="{{ showSync }}" hint-placeholder-val="{{ false }}">
-              <div style="background:rgba(242,178,3,.08);border:1px solid rgba(242,178,3,.35);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
+              <div style="background:color-mix(in srgb, var(--z-accent) 8%, transparent);border:1px solid color-mix(in srgb, var(--z-accent) 35%, transparent);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
                 <div style="display:flex;gap:10px;align-items:flex-start">
-                  <i data-lucide="clock" style="width:17px;height:17px;color:#F2B203;flex:0 0 17px;margin-top:2px"></i>
-                  <span style="font-size:12.5px;line-height:1.55;color:#E2E8F0">{{ g.syncMsg }}</span>
+                  <i data-lucide="clock" style="width:17px;height:17px;color:var(--z-accent-text);flex:0 0 17px;margin-top:2px"></i>
+                  <span style="font-size:12.5px;line-height:1.55;color:var(--z-text-2)">{{ g.syncMsg }}</span>
                 </div>
                 <button type="button" onClick="{{ toggleSync }}" style="{{ syncBtnStyle }}">{{ syncBtn }}</button>
               </div>
             </sc-if>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.payH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ g.payH }}</span>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:4px">
               <sc-for list="{{ payOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
-              </div>
+            </div>
             </div>
           </sc-if>
 
           <sc-if value="{{ isBookPick }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.restH }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ b.restH }}</span>
               <sc-for list="{{ bookRests }}" as="o" hint-placeholder-count="3">
-                <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}"><span style="flex:1;text-align:start;display:flex;flex-direction:column"><strong style="font-size:13px">{{ o.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ o.sub }}</span></span><span style="{{ o.dot }}"></span></button>
+                <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}"><span style="flex:1;text-align:start;display:flex;flex-direction:column"><strong style="font-size:13px">{{ o.name }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ o.sub }}</span></span><span style="{{ o.dot }}"></span></button>
               </sc-for>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.dateH }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ b.dateH }}</span>
               <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bookDates }}" as="o" hint-placeholder-count="4"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ b.timeH }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ b.timeH }}</span>
               <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ bookTimes }}" as="o" hint-placeholder-count="5"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
             </div>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between">
               <span style="font-size:13px;font-weight:700">{{ b.guestsH }}</span>
               <div style="display:flex;align-items:center;gap:14px">
-                <button type="button" onClick="{{ guestsDown }}" style="width:32px;height:32px;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;font-size:16px;cursor:pointer">−</button>
+                <button type="button" onClick="{{ guestsDown }}" style="width:32px;height:32px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-fg) 15%, transparent);background:transparent;color:var(--z-text);font-size:16px;cursor:pointer">−</button>
                 <strong style="font-size:15px;min-width:16px;text-align:center">{{ guests }}</strong>
-                <button type="button" onClick="{{ guestsUp }}" style="width:32px;height:32px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:16px;font-weight:800;cursor:pointer">+</button>
+                <button type="button" onClick="{{ guestsUp }}" style="width:32px;height:32px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:16px;font-weight:800;cursor:pointer">+</button>
               </div>
             </div>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
-              <button type="button" onClick="{{ togglePre }}" style="display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;cursor:pointer;color:#fff;text-align:start">
-                <i data-lucide="utensils" style="width:18px;height:18px;color:#F2B203;flex-shrink:0"></i>
-                <span style="flex:1;display:flex;flex-direction:column;gap:2px"><strong style="font-size:13px">{{ pre.h }}</strong><span style="font-size:11px;color:#8E9BAE">{{ pre.sub }}</span></span>
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+              <button type="button" onClick="{{ togglePre }}" style="display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;cursor:pointer;color:var(--z-text);text-align:start">
+                <i data-lucide="utensils" style="width:18px;height:18px;color:var(--z-accent-text);flex-shrink:0"></i>
+                <span style="flex:1;display:flex;flex-direction:column;gap:2px"><strong style="font-size:13px">{{ pre.h }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ pre.sub }}</span></span>
                 <span style="{{ track }}"><span style="width:18px;height:18px;border-radius:9999px;background:#fff"></span></span>
               </button>
               <sc-if value="{{ preOn }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                  <sc-if value="{{ preEmpty }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#8E9BAE">{{ pre.empty }}</span></sc-if>
+                <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);padding-top:12px">
+                  <sc-if value="{{ preEmpty }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--z-muted)">{{ pre.empty }}</span></sc-if>
                   <sc-for list="{{ preDishes }}" as="d" hint-placeholder-count="3">
                     <div style="display:flex;align-items:center;gap:10px">
-                      <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:12.5px">{{ d.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ d.price }}</span></span>
-                      <button type="button" onClick="{{ d.dec }}" style="width:28px;height:28px;border-radius:9999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff;cursor:pointer">−</button>
+                      <span style="flex:1;min-width:0;display:flex;flex-direction:column"><strong style="font-size:12.5px">{{ d.name }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ d.price }}</span></span>
+                      <button type="button" onClick="{{ d.dec }}" style="width:28px;height:28px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-fg) 15%, transparent);background:transparent;color:var(--z-text);cursor:pointer">−</button>
                       <strong style="font-size:13px;min-width:14px;text-align:center">{{ d.qty }}</strong>
-                      <button type="button" onClick="{{ d.inc }}" style="width:28px;height:28px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-weight:800;cursor:pointer">+</button>
+                      <button type="button" onClick="{{ d.inc }}" style="width:28px;height:28px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-weight:800;cursor:pointer">+</button>
                     </div>
                   </sc-for>
                   <sc-if value="{{ preHasItems }}" hint-placeholder-val="{{ false }}">
-                    <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ pre.payH }}</span>
+                    <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);padding-top:12px">
+                      <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ pre.payH }}</span>
                       <div style="display:flex;gap:8px"><button type="button" onClick="{{ prePayRest.pick }}" style="{{ prePayRest.style }}">{{ prePayRest.label }}</button><button type="button" onClick="{{ prePayNow.pick }}" style="{{ prePayNow.style }}">{{ prePayNow.label }}</button></div>
-                      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8E9BAE">{{ pre.totLbl }}</span><strong style="color:#F2B203">{{ preTotal }}</strong></div>
+                      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--z-muted)">{{ pre.totLbl }}</span><strong style="color:var(--z-accent-text)">{{ preTotal }}</strong></div>
                     </div>
                   </sc-if>
                 </div>
@@ -389,51 +420,51 @@
           </sc-if>
 
           <sc-if value="{{ isBook }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:8px;color:#10B981;font-size:12.5px;font-weight:700"><i data-lucide="check-circle-2" style="width:17px;height:17px"></i>{{ b.confirmed }}<sc-if value="{{ bookCodeOn }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;color:#F2B203;letter-spacing:.06em">{{ bookCodeLbl }}</span></sc-if></div>
+            <div style="display:flex;align-items:center;gap:8px;color:var(--z-ok);font-size:12.5px;font-weight:700"><i data-lucide="check-circle-2" style="width:17px;height:17px"></i>{{ b.confirmed }}<sc-if value="{{ bookCodeOn }}" hint-placeholder-val="{{ false }}"><span style="margin-inline-start:auto;color:var(--z-accent-text);letter-spacing:.06em">{{ bookCodeLbl }}</span></sc-if></div>
             <sc-if value="{{ bookErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;font-weight:700;color:#FCA5A5;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:10px 12px">{{ bookErrLbl }}</div></sc-if>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px">
-              <div style="display:flex;flex-direction:column"><strong style="font-size:14px">{{ bookRest.name }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ bookRest.addr }}</span></div>
-              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-direction:column"><strong style="font-size:14px">{{ bookRest.name }}</strong><span style="font-size:11.5px;color:var(--z-muted)">{{ bookRest.addr }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);padding-top:12px">
                 <sc-for list="{{ bookFacts }}" as="x" hint-placeholder-count="3">
-                  <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:10.5px;color:#8E9BAE">{{ x.k }}</span><strong style="font-size:13.5px">{{ x.v }}</strong></div>
+                  <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:10.5px;color:var(--z-muted)">{{ x.k }}</span><strong style="font-size:13.5px">{{ x.v }}</strong></div>
                 </sc-for>
               </div>
               <sc-if value="{{ preHasItems }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px">
-                  <span style="font-size:11px;font-weight:700;color:#8E9BAE">{{ pre.summaryH }}</span>
-                  <sc-for list="{{ preLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>{{ l.t }}</span><span style="color:#8E9BAE">{{ l.p }}</span></div></sc-for>
-                  <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:800"><span>{{ preTotal }}</span><span style="color:#10B981">{{ prePayNote }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);padding-top:12px">
+                  <span style="font-size:11px;font-weight:700;color:var(--z-muted)">{{ pre.summaryH }}</span>
+                  <sc-for list="{{ preLines }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>{{ l.t }}</span><span style="color:var(--z-muted)">{{ l.p }}</span></div></sc-for>
+                  <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:800"><span>{{ preTotal }}</span><span style="color:var(--z-ok)">{{ prePayNote }}</span></div>
                 </div>
               </sc-if>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.shareBookH }}</span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ g.shareBookH }}</span>
               <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
                 <sc-for list="{{ shareChannels }}" as="c" hint-placeholder-count="3">
-                  <button type="button" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;color:#fff;cursor:pointer;font-size:11.5px;font-weight:700"><i data-lucide="{{ c.icon }}" style="width:18px;height:18px;color:#F2B203"></i>{{ c.label }}</button>
+                  <button type="button" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;color:var(--z-text);cursor:pointer;font-size:11.5px;font-weight:700"><i data-lucide="{{ c.icon }}" style="width:18px;height:18px;color:var(--z-accent-text)"></i>{{ c.label }}</button>
                 </sc-for>
               </div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ g.previewH }}</span>
-              <p style="margin:0;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.6;color:#E2E8F0">{{ bookPreview }}</p>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ g.previewH }}</span>
+              <p style="margin:0;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.6;color:var(--z-text-2)">{{ bookPreview }}</p>
             </div>
           </sc-if>
 
           <sc-if value="{{ isProfileMenu }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px">
-              <span style="width:48px;height:48px;border-radius:9999px;background:#18284B;color:#F2B203;font-weight:800;display:flex;align-items:center;justify-content:center">KB</span>
-              <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:15px">Karim Benali</strong><span style="font-size:11.5px;color:#8E9BAE">karim@mail.be · +32 470 12 34 56</span></span>
+            <div style="display:flex;align-items:center;gap:12px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:14px">
+              <span style="width:48px;height:48px;border-radius:9999px;background:var(--z-inset);color:var(--z-accent-text);font-weight:800;display:flex;align-items:center;justify-content:center">KB</span>
+              <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:15px">Karim Benali</strong><span style="font-size:11.5px;color:var(--z-muted)">karim@mail.be · +32 470 12 34 56</span></span>
             </div>
             <sc-for list="{{ profileGroups }}" as="grp" hint-placeholder-count="3">
               <div style="display:flex;flex-direction:column;gap:6px">
-                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ grp.title }}</span>
-                <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden">
+                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ grp.title }}</span>
+                <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;overflow:hidden">
                   <sc-for list="{{ grp.items }}" as="it" hint-placeholder-count="2">
-                    <button type="button" onClick="{{ it.open }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.05);color:#fff;cursor:pointer;text-align:start">
-                      <i data-lucide="{{ it.icon }}" style="width:18px;height:18px;color:#F2B203"></i>
-                      <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ it.label }}</strong><span style="font-size:11px;color:#8E9BAE">{{ it.sub }}</span></span>
-                      <i data-lucide="chevron-right" style="width:15px;height:15px;color:#8E9BAE"></i>
+                    <button type="button" onClick="{{ it.open }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;background:transparent;border:0;border-bottom:1px solid color-mix(in srgb, var(--z-fg) 5%, transparent);color:var(--z-text);cursor:pointer;text-align:start">
+                      <i data-lucide="{{ it.icon }}" style="width:18px;height:18px;color:var(--z-accent-text)"></i>
+                      <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ it.label }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ it.sub }}</span></span>
+                      <i data-lucide="chevron-right" style="width:15px;height:15px;color:var(--z-muted)"></i>
                     </button>
                   </sc-for>
                 </div>
@@ -443,23 +474,23 @@
 
           <sc-if value="{{ isInfo }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ infoFields }}" as="x" hint-placeholder-count="4">
-              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ x.label }}</span><input value="{{ x.value }}" readOnly="{{ true }}" style="height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ x.label }}</span><input value="{{ x.value }}" readOnly="{{ true }}" style="height:42px;border-radius:10px;border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);background:var(--z-surface);color:var(--z-text);padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input></label>
             </sc-for>
             <div style="display:flex;align-items:center;gap:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.35);border-radius:12px;padding:12px">
-              <i data-lucide="shield-check" style="width:17px;height:17px;color:#10B981"></i>
-              <span style="font-size:12.5px;line-height:1.5;color:#E2E8F0">{{ p.otp }}</span>
+              <i data-lucide="shield-check" style="width:17px;height:17px;color:var(--z-ok)"></i>
+              <span style="font-size:12.5px;line-height:1.5;color:var(--z-text-2)">{{ p.otp }}</span>
             </div>
-            <p style="margin:0;font-size:11.5px;line-height:1.55;color:#8E9BAE">{{ p.guest }}</p>
+            <p style="margin:0;font-size:11.5px;line-height:1.55;color:var(--z-muted)">{{ p.guest }}</p>
           </sc-if>
 
           <sc-if value="{{ isDiet }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;font-size:12.5px;line-height:1.55;color:#8E9BAE">{{ p.dietP }}</p>
+            <p style="margin:0;font-size:12.5px;line-height:1.55;color:var(--z-muted)">{{ p.dietP }}</p>
             <sc-for list="{{ dietGroups }}" as="g" hint-placeholder-count="3">
               <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
                 <div style="display:flex;align-items:center;gap:8px">
-                  <i data-lucide="{{ g.icon }}" stroke-width="2" style="width:16px;height:16px;color:#F2B203"></i>
-                  <strong style="font-size:13.5px;color:#fff">{{ g.title }}</strong>
-                  <span style="font-size:11px;color:#8E9BAE">{{ g.opt }}</span>
+                  <i data-lucide="{{ g.icon }}" stroke-width="2" style="width:16px;height:16px;color:var(--z-accent-text)"></i>
+                  <strong style="font-size:13.5px;color:var(--z-text)">{{ g.title }}</strong>
+                  <span style="font-size:11px;color:var(--z-muted)">{{ g.opt }}</span>
                 </div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px">
                   <sc-for list="{{ g.items }}" as="o" hint-placeholder-count="6">
@@ -472,76 +503,76 @@
 
           <sc-if value="{{ isAddr }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ addrList }}" as="a" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px">
-                <i data-lucide="{{ a.icon }}" style="width:18px;height:18px;color:#F2B203"></i>
-                <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ a.label }}</strong><span style="font-size:11.5px;color:#8E9BAE">{{ a.addr }}</span></span>
+              <div style="display:flex;align-items:center;gap:12px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px 14px">
+                <i data-lucide="{{ a.icon }}" style="width:18px;height:18px;color:var(--z-accent-text)"></i>
+                <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13.5px">{{ a.label }}</strong><span style="font-size:11.5px;color:var(--z-muted)">{{ a.addr }}</span></span>
               </div>
             </sc-for>
-            <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="plus" style="width:15px;height:15px"></i>{{ p.addAddr }}</button>
+            <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="plus" style="width:15px;height:15px"></i>{{ p.addAddr }}</button>
           </sc-if>
 
           <sc-if value="{{ isGift }}" hint-placeholder-val="{{ false }}">
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12.5px;color:#8E9BAE">{{ p.credit }}</span><strong style="font-size:22px;color:#F2B203">€7.50</strong></div>
-            <div style="display:flex;gap:8px"><input placeholder="{{ p.codePh }}" style="height:42px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input><button type="button" style="padding:0 16px;border-radius:10px;border:0;background:#F2B203;color:#0A1122;font-size:13px;font-weight:800;cursor:pointer">{{ p.redeem }}</button></div>
-            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ p.activeH }}</span>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;flex-direction:column"><strong style="font-size:13px">WELCOME5</strong><span style="font-size:11px;color:#8E9BAE">{{ p.v1 }}</span></span><strong style="color:#10B981">€5.00</strong></div>
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12.5px;color:var(--z-muted)">{{ p.credit }}</span><strong style="font-size:22px;color:var(--z-accent-text)">€7.50</strong></div>
+            <div style="display:flex;gap:8px"><input placeholder="{{ p.codePh }}" style="height:42px;border-radius:10px;border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);background:var(--z-surface);color:var(--z-text);padding:0 12px;font-size:13px;outline:none;width:100%;box-sizing:border-box"></input><button type="button" style="padding:0 16px;border-radius:10px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:13px;font-weight:800;cursor:pointer">{{ p.redeem }}</button></div>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ p.activeH }}</span>
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;flex-direction:column"><strong style="font-size:13px">WELCOME5</strong><span style="font-size:11px;color:var(--z-muted)">{{ p.v1 }}</span></span><strong style="color:var(--z-ok)">€5.00</strong></div>
           </sc-if>
 
           <sc-if value="{{ isWallet }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;font-size:12.5px;line-height:1.55;color:#E2E8F0">{{ wv.intro }}</p>
-            <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between">
-              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11.5px;color:#8E9BAE">{{ wv.balanceLbl }}</span><strong style="font-size:24px;color:#F2B203">{{ wv.balance }}</strong></div>
-              <button type="button" style="padding:9px 16px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:12.5px;font-weight:800;cursor:pointer">{{ wv.topUp }}</button>
+            <p style="margin:0;font-size:12.5px;line-height:1.55;color:var(--z-text-2)">{{ wv.intro }}</p>
+            <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11.5px;color:var(--z-muted)">{{ wv.balanceLbl }}</span><strong style="font-size:24px;color:var(--z-accent-text)">{{ wv.balance }}</strong></div>
+              <button type="button" style="padding:9px 16px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:12.5px;font-weight:800;cursor:pointer">{{ wv.topUp }}</button>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.membersH }}</span>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:4px">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ wv.membersH }}</span>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:4px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:4px">
                 <sc-for list="{{ periodOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
               </div>
               <sc-for list="{{ walletMembers }}" as="m" hint-placeholder-count="3">
-                <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px">
+                <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px">
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-                    <span style="display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:#8E9BAE">{{ m.phone }}</span></span>
-                    <span style="font-size:12px;font-weight:700;color:#fff">{{ m.limit }}</span>
+                    <span style="display:flex;flex-direction:column"><strong style="font-size:13px">{{ m.name }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ m.phone }}</span></span>
+                    <span style="font-size:12px;font-weight:700;color:var(--z-text)">{{ m.limit }}</span>
                   </div>
-                  <div style="height:6px;border-radius:9999px;background:#18284B;overflow:hidden"><div style="{{ m.bar }}"></div></div>
-                  <span style="font-size:11px;color:#8E9BAE">{{ m.spent }}</span>
+                  <div style="height:6px;border-radius:9999px;background:var(--z-inset);overflow:hidden"><div style="{{ m.bar }}"></div></div>
+                  <span style="font-size:11px;color:var(--z-muted)">{{ m.spent }}</span>
                 </div>
               </sc-for>
-              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed rgba(242,178,3,.5);background:transparent;color:#F2B203;font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="user-plus" style="width:15px;height:15px"></i>{{ wv.create }}</button>
+              <button type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:9999px;border:1px dashed color-mix(in srgb, var(--z-accent) 50%, transparent);background:transparent;color:var(--z-accent-text);font-size:12.5px;font-weight:700;cursor:pointer"><i data-lucide="user-plus" style="width:15px;height:15px"></i>{{ wv.create }}</button>
             </div>
             <sc-if value="{{ isCorp }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;flex-direction:column;gap:6px">
-                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.rulesH }}</span>
+                <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ wv.rulesH }}</span>
                 <sc-for list="{{ corpRules }}" as="r" hint-placeholder-count="4">
-                  <div style="display:flex;align-items:center;gap:12px;background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:11px 13px">
-                    <i data-lucide="{{ r.icon }}" style="width:17px;height:17px;color:#F2B203"></i>
-                    <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ r.label }}</strong><span style="font-size:11px;color:#8E9BAE">{{ r.sub }}</span></span>
+                  <div style="display:flex;align-items:center;gap:12px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:11px 13px">
+                    <i data-lucide="{{ r.icon }}" style="width:17px;height:17px;color:var(--z-accent-text)"></i>
+                    <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ r.label }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ r.sub }}</span></span>
                   </div>
                 </sc-for>
               </div>
             </sc-if>
-            <p style="margin:0;font-size:11.5px;line-height:1.55;color:#8E9BAE">{{ wv.note }}</p>
+            <p style="margin:0;font-size:11.5px;line-height:1.55;color:var(--z-muted)">{{ wv.note }}</p>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8E9BAE">{{ wv.childH }}</span>
-              <div style="background:#101B33;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:#8E9BAE">{{ wv.orderLbl }}</span><strong>{{ wv.orderAmt }}</strong></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid #F2B203">
-                  <i data-lucide="wallet" style="width:17px;height:17px;color:#F2B203"></i>
-                  <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ wv.walletName }}</strong><span style="font-size:11px;color:#8E9BAE">{{ wv.remain }}</span></span>
-                  <span style="width:14px;height:14px;border-radius:9999px;background:#F2B203"></span>
+              <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--z-muted)">{{ wv.childH }}</span>
+              <div style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--z-muted)">{{ wv.orderLbl }}</span><strong>{{ wv.orderAmt }}</strong></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid var(--z-accent)">
+                  <i data-lucide="wallet" style="width:17px;height:17px;color:var(--z-accent-text)"></i>
+                  <span style="flex:1;display:flex;flex-direction:column"><strong style="font-size:13px">{{ wv.walletName }}</strong><span style="font-size:11px;color:var(--z-muted)">{{ wv.remain }}</span></span>
+                  <span style="width:14px;height:14px;border-radius:9999px;background:var(--z-accent)"></span>
                 </div>
-                <span style="font-size:11.5px;color:#10B981;font-weight:700">{{ wv.ok }}</span>
+                <span style="font-size:11.5px;color:var(--z-ok);font-weight:700">{{ wv.ok }}</span>
               </div>
             </div>
           </sc-if>
         </div>
         <sc-if value="{{ showCta }}" hint-placeholder-val="{{ true }}">
-        <div style="padding:14px 18px 26px;border-top:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:8px">
+        <div style="padding:14px 18px 26px;border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);display:flex;flex-direction:column;gap:8px">
           <sc-if value="{{ isGroup }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#8E9BAE"><span>{{ g.total }}</span><strong style="color:#fff">{{ groupTotal }}</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--z-muted)"><span>{{ g.total }}</span><strong style="color:var(--z-text)">{{ groupTotal }}</strong></div>
           </sc-if>
-          <button type="button" style="width:100%;padding:13px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;font-size:14px;font-weight:800;cursor:pointer" onClick="{{ onCta }}">{{ groupCta }}</button>
+          <button type="button" style="width:100%;padding:13px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);font-size:14px;font-weight:800;cursor:pointer" onClick="{{ onCta }}">{{ groupCta }}</button>
         </div>
         </sc-if>
       </div>
@@ -549,41 +580,51 @@
 
     <sc-if value="{{ placeOpen }}" hint-placeholder-val="{{ false }}">
     <button type="button" onClick="{{ toggleZalo }}" aria-label="Zal AI" style="position:absolute;bottom:96px;inset-inline-end:14px;z-index:10;display:flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:0;animation:danoFloat 3s ease-in-out infinite">
-      <span style="background:#101B33;border:1px solid rgba(242,178,3,.35);color:#fff;font-size:12px;font-weight:700;padding:6px 11px;border-radius:9999px;white-space:nowrap">{{ danoHint }}</span>
-      <span style="position:relative;width:52px;height:52px;border-radius:9999px;background:#F2B203;display:flex;align-items:center;justify-content:center;animation:danoPulse 2.2s ease-out infinite">
+      <span style="background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-accent) 35%, transparent);color:var(--z-text);font-size:12px;font-weight:700;padding:6px 11px;border-radius:9999px;white-space:nowrap">{{ danoHint }}</span>
+      <span style="position:relative;width:52px;height:52px;border-radius:9999px;background:var(--z-accent);display:flex;align-items:center;justify-content:center;animation:danoPulse 2.2s ease-out infinite">
         <span style="display:flex;gap:3px;margin-top:2px">
-          <span style="width:16px;height:16px;border-radius:9999px;background:#0A1122;display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:#F2B203;animation:danoBlink 4s infinite"></span></span>
-          <span style="width:16px;height:16px;border-radius:9999px;background:#0A1122;display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:#F2B203;animation:danoBlink 4s infinite"></span></span>
+          <span style="width:16px;height:16px;border-radius:9999px;background:var(--z-bg);display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:var(--z-accent);animation:danoBlink 4s infinite"></span></span>
+          <span style="width:16px;height:16px;border-radius:9999px;background:var(--z-bg);display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:9999px;background:var(--z-accent);animation:danoBlink 4s infinite"></span></span>
         </span>
-        <span style="position:absolute;bottom:10px;left:50%;margin-left:-4px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid #0A1122"></span>
-        <span style="position:absolute;top:1px;inset-inline-end:1px;width:12px;height:12px;border-radius:9999px;background:#10B981;border:2px solid #0A1122;animation:danoBreath 3s ease-in-out infinite"></span>
+        <span style="position:absolute;bottom:10px;left:50%;margin-left:-4px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid var(--z-bg)"></span>
+        <span style="position:absolute;top:1px;inset-inline-end:1px;width:12px;height:12px;border-radius:9999px;background:#10B981;border:2px solid var(--z-bg);animation:danoBreath 3s ease-in-out infinite"></span>
       </span>
     </button>
     </sc-if>
     <sc-if value="{{ danoOpen }}" hint-placeholder-val="{{ false }}">
       <div style="{{ danoPanelStyle }}">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#101B33;border-bottom:1px solid rgba(255,255,255,.07)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--z-surface);border-bottom:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent)">
           <div style="display:flex;flex-direction:column">
             <strong style="font-size:14px">{{ danoTitle }}</strong>
-            <span style="font-size:11px;color:#10B981">{{ danoSub }}</span>
+            <span style="font-size:11px;color:var(--z-ok)">{{ danoSub }}</span>
           </div>
-          <button type="button" onClick="{{ toggleZalo }}" aria-label="Close" style="background:none;border:0;color:#8E9BAE;cursor:pointer;font-size:18px;line-height:1">×</button>
+          <button type="button" onClick="{{ toggleZalo }}" aria-label="Close" style="background:none;border:0;color:var(--z-muted);cursor:pointer;font-size:18px;line-height:1">×</button>
         </div>
-        <div style="padding:10px 14px 0;font-size:11.5px;font-weight:700;color:#F2B203">{{ danoTag }}</div>
-        <p id="zalo-response-msg" style="margin:0;padding:10px 14px 14px;font-size:13px;line-height:1.55;color:#E2E8F0">{{ danoMsg }}</p>
+        <div style="padding:10px 14px 0;font-size:11.5px;font-weight:700;color:var(--z-accent-text)">{{ danoTag }}</div>
+        <p style="margin:0;padding:10px 14px 14px;font-size:13px;line-height:1.55;color:var(--z-text-2)">{{ danoMsg }}</p>
+        <div id="zal-ai-log" style="display:flex;flex-direction:column;gap:8px;padding:0 14px;max-height:300px;overflow-y:auto">
+          <sc-for list="{{ aiLog }}" as="m" hint-placeholder-count="0">
+            <div dir="auto" style="{{ m.style }}">{{ m.text }}</div>
+          </sc-for>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ aiPlaces }}" as="r" hint-placeholder-count="0">
+              <button type="button" onClick="{{ r.open }}" style="font:inherit;font-size:12px;font-weight:700;padding:6px 12px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);cursor:pointer">{{ r.label }}</button>
+            </sc-for>
+          </div>
+        </div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px">
           <sc-for list="{{ danoPrompts }}" as="q" hint-placeholder-count="3">
-            <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);color:#8E9BAE">{{ q }}</span>
+            <button type="button" onClick="{{ q.pick }}" style="font:inherit;font-size:11px;font-weight:700;padding:5px 10px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);background:transparent;color:var(--z-muted);cursor:pointer">{{ q.label }}</button>
           </sc-for>
         </div>
         <div style="display:flex;gap:8px;padding:0 14px 14px">
-          <input type="text" id="zalo-query-input" value="{{ query }}" onChange="{{ setQuery }}" placeholder="{{ danoInputPh }}" style="flex:1;min-width:0;height:42px;padding:0 14px;border-radius:9999px;border:1px solid rgba(255,255,255,.1);background:#101B33;color:#fff;font-size:13.5px;outline:none">
-          <button type="button" onClick="sendZalAIQuery()" aria-label="Send" style="width:42px;height:42px;flex:0 0 42px;border-radius:9999px;border:0;background:#F2B203;color:#0A1122;cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="send" style="width:16px;height:16px"></i></button>
+          <input type="text" dir="auto" value="{{ aiDraft }}" onChange="{{ setAiDraft }}" onKeyDown="{{ aiKey }}" placeholder="{{ danoInputPh }}" style="flex:1;min-width:0;height:42px;padding:0 14px;border-radius:9999px;border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);background:var(--z-surface);color:var(--z-text);font-size:13.5px;outline:none">
+          <button type="button" onClick="{{ aiSend }}" aria-label="Send" style="width:42px;height:42px;flex:0 0 42px;border-radius:9999px;border:0;background:var(--z-accent);color:var(--z-on-accent);cursor:pointer;display:flex;align-items:center;justify-content:center"><i data-lucide="send" style="width:16px;height:16px"></i></button>
         </div>
       </div>
     </sc-if>
 
-    <div style="position:absolute;bottom:0;inset-inline:0;background:rgba(10,17,34,.97);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-around;padding:10px 8px 18px;backdrop-filter:blur(14px)">
+    <div style="position:absolute;bottom:0;inset-inline:0;background:color-mix(in srgb, var(--z-bg) 97%, transparent);border-top:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);display:flex;align-items:center;justify-content:space-around;padding:10px 8px 18px;backdrop-filter:blur(14px)">
       <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="5">
         <button type="button" onClick="{{ tb.pick }}" style="{{ tb.style }}">
           <i data-lucide="{{ tb.icon }}" style="width:19px;height:19px"></i>
@@ -594,39 +635,7 @@
   </div>
 </div>
 </x-dc>
-<script>
-async function sendZalAIQuery() {
-    const inputEl = document.getElementById('zalo-query-input');
-    const msgEl = document.getElementById('zalo-response-msg');
-    if (!inputEl || !inputEl.value.trim()) return;
-    
-    const queryText = inputEl.value.trim();
-    msgEl.innerText = "جاري البحث في المنيوهات الحقيقية...";
-
-    try {
-        const response = await fetch('https://lhvnhmkhnwxwadpqabsd.supabase.co/functions/v1/bright-worker', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: queryText })
-        });
-
-        const data = await response.json();
-        if (data && data.response) {
-            msgEl.innerText = data.response;
-        } else if (data && data.message) {
-            msgEl.innerText = data.message;
-        } else {
-            msgEl.innerText = "عذراً، لم أتمكن من العثور على طلبك بدقة في المطاعم الحقيقية.";
-        }
-    } catch (err) {
-        console.error("Zal AI Error:", err);
-        msgEl.innerText = "حدث خطأ في الاتصال بخدمة الذكاء الاصطناعي.";
-    }
-}
-</script>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:880}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:880},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Morik Ink&quot;,&quot;Navy Night&quot;,&quot;Stone Day&quot;],&quot;default&quot;:&quot;Stone Day&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Colors&quot;}}">
 const T = {
   ar: {
     prices:["أقل من 10€","10–20€","20–35€","+35€"],
@@ -664,6 +673,7 @@ const T = {
   }
 };
 
+// Live data only: MENUS[restaurantId] = loaded menu rows, CACHE[restaurantId] = card row.
 let MENUS = {};
 const CACHE = {};
 const CHIP_KEYS = ["all","local","healthy","booking","vegetarian","halal","free"];
@@ -731,11 +741,11 @@ class Component extends DCLogic {
           it("life-buoy","مركز المساعدة","Help centre","الدعم والأسئلة","Support & FAQ", ext) ]}
       ],
       p: ar ? { otp:"رقم الهاتف موثّق برمز SMS لمرة واحدة.", guest:"يمكن تصفح زال دون حساب. يُطلب تسجيل الدخول عند إتمام الطلب أو حفظ عنوان.", dietP:"نعلّم لك الأطباق المناسبة، وننبهك عند وجود مكوّن تتحسس منه.", addAddr:"إضافة عنوان", credit:"رصيدك", codePh:"أدخل كود البطاقة أو القسيمة", redeem:"تفعيل", activeH:"القسائم الفعّالة", v1:"قسيمة ترحيب · تنتهي 31/12" }
-            : { otp:"Phone verified with a one-time SMS code.", guest:"You can browse Zal without an account. Sign-in is needed to check out or save an address.", dietP:"We mark dishes that suit you and warn you when a dish has something you avoid.", addAddr:"Add address", credit:"Your credit", codePh:"Enter gift card or voucher code", redeem:"Redeem", activeH:"Active vouchers", v1:"Welcome voucher · expires 31/12" },
+             : { otp:"Phone verified with a one-time SMS code.", guest:"You can browse Zal without an account. Sign-in is needed to check out or save an address.", dietP:"We mark dishes that suit you and warn you when a dish has something you avoid.", addAddr:"Add address", credit:"Your credit", codePh:"Enter gift card or voucher code", redeem:"Redeem", activeH:"Active vouchers", v1:"Welcome voucher · expires 31/12" },
       infoFields: [[ar?"الاسم الأول":"First name","Karim"],[ar?"اسم العائلة":"Last name","Benali"],[ar?"الإيميل":"Email","karim@mail.be"],[ar?"الهاتف":"Phone","+32 470 12 34 56"]].map(([label, value]) => ({ label, value })),
       dietGroups: dietGroups.map(([icon, title, opt, items]) => ({ icon, title, opt, items: items.map(([k, a, e]) => { const on = s.diet.includes(k); return { label: ar ? a : e,
         pick: () => this.setState({ diet: on ? s.diet.filter(x => x !== k) : [...s.diet, k] }),
-        style: "display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9999px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid " + (on ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.1);background:#101B33;color:#E2E8F0") }; }) })),
+        style: "display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9999px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid " + (on ? "var(--z-accent);background:var(--z-accent);color:var(--z-on-accent)" : "color-mix(in srgb, var(--z-fg) 10%, transparent);background:var(--z-surface);color:var(--z-text-2)") }; }) })),
       addrList: [["home", ar?"المنزل":"Home","Rue Royale 124, 1000 Bruxelles"],["briefcase", ar?"العمل":"Work","Avenue Louise 54, 1050 Ixelles"],["users", ar?"بيت سلمى":"Salma's place","Chaussée d'Ixelles 40, 1050"]].map(([icon,label,addr]) => ({ icon, label, addr }))
     };
   }
@@ -753,7 +763,7 @@ class Component extends DCLogic {
   placeVals(s, t, lang) {
     const p = CACHE[s.place], ar = lang === "ar";
     if (!p) return { placeOpen: false, pl: {}, closePlace: () => {} };
-    const c = this.card(p, t, lang), canBook = true;
+    const c = this.card(p, t, lang), canBook = !!p.booking;
     const badges = [...c.tags, p.michelin != null ? ("Michelin" + (p.michelin ? " " + p.michelin : "")) : "", p.gaultMillau != null ? ("Gault&Millau" + (p.gaultMillau ? " " + p.gaultMillau : "")) : ""].filter(Boolean);
     const web = (p.website || "").trim();
     return {
@@ -764,14 +774,14 @@ class Component extends DCLogic {
         badges, delivLine: c.delivLine, hasDeliv: c.hasDeliv,
         address: p.address, hasAddress: !!p.address, phone: p.phone, hasPhone: !!p.phone, tel: "tel:" + (p.phone || "").replace(/[^\d+]/g, ""),
         web: web.replace(/^https?:\/\//, "").replace(/\/$/, ""), webHref: /^https?:/.test(web) ? web : "https://" + web, hasWeb: !!web,
-        imgStyle: p.image ? 'position:absolute;inset:0;background:#18284B url("' + p.image + '") center/cover no-repeat' : "position:absolute;inset:0;background:#18284B",
+        imgStyle: p.image ? 'position:absolute;inset:0;background:var(--z-inset) url("' + p.image + '") center/cover no-repeat' : "position:absolute;inset:0;background:var(--z-inset)",
         chooseH: ar ? "ماذا تريد؟" : "What would you like?",
         orderPick: () => this.setState({ placeMenu: true }),
-        orderStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;cursor:pointer;text-align:start;border:1px solid #F2B203;" + (s.placeMenu ? "background:#F2B203;color:#0A1122" : "background:#101B33;color:#fff"),
+        orderStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;cursor:pointer;text-align:start;border:1px solid var(--z-accent);" + (s.placeMenu ? "background:var(--z-accent);color:var(--z-on-accent)" : "background:var(--z-surface);color:var(--z-text)"),
         orderLbl: ar ? "اطلب" : "Order", orderSub: p.dishCount > 0 ? (p.delivery ? (ar ? "استلام أو توصيل" : "Pickup or delivery") : (ar ? "استلام من المطعم" : "Pickup at the restaurant")) : (ar ? "القائمة قريباً" : "Menu coming soon"),
         bookLbl: ar ? "احجز طاولة" : "Book a table",
         bookSub: canBook ? (ar ? "اختر اليوم والساعة" : "Pick a day and time") : (ar ? "الحجز غير متاح هنا" : "Not available here"),
-        bookStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;border:1px solid rgba(242,178,3,.45);background:#101B33;color:#fff;text-align:start;" + (canBook ? "cursor:pointer" : "opacity:.45;cursor:not-allowed"),
+        bookStyle: "display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 14px;border-radius:14px;border:1px solid color-mix(in srgb, var(--z-accent) 45%, transparent);background:var(--z-surface);color:var(--z-text);text-align:start;" + (canBook ? "cursor:pointer" : "opacity:.45;cursor:not-allowed"),
         book: () => { if (canBook) this.setState({ place: 0, group: true, gmode: 1, bookStep: 0, bookPlace: p.id }); } }
     };
   }
@@ -781,7 +791,7 @@ class Component extends DCLogic {
     const lines = here ? Object.entries(s.cart).map(([i, q]) => ({ d: menu[i], i: +i, q })).filter(l => l.d) : [];
     const sub = lines.reduce((a, l) => a + l.d[4] * l.q, 0), fee = fu === 0 && !p.freeDelivery ? (p.deliveryFee || 0) : 0, total = sub + fee;
     const count = lines.reduce((a, l) => a + l.q, 0);
-    const seg = (on) => "flex:1;padding:10px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;border:1px solid " + (on ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.08);background:#101B33;color:#E2E8F0");
+    const seg = (on) => "flex:1;padding:10px;border-radius:10px;font-size:12.5px;font-weight:800;cursor:pointer;border:1px solid " + (on ? "var(--z-accent);background:var(--z-accent);color:var(--z-on-accent)" : "color-mix(in srgb, var(--z-fg) 8%, transparent);background:var(--z-surface);color:var(--z-text-2)");
     return {
       showMenu: s.placeMenu,
       menuH: ar ? "القائمة" : "Menu",
@@ -795,13 +805,14 @@ class Component extends DCLogic {
         const q = here ? (s.cart[i] || 0) : 0, priced = d[4] != null, ings = d[6] || [];
         return { name: ar ? d[1] : d[0], desc: ar ? d[3] : d[2], hasDesc: !!(ar ? d[3] : d[2]), price: priced ? eur(d[4]) : "", hasPrice: priced,
           ings, hasIngs: ings.length > 0, hasImg: !!d[7],
-          imgStyle: 'width:64px;height:64px;flex:0 0 64px;border-radius:10px;background:#18284B url("' + (d[7] || "") + '") center/cover no-repeat',
+          imgStyle: 'width:64px;height:64px;flex:0 0 64px;border-radius:10px;background:var(--z-inset) url("' + (d[7] || "") + '") center/cover no-repeat',
           qty: q, inCart: q > 0, notInCart: q === 0, showAdd: q === 0 && priced,
           add: () => this.addDish(p.id, i), inc: () => this.addDish(p.id, i), dec: () => this.addDish(p.id, i, -1) };
       }),
       cartBar: here && count > 0 && s.checkout === 0,
       cartBarLbl: (ar ? "عرض السلة · " : "View cart · ") + count, cartBarTotal: eur(sub),
-      openCheckout: () => { if (window.ZalTeam && !window.ZalTeam.getUser()) return window.ZalTeam.open("account"); this.setState({ checkout: 1 }); },
+      openCheckout: () => this.setState({ checkout: 1, ckErr: "" }),
+      hasCkErr: !!s.ckErr, ckErr: s.ckErr || "",
       checkoutOpen: s.checkout === 1, doneOpen: s.checkout === 2,
       ck: {
         h: ar ? "مراجعة الطلب" : "Review order", from: (ar ? "من " : "From ") + (ar ? p.name.ar : p.name.en),
@@ -821,7 +832,10 @@ class Component extends DCLogic {
         totLbl: ar ? "الإجمالي" : "Total", tot: eur(total),
         place: (ar ? "تأكيد الطلب · " : "Place order · ") + eur(total),
         back: () => this.setState({ checkout: 0 }),
-        submit: () => { this.syncOrder(p, lines).then(ok => { if (ok) this.setState({ checkout: 2, orderTotal: eur(total) }); }); }
+        submit: () => { if (this.busyOrder) return; this.busyOrder = true; this.setState({ ckErr: "" });
+          this.syncOrder(p, lines).then(() => this.setState({ checkout: 2, orderTotal: eur(total) }))
+            .catch(e => e.code === "signin" ? this.setState({ acctOpen: true, ckErr: "" }) : this.setState({ ckErr: e.message }))
+            .finally(() => { this.busyOrder = false; }); }
       },
       dn: {
         h: ar ? "تم إرسال طلبك" : "Order sent",
@@ -836,15 +850,15 @@ class Component extends DCLogic {
     const rests = bp ? [{ name: ar ? bp.name.ar : bp.name.en, addr: bp.address || "Brussels", sub: [bp.cuisineName, bp.rating != null ? "★ " + bp.rating.toFixed(1) : ""].filter(Boolean).join(" · ") }] : [];
     const dates = ar ? ["اليوم","الجمعة 26/9","السبت 27/9","الأحد 28/9"] : ["Today","Fri 26 Sep","Sat 27 Sep","Sun 28 Sep"];
     const times = ["19:00","19:30","20:00","20:30","21:00"];
-    const chip = on => segS(on) + ";padding:8px 13px;border-radius:9999px;" + (on ? "" : "border:1px solid rgba(255,255,255,.1)");
+    const chip = on => segS(on) + ";padding:8px 13px;border-radius:9999px;" + (on ? "" : "border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent)");
     const r = rests[s.bRest] || rests[0] || { name: "", addr: "", sub: "" }, d = dates[s.bDate], tm = times[s.bTime];
     return {
       b: ar ? { restH:"المطعم", dateH:"التاريخ", timeH:"الساعة", guestsH:"عدد الأشخاص", confirmed:"تم تأكيد الحجز" } : { restH:"Restaurant", dateH:"Date", timeH:"Time", guestsH:"Guests", confirmed:"Booking confirmed" },
       w: ar ? { settingsH:"إعدادات الحساب", childH:"ما يراه الابن عند الدفع", orderLbl:"طلب آزاد", remain:"المتبقي اليوم €3.50 من €10", ok:"السقف يسمح · يُخصم من حساب الأب الرئيسي" }
             : { settingsH:"Account settings", childH:"What the child sees at checkout", orderLbl:"Azad's order", remain:"€3.50 left today of €10", ok:"Within limit · charged to parent's main wallet" },
       bookRests: rests.map((o, i) => ({ ...o, pick: () => this.setState({ bRest: i }),
-        style: "display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;cursor:pointer;color:#fff;background:#101B33;border:1px solid " + (i === s.bRest ? "#F2B203" : "rgba(255,255,255,.07)"),
-        dot: "width:14px;height:14px;border-radius:9999px;border:2px solid " + (i === s.bRest ? "#F2B203;background:#F2B203" : "rgba(255,255,255,.2)") })),
+        style: "display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;cursor:pointer;color:var(--z-text);background:var(--z-surface);border:1px solid " + (i === s.bRest ? "var(--z-accent)" : "color-mix(in srgb, var(--z-fg) 7%, transparent)"),
+        dot: "width:14px;height:14px;border-radius:9999px;border:2px solid " + (i === s.bRest ? "var(--z-accent);background:var(--z-accent)" : "color-mix(in srgb, var(--z-fg) 20%, transparent)") })),
       bookDates: dates.map((label, i) => ({ label, style: chip(i === s.bDate), pick: () => this.setState({ bDate: i }) })),
       bookTimes: times.map((label, i) => ({ label, style: chip(i === s.bTime), pick: () => this.setState({ bTime: i }) })),
       guests: s.guests,
@@ -854,14 +868,14 @@ class Component extends DCLogic {
         const tot = lines.reduce((a, l) => a + l.d[4] * l.q, 0);
         const has = s.preOn && tot > 0;
         const eurx = v => "€" + v.toFixed(2);
-        const pseg = on => segS(on) + ";flex:1;padding:9px;border-radius:9999px;" + (on ? "" : "border:1px solid rgba(255,255,255,.1)");
+        const pseg = on => segS(on) + ";flex:1;padding:9px;border-radius:9999px;" + (on ? "" : "border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent)");
         const setQ = (i, dq) => this.setState(x => { const pre = { ...x.pre }; pre[i] = Math.max(0, (pre[i] || 0) + dq); return { pre }; });
         return {
           pre: ar ? { h:"اطلب مسبقاً (اختياري)", sub:"تكون الأطباق جاهزة عند وصولكم", empty:"هذا المطعم لم يضف قائمته بعد.", payH:"الدفع", totLbl:"مجموع الطلب المسبق", summaryH:"الطلب المسبق" }
                   : { h:"Pre-order (optional)", sub:"Dishes ready when you arrive", empty:"This restaurant hasn't added its menu yet.", payH:"Payment", totLbl:"Pre-order total", summaryH:"Pre-order" },
           preOn: s.preOn, preEmpty: s.preOn && !menu.length, preHasItems: has,
           togglePre: () => this.setState({ preOn: !s.preOn }),
-          track: "width:40px;height:22px;border-radius:9999px;flex-shrink:0;display:flex;align-items:center;padding:2px;transition:background .15s;" + (s.preOn ? "background:#F2B203;justify-content:flex-end" : "background:rgba(255,255,255,.15);justify-content:flex-start"),
+          track: "width:40px;height:22px;border-radius:9999px;flex-shrink:0;display:flex;align-items:center;padding:2px;transition:background .15s;" + (s.preOn ? "background:var(--z-accent);justify-content:flex-end" : "background:color-mix(in srgb, var(--z-fg) 15%, transparent);justify-content:flex-start"),
           preDishes: lines.map(l => ({ name: ar ? l.d[1] : l.d[0], price: eurx(l.d[4]), qty: l.q, inc: () => setQ(l.i, 1), dec: () => setQ(l.i, -1) })),
           preLines: lines.filter(l => l.q).map(l => ({ t: l.q + "× " + (ar ? l.d[1] : l.d[0]), p: eurx(l.d[4] * l.q) })),
           preTotal: eurx(tot),
@@ -881,12 +895,12 @@ class Component extends DCLogic {
         : s.bookErr === "booking not available" ? (ar ? "هذا المطعم لا يقبل الحجز حالياً." : "This restaurant isn't taking bookings right now.")
         : (ar ? "لم يُحفظ الحجز، حاول مرة أخرى." : "The booking wasn't saved. Please try again."),
       bookPreview: ar ? "كريم دعاك إلى " + r.name + "، " + d + " الساعة " + tm + "، " + s.guests + " أشخاص، " + r.addr + ". التفاصيل وتطبيق زال: zal.be/b/" + (s.bookCode || "KRM26") + ""
-            : "Karim invited you to " + r.name + ", " + d + " at " + tm + ", " + s.guests + " people, " + r.addr + ". Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + ""
+                      : "Karim invited you to " + r.name + ", " + d + " at " + tm + ", " + s.guests + " people, " + r.addr + ". Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + ""
     };
   }
   groupVals(s, lang) {
     const ar = lang === "ar", L = o => ar ? o.ar : o.en, eur = n => "€" + n.toFixed(2);
-    const segS = on => "padding:8px 4px;border-radius:9px;border:0;cursor:pointer;font-size:12px;font-weight:700;" + (on ? "background:#F2B203;color:#0A1122" : "background:transparent;color:#8E9BAE");
+    const segS = on => "padding:8px 4px;border-radius:9px;border:0;cursor:pointer;font-size:12px;font-weight:700;" + (on ? "background:var(--z-accent);color:var(--z-on-accent)" : "background:transparent;color:var(--z-muted)");
     const segs = (labels, key) => labels.map((label, i) => ({ label, style: segS(i === s[key]), pick: () => this.setState({ [key]: i }) }));
     const joined = GROUP.filter(m => m.me || s.joined.includes(m.ini));
     const ordering = joined.filter(m => m.price > 0);
@@ -908,8 +922,8 @@ class Component extends DCLogic {
       syncMsg:"These restaurants are far apart and prep times differ by at least 20 minutes. Adjust timing so all orders arrive together?",
       shareBookH:"Share booking details", previewH:"What they receive",
       preview:"Karim invited you to dinner at Beirut Corner, Friday 26 September at 20:00, 4 people, Rue de Brabant 8, 1030 Schaerbeek. Details and the Zal app: zal.be/b/" + (s.bookCode || "KRM26") + "",
-      balance:"Main wallet balance", topUp:"Top up", membersH:"Members & limits", rulesH:"Company rules", create:"Add employee",
-      walletNote:"Employees pay nothing and need no card. Orders outside hours or above the limit are declined, or the employee pays the difference by card."
+      balance:"Main wallet balance", topUp:"Top up", membersH:"Members & limits", addMember:"Add member by phone",
+      walletNote:"Each member orders from their own allowance within the limit. It is charged to the main wallet, no personal bank card needed."
     };
     return {
       g: t,
@@ -931,7 +945,7 @@ class Component extends DCLogic {
           ini: m.ini, name: L(m.name),
           sub: m.invited ? (ar ? "أُرسلت دعوة مع رابط التطبيق" : "Invite sent with app link") : m.app ? (inn ? (ar ? "وصله تنبيه · انضم" : "Notified · joined") : (ar ? "على زال" : "On Zal")) : (ar ? "ليس على زال · أرسل الرابط" : "Not on Zal · send the link"),
           btn: m.invited ? (ar ? "مدعو" : "Invited") : m.app ? (inn ? (ar ? "مضاف" : "Added") : (ar ? "أضف" : "Add")) : (ar ? "رابط" : "Link"),
-          btnStyle: "padding:6px 12px;border-radius:9999px;font-size:11.5px;font-weight:800;cursor:pointer;" + (inn ? "border:1px solid #10B981;background:transparent;color:#10B981" : m.app ? "border:0;background:#F2B203;color:#0A1122" : "border:1px solid rgba(255,255,255,.15);background:transparent;color:#fff"),
+          btnStyle: "padding:6px 12px;border-radius:9999px;font-size:11.5px;font-weight:800;cursor:pointer;" + (inn ? "border:1px solid #10B981;background:transparent;color:var(--z-ok)" : m.app ? "border:0;background:var(--z-accent);color:var(--z-on-accent)" : "border:1px solid color-mix(in srgb, var(--z-fg) 15%, transparent);background:transparent;color:var(--z-text)"),
           pick: () => { if (m.app) this.setState({ joined: inn ? s.joined.filter(x => x !== m.ini) : [...s.joined, m.ini] }); }
         };
       }),
@@ -940,7 +954,7 @@ class Component extends DCLogic {
       showSync: s.addrMode === 1 && ordering.length > 1,
       toggleSync: () => this.setState({ sync: !s.sync }),
       syncBtn: s.sync ? (ar ? "تمت المزامنة · تصل كل الطلبات حوالي 20:35" : "Synced · all orders arrive around 20:35") : (ar ? "نعم، زامن وقت الوصول" : "Yes, sync arrival time"),
-      syncBtnStyle: "padding:9px;border-radius:9999px;font-size:12px;font-weight:800;cursor:pointer;" + (s.sync ? "border:1px solid #10B981;background:transparent;color:#10B981" : "border:0;background:#F2B203;color:#0A1122"),
+      syncBtnStyle: "padding:9px;border-radius:9999px;font-size:12px;font-weight:800;cursor:pointer;" + (s.sync ? "border:1px solid #10B981;background:transparent;color:var(--z-ok)" : "border:0;background:var(--z-accent);color:var(--z-on-accent)"),
       payOpts: segs(ar ? ["شخص واحد يدفع","كل واحد يدفع طلبه"] : ["One person pays","Split payment"], "payMode"),
       shareChannels: [{icon:"mail",label: ar ? "إيميل" : "Email"},{icon:"message-square",label: ar ? "رسالة نصية" : "SMS"},{icon:"link",label: ar ? "نسخ الرابط" : "Copy link"}],
       periodOpts: segs(s.walletType === 1 ? (ar ? ["يوم عمل","أسبوعي","لكل وجبة"] : ["Per workday","Weekly","Per meal"]) : (ar ? ["يومي","أسبوعي","لكل طلب"] : ["Daily","Weekly","Per order"]), "period"),
@@ -976,7 +990,7 @@ class Component extends DCLogic {
       walletMembers: (s.walletType === 1 ? CORP : WALLET).map(m => { const p = s.period, lim = m.limit[p], sp = m.spent[p]; return {
         name: L(m.name), phone: m.phone,
         limit: (ar ? "سقف " : "Limit ") + eur(lim) + [ar ? " / يوم" : " / day", ar ? " / أسبوع" : " / week", ar ? " / طلب" : " / order"][p],
-        bar: "height:100%;border-radius:9999px;background:#F2B203;width:" + Math.round(sp / lim * 100) + "%",
+        bar: "height:100%;border-radius:9999px;background:var(--z-accent);width:" + Math.round(sp / lim * 100) + "%",
         spent: p === 2 ? (ar ? "الحد الأقصى لكل طلب " : "Max per order ") + eur(lim) : (p ? (ar ? "صُرف هذا الأسبوع " : "Spent this week ") : (ar ? "صُرف اليوم " : "Spent today ")) + eur(sp) + " · " + (ar ? "متبقٍ " : "left ") + eur(lim - sp)
       }; }),
       groupTotal: eur(total),
@@ -990,7 +1004,8 @@ class Component extends DCLogic {
 
   state = { places:[], total:null, listLoading:true, listErr:false, menuFor:0, menuTick:0, bookCode:"", bookErr:"", preOn:false, pre:{}, prePay:0, fulfil:1, filtersOpen:false, lang:"en", chip:0, price:-1, region:-1, country:"", dano:false, group:false, gmode:0, addrMode:1, sync:false, payMode:1, walletType:0, period:0, bookStep:0, place:0, bookPlace:0, pview:"menu", diet:["vegetarian"], bRest:0, bDate:1, bTime:2, guests:4, joined:["SL","RH"], friendQ:"", extra:[], query:"", cart:{}, cartPlace:0, placeMenu:false, checkout:0, split:0, orderTotal:"", tab:0, addr:0 };
 
-  componentDidMount() { this.icons(); this.curKey = this.specKey(this.state); this.load(true); }
+  applyTheme() { document.documentElement.setAttribute("data-zal-theme", this.state.userTheme || this.props.theme || "Stone Day"); }
+  componentDidMount() { this.applyTheme(); this.icons(); this.curKey = this.specKey(this.state); this.load(true); }
   filterSpec(s) {
     const key = CHIP_KEYS[s.chip] || "all";
     return { delivery: s.fulfil === 0, pickup: s.fulfil !== 0,
@@ -1041,16 +1056,39 @@ class Component extends DCLogic {
       .then(r => this.setState({ bookCode: r ? r.share_code : "" }))
       .catch(e => { console.warn("ZAL: booking not saved —", e.message); this.setState({ bookErr: e.message }); });
   }
+  // Zal AI: real conversation through the zal-ai edge function (no login needed); inside a restaurant it answers about that menu
+  async askAi(q) {
+    const text = String(q || this.state.aiDraft || "").trim(), Z = window.ZalDB;
+    if (!text || this.aiBusy || !Z || !Z.configured()) return;
+    const prev = this.state.aiChat || [], p = this.state.place ? CACHE[this.state.place] : null;
+    this.aiBusy = true;
+    this.setState({ aiChat: prev.concat([{ role:"user", content:text }, { role:"assistant", content:"…" }]), aiDraft:"" }, () => this.aiScroll());
+    let answer;
+    try {
+      const { data, error } = await Z.client().functions.invoke("zal-ai", { body: { message: text, history: prev.slice(-10), restaurant_id: p ? p.id : undefined, language: this.state.lang } });
+      if (error || !data || data.error) throw new Error((data && data.error) || (error && error.message));
+      answer = data.answer; this.setState({ aiPlaces: p ? [] : (data.restaurants || []).filter(r => { const n = x => String(x).toLowerCase().replace(/\s+/g, " "); return n(answer).indexOf(n(r.name)) >= 0; }) });
+    } catch (e) { answer = this.state.lang === "ar" ? "عذراً، ما قدرت أجاوب الآن. جرّب بعد لحظة." : "Sorry, I couldn't answer right now. Please try again in a moment."; }
+    this.aiBusy = false;
+    this.setState(s => ({ aiChat: (s.aiChat || []).slice(0, -1).concat([{ role:"assistant", content:answer }]) }), () => this.aiScroll());
+  }
+  // open a restaurant the AI suggested (load its card first if it isn't on screen yet)
+  async openFromAi(r) {
+    if (!CACHE[r.id]) { const res = await window.ZalDB.queryCards({ q: r.name }, 0, 10).catch(() => null);
+      ((res && res.rows) || []).forEach(x => { CACHE[x.id] = x; }); }
+    if (CACHE[r.id]) { this.setState({ dano: false }); this.openPlace(r.id); }
+  }
+  aiScroll() { setTimeout(() => { const el = document.getElementById("zal-ai-log"); if (el) el.scrollTop = el.scrollHeight; }, 30); }
   syncOrder(p, lines) {
     const Z = window.ZalDB;
-    if (!Z || !Z.configured() || !this.state.dbLive) return Promise.resolve(true);
+    if (!Z || !Z.configured() || !this.state.dbLive) return Promise.reject(new Error("offline"));
     const items = lines.filter(l => l.d[5]).map(l => ({ menu_item_id: l.d[5], qty: l.q }));
-    if (!items.length) return Promise.resolve(true);
+    if (!items.length) return Promise.reject(new Error(this.state.lang === "ar" ? "هذه الأطباق بلا سعر مؤكد، لا يمكن طلبها." : "These dishes have no confirmed price and can't be ordered."));
     return Z.placeOrder(p.id, items, p.delivery && this.state.fulfil === 0 ? "delivery" : "pickup")
-      .then(id => { this.setState({ dbOrderId: id }); return true; })
-      .catch(e => { alert(e.message); return false; });
+      .then(id => this.setState({ dbOrderId: id }));
   }
   componentDidUpdate() {
+    this.applyTheme();
     this.icons();
     const k = this.specKey(this.state);
     if (k !== this.curKey) { this.curKey = k; clearTimeout(this.tmr); this.tmr = setTimeout(() => this.load(true), 280); }
@@ -1077,17 +1115,17 @@ class Component extends DCLogic {
       delivLine: this.delivLine(p, ar), hasDeliv: !!p.delivery,
       hasOpen: p.open != null, openLabel: p.open ? t.open : t.closed,
       openStyle: "font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:9999px;" +
-        (p.open ? "background:rgba(16,185,129,.92);color:#04241a" : "background:rgba(10,17,34,.9);color:#8E9BAE;border:1px solid rgba(255,255,255,.12)"),
+        (p.open ? "background:rgba(16,185,129,.92);color:#04241a" : "background:color-mix(in srgb, var(--z-bg) 90%, transparent);color:var(--z-muted);border:1px solid color-mix(in srgb, var(--z-fg) 12%, transparent)"),
       hasImg: !!p.image, noImg: !p.image,
-      imgStyle: 'position:absolute;inset:0;background:#18284B url("' + p.image + '") center/cover no-repeat'
+      imgStyle: 'position:absolute;inset:0;background:var(--z-inset) url("' + p.image + '") center/cover no-repeat'
     };
   }
 
   renderVals() {
     const s = this.state, lang = s.lang, t = T[lang], rtl = lang === "ar";
-    const fseg = on => "padding:6px 11px;border-radius:9999px;border:0;font-size:11.5px;font-weight:800;cursor:pointer;" + (on ? "background:#F2B203;color:#0A1122" : "background:transparent;color:#CBD5E1");
+    const fseg = on => "padding:6px 11px;border-radius:9999px;border:0;font-size:11.5px;font-weight:800;cursor:pointer;" + (on ? "background:var(--z-accent);color:var(--z-on-accent)" : "background:transparent;color:var(--z-text-2)");
     const sub = on => "flex:0 0 auto;padding:6px 13px;border-radius:9999px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " +
-      (on ? "#F2B203;background:rgba(242,178,3,.14);color:#F2B203" : "rgba(255,255,255,.08);background:transparent;color:#8E9BAE");
+      (on ? "var(--z-accent);background:color-mix(in srgb, var(--z-accent) 14%, transparent);color:var(--z-accent-text)" : "color-mix(in srgb, var(--z-fg) 8%, transparent);background:transparent;color:var(--z-muted)");
 
     const cards = s.places.map(p => ({ ...this.card(p, t, lang), open: () => this.openPlace(p.id) }));
     const hasMore = !s.listLoading && !s.listErr && s.total != null && s.places.length < s.total;
@@ -1096,25 +1134,36 @@ class Component extends DCLogic {
       dir: rtl ? "rtl" : "ltr", t,
       langLabel: lang === "ar" ? "EN" : "ع",
       toggleLang: () => this.setState({ lang: lang === "ar" ? "en" : "ar" }),
-      openAccount: () => this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }),
+      openAccount: () => this.setState({ acctOpen: true }),
+      acctOpen: !!s.acctOpen, closeAcct: () => this.setState({ acctOpen: false, tab: 0 }),
+      acctTitle: lang === "ar" ? "حسابي" : "My account",
+      curTheme: s.userTheme || this.props.theme || "Stone Day",
+      setThemeName: name => this.setState({ userTheme: name }),
+      setLangCode: code => this.setState({ lang: code === "ar" ? "ar" : "en" }),
+      appLang: lang,
       ...this.placeVals(s, t, lang),
       ...this.groupVals(s, lang),
       danoOpen: s.dano,
       toggleZalo: () => this.setState({ dano: !s.dano }),
       danoHint: (() => { const p = CACHE[s.place]; const n = p ? (lang === "ar" ? p.name.ar : p.name.en) : ""; return lang === "ar" ? "اسأل جرسون " + n : "Ask " + n + "'s waiter"; })(),
       danoTitle: (() => { const p = s.place ? CACHE[s.place] : null; return p ? (lang === "ar" ? "جرسون " + p.name.ar : p.name.en + " waiter") : "Zal AI"; })(),
-      danoPanelStyle: s.place ? "position:absolute;bottom:148px;inset-inline:14px;z-index:9;background:#0A1122;border:1px solid rgba(242,178,3,.35);border-radius:16px;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);overflow:hidden"
-        : "position:absolute;top:44px;bottom:0;inset-inline:0;z-index:30;background:#0A1122;border-top:1px solid rgba(242,178,3,.35);border-radius:18px 18px 0 0;overflow:auto;display:flex;flex-direction:column",
+      danoPanelStyle: s.place ? "position:absolute;bottom:148px;inset-inline:14px;z-index:9;background:var(--z-bg);border:1px solid color-mix(in srgb, var(--z-accent) 35%, transparent);border-radius:16px;box-shadow:0 20px 40px -15px rgba(0,0,0,.7);overflow:hidden"
+        : "position:absolute;top:44px;bottom:0;inset-inline:0;z-index:30;background:var(--z-bg);border-top:1px solid color-mix(in srgb, var(--z-accent) 35%, transparent);border-radius:18px 18px 0 0;overflow:auto;display:flex;flex-direction:column",
       danoInputPh: lang === "ar" ? "اكتب طبقاً أو مطعماً أو اسأل سؤالاً..." : "Type a dish, a restaurant, or ask anything...",
       askPh: lang === "ar" ? "مو متأكد شو تاكل؟ اسأل Zal AI" : "Not sure what to eat? Ask ZAL AI",
       openAsk: () => this.setState({ dano: true }),
+      aiDraft: s.aiDraft || "", setAiDraft: e => this.setState({ aiDraft: e.target.value }),
+      aiPlaces: (s.aiPlaces || []).slice(0, 4).map(r => ({ label: (lang === "ar" ? "افتح " : "Open ") + r.name, open: () => this.openFromAi(r) })),
+      aiKey: e => { if (e.key === "Enter") this.askAi(); }, aiSend: () => this.askAi(),
+      aiLog: (s.aiChat || []).map(m => ({ text: m.content, style: "max-width:85%;padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5;white-space:pre-wrap;" +
+        (m.role === "user" ? "align-self:flex-end;background:var(--z-accent);color:var(--z-on-accent);font-weight:600" : "align-self:flex-start;background:var(--z-surface);color:var(--z-text);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent)") })),
       addrLbl: s.fulfil === 0 ? t.deliver_to : (lang === "ar" ? "الاستلام قرب" : "Pick up near"),
       fulPickup: { label: lang === "ar" ? "استلام" : "Pickup", style: fseg(s.fulfil !== 0), pick: () => this.setState({ fulfil: 1 }) },
       fulDeliv: { label: lang === "ar" ? "توصيل" : "Delivery", style: fseg(s.fulfil === 0), pick: () => this.setState({ fulfil: 0 }) },
       danoSub: lang === "ar" ? "رفيقك في عالم الطعام" : "Your Food Companion",
       danoTag: lang === "ar" ? "اكتشف المطاعم • احجز طاولة • اطلب طعامك" : "Find restaurants • Book tables • Order food",
       danoMsg: lang === "ar" ? "أهلاً، أنا Zal AI. أساعدك تختار طبقك، أشرح المكونات والحساسية، وأحجز لك طاولة." : "Hi, I'm Zal AI. I can help you pick a dish, explain ingredients and allergens, or book you a table.",
-      danoPrompts: lang === "ar" ? ["اقترح طبقاً", "مكونات الطبق", "احجز طاولة"] : ["Suggest a dish", "Ingredients", "Book a table"],
+      danoPrompts: ( lang === "ar" ? ["اقترح طبقاً", "مكونات الطبق", "احجز طاولة"] : ["Suggest a dish", "Ingredients", "Book a table"]).map(label => ({ label, pick: () => this.askAi(label) })),
       address: t.addresses[s.addr],
       cycleAddress: () => this.setState({ addr: (s.addr + 1) % t.addresses.length }),
       query: s.query, setQuery: e => this.setState({ query: e.target.value }),
@@ -1123,7 +1172,7 @@ class Component extends DCLogic {
       chips: t.chips.map((label, i) => ({
         label, icon: ["layout-grid","compass","salad","utensils","sprout","badge-check","bike"][i],
         style: "flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 14px;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;border:1px solid " +
-          (i === s.chip ? "#F2B203;background:#F2B203;color:#0A1122" : "rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:#8E9BAE"),
+          (i === s.chip ? "var(--z-accent);background:var(--z-accent);color:var(--z-on-accent)" : "color-mix(in srgb, var(--z-fg) 6%, transparent);background:color-mix(in srgb, var(--z-fg) 3%, transparent);color:var(--z-muted)"),
         pick: () => this.setState({ chip: i })
       })),
       cards, hasMore, loadMore: () => this.load(false),
@@ -1134,7 +1183,7 @@ class Component extends DCLogic {
       closeFilters: () => this.setState({ filtersOpen: false }),
       clearFilters: () => this.setState({ price: -1, region: -1, country: "" }),
       filterBtnLbl: (() => { const n = (s.price >= 0 ? 1 : 0) + (s.region >= 0 ? 1 : 0) + (s.country ? 1 : 0); return t.filters_lbl + (n ? " · " + n : ""); })(),
-      filterBtnStyle: "flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:64px;padding:9px 12px;border-radius:14px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " + ((s.price >= 0 || s.region >= 0) ? "#F2B203;background:rgba(242,178,3,.14);color:#F2B203" : "rgba(255,255,255,.12);background:transparent;color:#E2E8F0"),
+      filterBtnStyle: "flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:64px;padding:9px 12px;border-radius:14px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " + ((s.price >= 0 || s.region >= 0) ? "var(--z-accent);background:color-mix(in srgb, var(--z-accent) 14%, transparent);color:var(--z-accent-text)" : "color-mix(in srgb, var(--z-fg) 12%, transparent);background:transparent;color:var(--z-text-2)"),
       showResultsLbl: t.show_results,
       priceChips: t.prices.map((label, i) => ({ label, style: sub(i === s.price), pick: () => this.setState({ price: s.price === i ? -1 : i }) })),
       regionChips: t.regions.map((label, i) => ({ label, style: sub(i === s.region), pick: () => this.setState({ region: s.region === i ? -1 : i, country:"" }) })),
@@ -1142,8 +1191,8 @@ class Component extends DCLogic {
       countryChips: s.region >= 0 ? COUNTRIES[REGION_KEYS[s.region]].map(([k, ar, en]) => ({ label: lang === "ar" ? ar : en, style: sub(s.country === en), pick: () => this.setState({ country: s.country === en ? "" : en }) })) : [],
       tabs: t.tabs.map(([icon, label], i) => ({
         icon, label,
-        style: "display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:4px 10px;font-size:12px;font-weight:" + (i === s.tab ? "700" : "500") + ";color:" + (i === s.tab ? "#FFFFFF" : "#8E9BAE"),
-        pick: () => i === 4 ? this.setState({ tab: 4, group: true, gmode: 2, pview: "menu" }) : this.setState({ tab: i })
+        style: "display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:4px 10px;font-size:12px;font-weight:" + (i === s.tab ? "700" : "500") + ";color:" + (i === s.tab ? "var(--z-text)" : "var(--z-muted)"),
+        pick: () => i === 4 ? this.setState({ tab: 4, acctOpen: true }) : this.setState({ tab: i })
       }))
     };
   }

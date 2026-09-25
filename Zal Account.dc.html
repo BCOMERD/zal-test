@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div dir="{{ dir }}" style="display:flex;flex-direction:column;gap:16px;height:100%;min-height:0;font-family:inherit;color:var(--z-text)">
+  <sc-if value="{{ needAuth }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:420px;width:100%;margin:0 auto">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:9999px;background:var(--z-inset)">
+        <button type="button" onClick="{{ modeIn }}" style="{{ tabInStyle }}">{{ t.signin }}</button>
+        <button type="button" onClick="{{ modeUp }}" style="{{ tabUpStyle }}">{{ t.signup }}</button>
+      </div>
+      <sc-if value="{{ isSignUp }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><input value="{{ aName }}" onChange="{{ setAName }}" placeholder="{{ firstPh }}" autocomplete="given-name" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none"><input value="{{ aLast }}" onChange="{{ setALast }}" placeholder="{{ lastPh }}" autocomplete="family-name" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none"></div>
+      </sc-if>
+      <input type="email" value="{{ aEmail }}" onChange="{{ setAEmail }}" placeholder="{{ t.email }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none">
+      <input type="password" value="{{ aPass }}" onChange="{{ setAPass }}" placeholder="{{ t.pass }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none">
+      <sc-if value="{{ hasAMsg }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;line-height:1.5;color:var(--z-text-2)">{{ aMsg }}</span></sc-if>
+      <button type="button" onClick="{{ submitAuth }}" style="height:48px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;font-size:15px;cursor:pointer">{{ submitLbl }}</button>
+      <span style="font-size:12.5px;line-height:1.5;color:var(--z-muted);text-align:center">{{ t.guestNote }}</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{ hasUser }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <span style="width:46px;height:46px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">{{ initial }}</span>
+    <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+      <strong style="font-size:16px">{{ name }}</strong>
+      <span style="font-size:13px;color:var(--z-muted);overflow:hidden;text-overflow:ellipsis">{{ email }}</span>
+    </div>
+    <button type="button" onClick="{{ goWallet }}" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:8px 14px;border-radius:12px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);cursor:pointer;font:inherit;color:var(--z-text)">
+      <span style="font-size:11px;color:var(--z-muted);font-weight:600">{{ t.wallet }}</span>
+      <strong style="font-size:17px">{{ balanceLbl }}</strong>
+    </button>
+  </div>
+
+  <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-shrink:0">
+    <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="6">
+      <button type="button" onClick="{{ tb.pick }}" style="{{ tb.style }}">{{ tb.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:4px">
+    <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;border-radius:12px;background:var(--z-surface);font-size:13.5px;line-height:1.55;color:var(--z-text-2)">{{ errMsg }}</div>
+    </sc-if>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px;text-align:center;font-size:13.5px;color:var(--z-muted)">{{ t.loading }}</div>
+    </sc-if>
+
+    <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ noOrders }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 16px;text-align:center;font-size:14px;color:var(--z-muted)">{{ t.noOrders }}</div>
+      </sc-if>
+      <sc-for list="{{ orders }}" as="o" hint-placeholder-count="2">
+        <div style="padding:16px;border-radius:14px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+              <strong style="font-size:15px">{{ o.rest }}</strong>
+              <span style="font-size:12.5px;color:var(--z-muted)">{{ o.meta }}</span>
+            </div>
+            <span style="{{ o.pillStyle }}">{{ o.statusLbl }}</span>
+          </div>
+          <sc-if value="{{ o.showSteps }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+              <sc-for list="{{ o.steps }}" as="st" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="{{ st.bar }}"></span>
+                  <span style="{{ st.lbl }}">{{ st.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <span style="font-size:13px;line-height:1.5;color:var(--z-text-2)">{{ o.items }}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <strong style="font-size:15px">{{ o.total }}</strong>
+            <div style="display:flex;gap:8px;align-items:center">
+              <sc-if value="{{ o.hasCash }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:700;color:var(--z-ok)">{{ o.cash }}</span></sc-if>
+              <button type="button" onClick="{{ o.again }}" style="height:36px;padding:0 16px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;font-size:13px;cursor:pointer">{{ o.againLbl }}</button>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ isBookings }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ noBookings }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 16px;text-align:center;font-size:14px;color:var(--z-muted)">{{ t.noBookings }}</div>
+      </sc-if>
+      <sc-for list="{{ bookings }}" as="b" hint-placeholder-count="2">
+        <div style="padding:16px;border-radius:14px;background:var(--z-surface);border:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+            <strong style="font-size:15px">{{ b.rest }}</strong>
+            <span style="font-size:13px;color:var(--z-text-2)">{{ b.when }}</span>
+            <span style="font-size:12.5px;color:var(--z-muted)">{{ b.meta }}</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="{{ b.pillStyle }}">{{ b.statusLbl }}</span>
+            <sc-if value="{{ b.canCancel }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ b.cancel }}" style="height:34px;padding:0 14px;border-radius:9999px;background:transparent;border:1px solid color-mix(in srgb, var(--z-fg) 18%, transparent);color:var(--z-text);font:inherit;font-weight:700;font-size:12.5px;cursor:pointer">{{ t.cancel }}</button>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ isWallet }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:20px;border-radius:16px;background:var(--z-accent);color:var(--z-on-accent);display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:700">{{ t.balance }}</span>
+        <strong style="font-size:34px;font-weight:900;line-height:1.1">{{ balanceLbl }}</strong>
+        <span style="font-size:13px;line-height:1.5">{{ t.cashbackNote }}</span>
+      </div>
+      <sc-if value="{{ noLedger }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px 16px;text-align:center;font-size:14px;color:var(--z-muted)">{{ t.noLedger }}</div>
+      </sc-if>
+      <sc-for list="{{ ledger }}" as="l" hint-placeholder-count="3">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--z-surface)">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:14px;font-weight:700">{{ l.label }}</span>
+            <span style="font-size:12px;color:var(--z-muted)">{{ l.date }}</span>
+          </div>
+          <strong style="{{ l.amtStyle }}">{{ l.amount }}</strong>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ isFavs }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ noFavs }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 16px;text-align:center;font-size:14px;color:var(--z-muted)">{{ t.noFavs }}</div>
+      </sc-if>
+      <sc-for list="{{ favs }}" as="f" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--z-surface)">
+          <div style="{{ f.img }}"></div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+            <strong style="font-size:14.5px">{{ f.name }}</strong>
+            <span style="font-size:12.5px;color:var(--z-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.meta }}</span>
+          </div>
+          <button type="button" onClick="{{ f.remove }}" style="height:34px;padding:0 14px;border-radius:9999px;background:transparent;border:1px solid color-mix(in srgb, var(--z-fg) 18%, transparent);color:var(--z-text);font:inherit;font-weight:700;font-size:12.5px;cursor:pointer">{{ t.remove }}</button>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ isAddr }}" hint-placeholder-val="{{ false }}">
+      <sc-for list="{{ addrs }}" as="a" hint-placeholder-count="1">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:var(--z-surface)">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+            <strong style="font-size:14.5px">{{ a.label }}</strong>
+            <span style="font-size:13px;color:var(--z-text-2)">{{ a.line }}</span>
+          </div>
+          <button type="button" onClick="{{ a.remove }}" style="height:34px;padding:0 14px;border-radius:9999px;background:transparent;border:1px solid color-mix(in srgb, var(--z-fg) 18%, transparent);color:var(--z-text);font:inherit;font-weight:700;font-size:12.5px;cursor:pointer">{{ t.remove }}</button>
+        </div>
+      </sc-for>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;border:1px dashed color-mix(in srgb, var(--z-fg) 20%, transparent)">
+        <strong style="font-size:14px">{{ t.addAddr }}</strong>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px">
+          <input value="{{ addrLabel }}" onChange="{{ setAddrLabel }}" placeholder="{{ t.addrLabel }}" style="width:100%;box-sizing:border-box;height:44px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none">
+          <input value="{{ addrLine }}" onChange="{{ setAddrLine }}" placeholder="{{ t.addrLine }}" style="width:100%;box-sizing:border-box;height:44px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;outline:none">
+        </div>
+        <button type="button" onClick="{{ addAddr }}" style="align-self:flex-start;height:40px;padding:0 18px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;font-size:13px;cursor:pointer">{{ t.save }}</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:14px;padding:16px;border-radius:14px;background:var(--z-surface)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:700;color:var(--z-text-2)">{{ t.fullName }}
+            <input value="{{ pName }}" onChange="{{ setPName }}" style="width:100%;box-sizing:border-box;height:44px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;font-weight:400;outline:none">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:700;color:var(--z-text-2)">{{ t.phone }}
+            <input value="{{ pPhone }}" onChange="{{ setPPhone }}" style="width:100%;box-sizing:border-box;height:44px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:1px solid color-mix(in srgb, var(--z-fg) 10%, transparent);color:var(--z-text);font:inherit;font-size:14px;font-weight:400;outline:none">
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:var(--z-text-2)">{{ t.language }}</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ langs }}" as="lg" hint-placeholder-count="4">
+              <button type="button" onClick="{{ lg.pick }}" style="{{ lg.style }}">{{ lg.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12.5px;font-weight:700;color:var(--z-text-2)">{{ t.appearance }}</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ themes }}" as="th" hint-placeholder-count="2">
+              <button type="button" onClick="{{ th.pick }}" style="{{ th.style }}">{{ th.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12.5px;font-weight:700;color:var(--z-text-2)">{{ t.notifications }}</span>
+          <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="3">
+            <button type="button" onClick="{{ n.toggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;background:none;border:0;border-bottom:1px solid color-mix(in srgb, var(--z-fg) 7%, transparent);cursor:pointer;font:inherit;color:var(--z-text);font-size:14px;text-align:start">
+              <span>{{ n.label }}</span>
+              <span style="{{ n.track }}"><span style="{{ n.knob }}"></span></span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button type="button" onClick="{{ saveProfile }}" style="height:44px;padding:0 22px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;font-size:14px;cursor:pointer">{{ t.save }}</button>
+          <sc-if value="{{ hasSaved }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:700;color:var(--z-ok)">{{ t.saved }}</span></sc-if>
+        </div>
+      </div>
+      <button type="button" onClick="{{ signOut }}" style="height:46px;border-radius:9999px;background:transparent;border:1px solid color-mix(in srgb, var(--z-fg) 15%, transparent);color:var(--z-text);font:inherit;font-weight:700;cursor:pointer">{{ t.signout }}</button>
+    </sc-if>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:640},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;ar&quot;,&quot;fr&quot;,&quot;nl&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;theme&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;Stone Day&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;initialTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;orders&quot;,&quot;bookings&quot;,&quot;wallet&quot;,&quot;favs&quot;,&quot;addr&quot;,&quot;settings&quot;],&quot;default&quot;:&quot;orders&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onLang&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(code:string)=&gt;void&quot;},&quot;onTheme&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(name:string)=&gt;void&quot;},&quot;onSignOut&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;()=&gt;void&quot;}}">
+const TX = {
+  en:{signin:"Sign in",signup:"Create account",email:"Email",pass:"Password (min. 6)",wait:"Please wait…",need:"Enter email and password.",check:"Check your email to confirm your account.",guestNote:"Create an account to order, track your orders live and collect 3% cashback.",wallet:"Wallet",loading:"Loading…",orders:"My orders",bookings:"My bookings",favs:"Favourites",addr:"Addresses",settings:"Settings",
+    noOrders:"No orders yet. Your orders will appear here with live status.",noBookings:"No bookings yet.",noFavs:"No favourite restaurants yet.",noLedger:"No cashback yet.",
+    again:"Order again",sent:"Sent ✓",cancel:"Cancel",remove:"Remove",balance:"Your balance",cashbackNote:"You get 3% back on every completed order, paid by ZAL.",
+    cashback:"Cashback",spend:"Used on order",adjust:"Adjustment",addAddr:"Add an address",addrLabel:"Label (Home, Work)",addrLine:"Street, number, postcode",save:"Save",saved:"Saved",
+    fullName:"Full name",phone:"Phone",language:"Language",appearance:"Appearance",light:"Light",dark:"Dark",notifications:"Notifications",
+    nOrders:"Order status updates",nBookings:"Booking reminders",nOffers:"Offers and news",signout:"Sign out",
+    pickup:"Pickup",delivery:"Delivery",dine_in:"Dine-in",guests:"guests",code:"Code",items:"items",
+    st:{pending:"Received",accepted:"Accepted",preparing:"Preparing",ready:"Ready",completed:"Completed",cancelled:"Cancelled"},
+    bst:{confirmed:"Confirmed",cancelled:"Cancelled",seated:"Seated",no_show:"Missed"},upcoming:"Upcoming",
+    setup:"Account data is not available yet. Run supabase/account.sql in the Supabase SQL Editor, then reload.",err:"Something went wrong: "},
+  ar:{signin:"تسجيل الدخول",signup:"إنشاء حساب",email:"البريد الإلكتروني",pass:"كلمة المرور (6 أحرف على الأقل)",wait:"لحظة…",need:"أدخل البريد وكلمة المرور.",check:"تفقّد بريدك لتأكيد الحساب.",guestNote:"أنشئ حساباً لتطلب، وتتابع طلباتك مباشرة، وتجمع 3٪ كاش باك.",wallet:"المحفظة",loading:"جارٍ التحميل…",orders:"طلباتي",bookings:"حجوزاتي",favs:"المفضلة",addr:"عناويني",settings:"الإعدادات",
+    noOrders:"لا طلبات بعد. ستظهر طلباتك هنا مع حالتها مباشرة.",noBookings:"لا حجوزات بعد.",noFavs:"لا مطاعم مفضلة بعد.",noLedger:"لا كاش باك بعد.",
+    again:"اطلب مرة أخرى",sent:"تم الإرسال ✓",cancel:"إلغاء",remove:"حذف",balance:"رصيدك",cashbackNote:"تسترجع 3٪ من كل طلب مكتمل، على حساب زال.",
+    cashback:"كاش باك",spend:"استخدام في طلب",adjust:"تعديل",addAddr:"إضافة عنوان",addrLabel:"الاسم (المنزل، العمل)",addrLine:"الشارع، الرقم، الرمز البريدي",save:"حفظ",saved:"تم الحفظ",
+    fullName:"الاسم الكامل",phone:"الهاتف",language:"اللغة",appearance:"المظهر",light:"فاتح",dark:"غامق",notifications:"الإشعارات",
+    nOrders:"تحديثات حالة الطلب",nBookings:"تذكير الحجوزات",nOffers:"العروض والأخبار",signout:"تسجيل الخروج",
+    pickup:"استلام",delivery:"توصيل",dine_in:"في المطعم",guests:"أشخاص",code:"الرمز",items:"أطباق",
+    st:{pending:"مستلم",accepted:"مقبول",preparing:"قيد التحضير",ready:"جاهز",completed:"مكتمل",cancelled:"ملغى"},
+    bst:{confirmed:"مؤكد",cancelled:"ملغى",seated:"حضر",no_show:"لم يحضر"},upcoming:"قادم",
+    setup:"بيانات الحساب غير متاحة بعد. شغّل ملف supabase/account.sql في محرر SQL في Supabase ثم أعد التحميل.",err:"حدث خطأ: "},
+  fr:{signin:"Se connecter",signup:"Créer un compte",email:"E-mail",pass:"Mot de passe (min. 6)",wait:"Un instant…",need:"Saisissez e-mail et mot de passe.",check:"Vérifiez votre e-mail pour confirmer votre compte.",guestNote:"Créez un compte pour commander, suivre vos commandes en direct et gagner 3% de cashback.",wallet:"Portefeuille",loading:"Chargement…",orders:"Mes commandes",bookings:"Mes réservations",favs:"Favoris",addr:"Adresses",settings:"Réglages",
+    noOrders:"Aucune commande. Vos commandes apparaîtront ici avec leur statut en direct.",noBookings:"Aucune réservation.",noFavs:"Aucun restaurant favori.",noLedger:"Pas encore de cashback.",
+    again:"Commander à nouveau",sent:"Envoyé ✓",cancel:"Annuler",remove:"Supprimer",balance:"Votre solde",cashbackNote:"3% remboursés sur chaque commande terminée, offerts par ZAL.",
+    cashback:"Cashback",spend:"Utilisé sur commande",adjust:"Ajustement",addAddr:"Ajouter une adresse",addrLabel:"Nom (Maison, Travail)",addrLine:"Rue, numéro, code postal",save:"Enregistrer",saved:"Enregistré",
+    fullName:"Nom complet",phone:"Téléphone",language:"Langue",appearance:"Apparence",light:"Clair",dark:"Sombre",notifications:"Notifications",
+    nOrders:"Suivi des commandes",nBookings:"Rappels de réservation",nOffers:"Offres et nouveautés",signout:"Se déconnecter",
+    pickup:"À emporter",delivery:"Livraison",dine_in:"Sur place",guests:"pers.",code:"Code",items:"plats",
+    st:{pending:"Reçue",accepted:"Acceptée",preparing:"En préparation",ready:"Prête",completed:"Terminée",cancelled:"Annulée"},
+    bst:{confirmed:"Confirmée",cancelled:"Annulée",seated:"Honorée",no_show:"Manquée"},upcoming:"À venir",
+    setup:"Les données du compte ne sont pas encore disponibles. Exécutez supabase/account.sql dans l'éditeur SQL de Supabase, puis rechargez.",err:"Erreur : "},
+  nl:{signin:"Inloggen",signup:"Account aanmaken",email:"E-mail",pass:"Wachtwoord (min. 6)",wait:"Even geduld…",need:"Vul e-mail en wachtwoord in.",check:"Controleer je e-mail om je account te bevestigen.",guestNote:"Maak een account om te bestellen, je bestellingen live te volgen en 3% cashback te sparen.",wallet:"Portemonnee",loading:"Laden…",orders:"Mijn bestellingen",bookings:"Mijn reservaties",favs:"Favorieten",addr:"Adressen",settings:"Instellingen",
+    noOrders:"Nog geen bestellingen. Je bestellingen verschijnen hier met live status.",noBookings:"Nog geen reservaties.",noFavs:"Nog geen favoriete restaurants.",noLedger:"Nog geen cashback.",
+    again:"Opnieuw bestellen",sent:"Verzonden ✓",cancel:"Annuleren",remove:"Verwijderen",balance:"Je saldo",cashbackNote:"Je krijgt 3% terug op elke afgeronde bestelling, betaald door ZAL.",
+    cashback:"Cashback",spend:"Gebruikt bij bestelling",adjust:"Correctie",addAddr:"Adres toevoegen",addrLabel:"Naam (Thuis, Werk)",addrLine:"Straat, nummer, postcode",save:"Opslaan",saved:"Opgeslagen",
+    fullName:"Volledige naam",phone:"Telefoon",language:"Taal",appearance:"Weergave",light:"Licht",dark:"Donker",notifications:"Meldingen",
+    nOrders:"Bestelstatus",nBookings:"Reservatieherinneringen",nOffers:"Aanbiedingen en nieuws",signout:"Uitloggen",
+    pickup:"Afhalen",delivery:"Levering",dine_in:"Ter plaatse",guests:"pers.",code:"Code",items:"gerechten",
+    st:{pending:"Ontvangen",accepted:"Aanvaard",preparing:"In bereiding",ready:"Klaar",completed:"Afgerond",cancelled:"Geannuleerd"},
+    bst:{confirmed:"Bevestigd",cancelled:"Geannuleerd",seated:"Aanwezig",no_show:"Gemist"},upcoming:"Komend",
+    setup:"Accountgegevens zijn nog niet beschikbaar. Voer supabase/account.sql uit in de Supabase SQL Editor en herlaad.",err:"Er ging iets mis: "}
+};
+const LOC = { en:"en-GB", ar:"ar", fr:"fr-BE", nl:"nl-BE" };
+const STEPS = ["pending","accepted","preparing","ready"];
+const eur = n => (Number(n) || 0).toFixed(2).replace(".", ",") + " €";
+const pill = (bg, fg) => "flex-shrink:0;font-size:12px;font-weight:800;padding:5px 11px;border-radius:9999px;background:" + bg + ";color:" + fg;
+const chip = on => "flex-shrink:0;height:36px;padding:0 15px;border-radius:9999px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid " +
+  (on ? "var(--z-accent);background:var(--z-accent);color:var(--z-on-accent)" : "color-mix(in srgb, var(--z-fg) 12%, transparent);background:transparent;color:var(--z-text)");
+
+class Component extends DCLogic {
+  state = { tab:"orders", loading:true, err:"", orders:[], bookings:[], balance:0, ledger:[], favs:[], addrs:[], user:null,
+    pName:"", pPhone:"", pLang:null, pTheme:null, notify:{ orders:true, bookings:true, offers:false }, saved:false, addrLabel:"", addrLine:"", sentId:null, authMode:"in", aName:"", aEmail:"", aPass:"", aMsg:"", aBusy:false, checked:false };
+
+  componentDidMount() {
+    this.load();
+    const A = window.ZalDB && window.ZalDB.acct;
+    if (A) this.unwatch = A.watchOrders(o => this.setState(s => ({ orders: s.orders.map(x => x.id === o.id ? Object.assign({}, x, { status:o.status }) : x) })));
+    if (this.props.initialTab) this.setState({ tab: this.props.initialTab });
+  }
+  componentWillUnmount() { if (this.unwatch) this.unwatch(); if (this.authSub) this.authSub.unsubscribe(); }
+  async submitAuth() {
+    const s = this.state, t = TX[this.props.lang] || TX.en, c = window.ZalDB && window.ZalDB.configured() ? window.ZalDB.client() : null;
+    if (!c) return this.setState({ aMsg: t.setup });
+    if (!s.aEmail || !s.aPass || (s.authMode === "up" && (!s.aName.trim() || !(s.aLast || "").trim()))) return this.setState({ aMsg: t.need });
+    this.setState({ aBusy:true, aMsg:"" });
+    try {
+      if (s.authMode === "up") {
+        const { data, error } = await c.auth.signUp({ email: s.aEmail.trim(), password: s.aPass, options: { data: { role: "customer", first_name: s.aName.trim(), last_name: (s.aLast || "").trim(), full_name: (s.aName.trim() + " " + (s.aLast || "").trim()).trim() } } });
+        if (error) throw error;
+        if (!data.session) this.setState({ aMsg: t.check });
+      } else {
+        const { error } = await c.auth.signInWithPassword({ email: s.aEmail.trim(), password: s.aPass });
+        if (error) throw error;
+      }
+      this.setState({ aPass:"" }); this.load();
+    } catch (e) { this.setState({ aMsg: e.message }); }
+    this.setState({ aBusy:false });
+  }
+  fail(e) {
+    const m = (e && e.message) || String(e);
+    const setup = /does not exist|schema cache|relation|function .* not/i.test(m);
+    this.setState({ err: setup ? "__setup" : m, loading:false });
+  }
+  async load() {
+    const Z = window.ZalDB;
+    if (!Z || !Z.configured()) return this.setState({ loading:false, err:"__setup" });
+    const A = Z.acct;
+    try {
+      const user = await A.user();
+      this.setState({ user, checked:true });
+      if (!user) return this.setState({ loading:false });
+      const [orders, bookings, balance, ledger, favs, addrs, prof] = await Promise.all([
+        A.orders(), A.bookings(), A.walletBalance(), A.walletLedger(), A.favorites(), A.addresses(), A.profile()]);
+      const p = prof || {};
+      this.setState({ orders: orders || [], bookings: bookings || [], balance, ledger: ledger || [], favs: favs || [], addrs: addrs || [], loading:false, err:"",
+        pName: p.full_name || (user && user.user_metadata && user.user_metadata.full_name) || "", pPhone: p.phone || "",
+        pLang: p.lang || null, pTheme: p.theme || null,
+        notify: { orders: p.notify_orders !== false, bookings: p.notify_bookings !== false, offers: !!p.notify_offers } });
+    } catch (e) { this.fail(e); }
+  }
+  async run(fn, reload) { try { await fn(); if (reload) this.load(); } catch (e) { this.fail(e); } }
+
+  renderVals() {
+    const s = this.state, lang = this.props.lang || "en", t = TX[lang] || TX.en, loc = LOC[lang] || "en-GB";
+    const A = window.ZalDB && window.ZalDB.acct;
+    const fmt = (d, o) => new Date(d).toLocaleString(loc, Object.assign({ timeZone:"Europe/Brussels" }, o));
+    const u = s.user, nm = s.pName || (u ? u.email.split("@")[0] : "");
+    const now = Date.now();
+    const tabs = [["orders",t.orders],["bookings",t.bookings],["wallet",t.wallet],["favs",t.favs],["addr",t.addr],["settings",t.settings]]
+      .map(([k, label]) => ({ label, style: chip(s.tab === k), pick: () => this.setState({ tab:k, saved:false }) }));
+
+    const orders = s.orders.map(o => {
+      const idx = STEPS.indexOf(o.status), closed = o.status === "completed" || o.status === "cancelled";
+      const its = (o.zal_order_items || []);
+      return {
+        rest: (o.restaurants && o.restaurants.name) || "",
+        meta: fmt(o.created_at, { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit" }) + " · " + (t[o.fulfilment] || o.fulfilment),
+        statusLbl: t.st[o.status] || o.status,
+        pillStyle: o.status === "cancelled" ? pill("color-mix(in srgb, var(--z-fg) 8%, transparent)", "var(--z-muted)")
+          : o.status === "completed" ? pill("color-mix(in srgb, var(--z-ok) 14%, transparent)", "var(--z-ok)")
+          : o.status === "ready" ? pill("var(--z-ok)", "#fff") : pill("var(--z-accent)", "var(--z-on-accent)"),
+        showSteps: !closed,
+        steps: STEPS.map((k, i) => ({ label: t.st[k],
+          bar: "height:5px;border-radius:9999px;background:" + (i <= idx ? "var(--z-accent)" : "color-mix(in srgb, var(--z-fg) 10%, transparent)"),
+          lbl: "font-size:11px;font-weight:" + (i === idx ? "800" : "600") + ";color:" + (i <= idx ? "var(--z-text)" : "var(--z-muted)") })),
+        items: its.map(i => i.qty + "× " + ((i.menu_items && i.menu_items.name) || "")).join(" · "),
+        total: eur(o.subtotal),
+        hasCash: o.status === "completed", cash: "+" + eur(o.subtotal * 0.03),
+        againLbl: s.sentId === o.id ? t.sent : t.again,
+        again: () => A && this.run(async () => { await A.reorder(o); this.setState({ sentId:o.id }); }, true)
+      };
+    });
+
+    const bookings = s.bookings.map(b => {
+      const future = new Date(b.starts_at).getTime() > now, st = b.status;
+      return {
+        rest: (b.restaurants && b.restaurants.name) || "",
+        when: fmt(b.starts_at, { weekday:"long", day:"numeric", month:"long", hour:"2-digit", minute:"2-digit" }),
+        meta: b.guests + " " + t.guests + " · " + t.code + " " + b.share_code,
+        statusLbl: st === "confirmed" && future ? t.upcoming : (t.bst[st] || st),
+        pillStyle: st === "confirmed" && future ? pill("var(--z-accent)", "var(--z-on-accent)") : pill("color-mix(in srgb, var(--z-fg) 8%, transparent)", "var(--z-muted)"),
+        canCancel: st === "confirmed" && future,
+        cancel: () => A && this.run(() => A.cancelBooking(b.id), true)
+      };
+    });
+
+    const ledger = s.ledger.map(l => ({
+      label: t[l.kind] || l.kind, date: fmt(l.created_at, { day:"numeric", month:"short", year:"numeric" }),
+      amount: (l.amount > 0 ? "+" : "") + eur(l.amount),
+      amtStyle: "font-size:15px;color:" + (l.amount > 0 ? "var(--z-ok)" : "var(--z-text)")
+    }));
+
+    const favs = s.favs.map(f => { const r = f.restaurants || {}; return {
+      name: r.name || "", meta: [r.cuisine, r.address].filter(Boolean).join(" · "),
+      img: "width:52px;height:52px;border-radius:10px;flex-shrink:0;background:var(--z-inset)" + (r.image_url ? ' url("' + r.image_url + '") center/cover no-repeat' : ""),
+      remove: () => A && this.run(() => A.setFavorite(f.restaurant_id, false), true) }; });
+
+    const addrs = s.addrs.map(a => ({ label: a.label, line: a.line, remove: () => A && this.run(() => A.removeAddress(a.id), true) }));
+
+    const curLang = lang, curTheme = this.props.theme || "Stone Day";
+    const langs = [["en","English"],["ar","العربية"],["fr","Français"],["nl","Nederlands"]].map(([k, label]) => ({ label, style: chip(curLang === k),
+      pick: () => { this.setState({ pLang:k }); if (this.props.onLang) this.props.onLang(k); } }));
+    const themes = [["Stone Day",t.light],["Morik Ink",t.dark]].map(([k, label]) => ({ label, style: chip(curTheme === k),
+      pick: () => { this.setState({ pTheme:k }); if (this.props.onTheme) this.props.onTheme(k); } }));
+    const notifs = [["orders",t.nOrders],["bookings",t.nBookings],["offers",t.nOffers]].map(([k, label]) => {
+      const on = s.notify[k];
+      return { label,
+        track: "position:relative;width:42px;height:24px;border-radius:9999px;flex-shrink:0;transition:background .15s;background:" + (on ? "var(--z-accent)" : "color-mix(in srgb, var(--z-fg) 15%, transparent)"),
+        knob: "position:absolute;top:3px;width:18px;height:18px;border-radius:9999px;background:" + (on ? "var(--z-on-accent)" : "var(--z-bg)") + ";transition:inset-inline-start .15s;inset-inline-start:" + (on ? "21px" : "3px"),
+        toggle: () => this.setState(st => ({ saved:false, notify: Object.assign({}, st.notify, { [k]: !st.notify[k] }) })) };
+    });
+
+    return {
+      firstPh: this.props.lang === "ar" ? "الاسم الأول" : this.props.lang === "fr" ? "Prénom" : this.props.lang === "nl" ? "Voornaam" : "First name",
+      lastPh: this.props.lang === "ar" ? "اسم العائلة" : this.props.lang === "fr" ? "Nom" : this.props.lang === "nl" ? "Achternaam" : "Last name",
+      aLast: s.aLast || "", setALast: e => this.setState({ aLast: e.target.value }),
+      dir: lang === "ar" ? "rtl" : "ltr", t,
+      initial: (nm[0] || "?").toUpperCase(), name: nm, email: u ? u.email : "",
+      balanceLbl: eur(s.balance), goWallet: () => this.setState({ tab:"wallet" }),
+      tabs, loading: s.loading, hasErr: !!s.err, errMsg: s.err === "__setup" ? t.setup : t.err + s.err,
+      isOrders: s.tab === "orders", isBookings: s.tab === "bookings", isWallet: s.tab === "wallet", isFavs: s.tab === "favs", isAddr: s.tab === "addr", isSettings: s.tab === "settings",
+      orders, noOrders: !s.loading && !s.err && !orders.length,
+      bookings, noBookings: !s.loading && !s.err && !bookings.length,
+      ledger, noLedger: !s.loading && !s.err && !ledger.length,
+      favs, noFavs: !s.loading && !s.err && !favs.length,
+      addrs, addrLabel: s.addrLabel, addrLine: s.addrLine,
+      setAddrLabel: e => this.setState({ addrLabel: e.target.value }), setAddrLine: e => this.setState({ addrLine: e.target.value }),
+      addAddr: () => { const line = s.addrLine.trim(); if (!line || !A) return;
+        this.run(async () => { await A.addAddress({ label: s.addrLabel.trim() || "Home", line }); this.setState({ addrLabel:"", addrLine:"" }); }, true); },
+      pName: s.pName, pPhone: s.pPhone,
+      setPName: e => this.setState({ pName: e.target.value, saved:false }), setPPhone: e => this.setState({ pPhone: e.target.value, saved:false }),
+      langs, themes, notifs,
+      hasSaved: s.saved,
+      saveProfile: () => A && this.run(async () => {
+        await A.saveProfile({ full_name: s.pName.trim(), phone: s.pPhone.trim(), lang: curLang, theme: curTheme,
+          notify_orders: s.notify.orders, notify_bookings: s.notify.bookings, notify_offers: s.notify.offers });
+        this.setState({ saved:true });
+      }),
+      signOut: async () => { const c = window.ZalDB && window.ZalDB.client(); if (c) await c.auth.signOut(); this.setState({ user:null, orders:[], bookings:[], ledger:[], favs:[], addrs:[], balance:0 }); if (this.props.onSignOut) this.props.onSignOut(); },
+      needAuth: s.checked && !u && !s.loading, hasUser: !!u,
+      isSignUp: s.authMode === "up",
+      tabInStyle: chip(s.authMode === "in").replace("flex-shrink:0;", "") + ";border:0;height:38px",
+      tabUpStyle: chip(s.authMode === "up").replace("flex-shrink:0;", "") + ";border:0;height:38px",
+      modeIn: () => this.setState({ authMode:"in", aMsg:"" }), modeUp: () => this.setState({ authMode:"up", aMsg:"" }),
+      aName: s.aName, aEmail: s.aEmail, aPass: s.aPass, hasAMsg: !!s.aMsg, aMsg: s.aMsg,
+      setAName: e => this.setState({ aName: e.target.value }), setAEmail: e => this.setState({ aEmail: e.target.value }), setAPass: e => this.setState({ aPass: e.target.value }),
+      submitLbl: s.aBusy ? t.wait : (s.authMode === "up" ? t.signup : t.signin),
+      submitAuth: () => { if (!this.state.aBusy) this.submitAuth(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

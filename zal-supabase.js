@@ -187,17 +187,13 @@
     });
   }
 
-  // items: [{ menu_item_id, qty }]
-  // Orders from the app's own screens go to the restaurant owner's and driver's dashboards.
-  // Payment is simulated (beta): the order is marked paid right after it is created.
+  // items: [{ menu_item_id, qty }]. Beta: payment is simulated right after the order is created,
+  // which splits the money into the restaurant / ZAL / gateway wallets (zal_team_* RPCs).
   async function placeOrder(restaurantId, items, fulfilment, address, note, tip) {
     const c = db();
     if (!c) return null;
     const { data: s } = await c.auth.getSession();
-    if (!s.session) {
-      window.ZalTeam?.open("account");
-      throw new Error("Please sign in or create an account to order.");
-    }
+    if (!s.session) { const e = new Error("Please sign in or create an account to order."); e.code = "signin"; throw e; }
     const { data: id, error } = await c.rpc("zal_team_place_order", {
       p_restaurant_id: restaurantId, p_items: items, p_fulfilment: fulfilment || "pickup",
       p_address: address || null, p_note: note || null, p_request_id: crypto.randomUUID(), p_tip: tip || 0
@@ -220,5 +216,55 @@
     return data && data[0]; // { booking_id, share_code }
   }
 
-  window.ZalDB = { configured, queryCards, loadMenu, placeOrder, bookTable, parseRating, ORIGIN, client: db };
+  // ---- Customer account (tables from orders.sql / bookings; extras live in the user's metadata) ----
+  const need = () => { const c = db(); if (!c) throw new Error("offline"); return c; };
+  const ok = r => { if (r.error) throw r.error; return r.data; };
+  async function user() { const c = db(); if (!c) return null; const { data } = await c.auth.getSession(); return data.session ? data.session.user : null; }
+  const meta = async () => ((await user()) || {}).user_metadata || {};
+  const setMeta = async patch => ok(await need().auth.updateUser({ data: patch }));
+  const dash = async () => ok(await need().rpc("zal_team_dashboard"));
+  // polling instead of realtime: works without extra database setup
+  const poll = (fn, ms) => { const t = setInterval(fn, ms || 8000); return () => clearInterval(t); };
+  const acct = {
+    user,
+    orders: async () => ok(await need().from("zal_orders")
+      .select("id,restaurant_id,status,fulfilment,subtotal,delivery_fee,tip,payment_status,delivery_status,created_at,restaurants(name,image_url),zal_order_items(qty,unit_price,menu_item_id,menu_items(name))")
+      .order("created_at", { ascending: false }).limit(50)),
+    bookings: async () => ok(await need().from("zal_bookings")
+      .select("id,restaurant_id,starts_at,guests,status,share_code,restaurants(name,address)")
+      .order("starts_at", { ascending: false }).limit(50)),
+    cancelBooking: async id => ok(await need().rpc("zal_cancel_booking", { p_id: id })),
+    reorder: async o => placeOrder(o.restaurant_id, o.zal_order_items.map(i => ({ menu_item_id: i.menu_item_id, qty: i.qty })), o.fulfilment === "delivery" ? "delivery" : "pickup"),
+    walletBalance: async () => { const u = await user(); if (!u) return 0;
+      const r = ok(await need().from("zal_wallet_entries").select("amount").eq("user_id", u.id)); return (r || []).reduce((s, x) => s + Number(x.amount), 0); },
+    walletLedger: async () => { const u = await user(); if (!u) return [];
+      const r = ok(await need().from("zal_wallet_entries").select("id,event,amount,created_at,order_id").eq("user_id", u.id).order("created_at", { ascending: false }).limit(50));
+      return (r || []).map(x => ({ id: x.id, kind: x.event === "refund" ? "adjust" : "cashback", amount: x.amount, created_at: x.created_at, order_id: x.order_id })); },
+    favorites: async () => { const ids = (await meta()).favs || []; if (!ids.length) return [];
+      const r = ok(await need().from("restaurants").select("id,name,cuisine,address,image_url").in("id", ids));
+      return ids.map(id => (r || []).find(x => x.id === id)).filter(Boolean).map(x => ({ restaurant_id: x.id, restaurants: x })); },
+    setFavorite: async (rid, on) => { const f = ((await meta()).favs || []).filter(x => x !== rid); return setMeta({ favs: on ? [rid].concat(f) : f }); },
+    addresses: async () => (await meta()).addrs || [],
+    addAddress: async a => { const l = (await meta()).addrs || []; return setMeta({ addrs: l.concat([Object.assign({ id: crypto.randomUUID(), created_at: new Date().toISOString() }, a)]) }); },
+    removeAddress: async id => setMeta({ addrs: ((await meta()).addrs || []).filter(x => x.id !== id) }),
+    profile: async () => { const m = await meta(); return Object.assign({ full_name: m.full_name, phone: m.phone }, m.profile || {}); },
+    saveProfile: async p => setMeta({ full_name: p.full_name, phone: p.phone, profile: p }),
+    trackOrder: async id => { const r = ok(await need().from("zal_orders").select("status,fulfilment,subtotal,created_at,restaurants(name)").eq("id", id).maybeSingle());
+      return r ? { status: r.status, restaurant: r.restaurants && r.restaurants.name, fulfilment: r.fulfilment, subtotal: r.subtotal, created_at: r.created_at } : null; },
+    // cb(order) on every status change of the signed-in user's orders
+    watchOrders: cb => { let last = {}; return poll(async () => { try {
+      for (const o of await acct.orders()) { if (last[o.id] && last[o.id] !== o.status) cb(o); last[o.id] = o.status; } } catch (e) {} }); }
+  };
+  // ---- Restaurant owner (zal_team_* backend) ----
+  const ACTION = { accepted: "accept", preparing: "accept", ready: "ready", completed: "complete", cancelled: "cancel" };
+  const staff = {
+    restaurants: async () => ((await dash()).restaurants || []).map(r => ({ restaurant_id: r.id, role: "owner", restaurants: { name: r.name } })),
+    orders: async rid => ((await dash()).orders || []).filter(o => o.restaurant_id === rid && o.payment_status === "paid")
+      .map(o => Object.assign({}, o, { zal_order_items: (o.items || []).map(i => ({ qty: i.qty, menu_items: { name: i.name } })) })),
+    bookings: async rid => { const r = await need().rpc("zal_team_bookings", { p_restaurant: rid }); return r.error ? [] : r.data; },
+    setStatus: async (id, st) => ok(await need().rpc("zal_team_order_action", { p_order_id: id, p_action: ACTION[st] || st })),
+    watch: (rid, cb) => poll(cb, 10000)
+  };
+
+  window.ZalDB = { configured, queryCards, loadMenu, placeOrder, bookTable, parseRating, ORIGIN, client: db, acct, staff };
 })();

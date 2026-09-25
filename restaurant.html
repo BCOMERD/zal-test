@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<meta name="robots" content="noindex, nofollow">
+<title>ZAL Partner</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="zal-config.js?v=5"></script>
+<script src="zal-supabase.js?v=5"></script>
+<style>
+  :root { --z-bg:#F7F3EC; --z-surface:#fff; --z-inset:#EFE8DC; --z-text:#0A192F; --z-text-2:#15294A; --z-muted:#3E5275; --z-accent:#FFD000; --z-on-accent:#0A192F; --z-fg:#0A192F; --z-ok:#1F7A55; --z-bad:#B3261E; }
+  body { margin:0; background:var(--z-bg); font-family:Inter,Tajawal,sans-serif; }
+  ::-webkit-scrollbar { display:none; }
+</style>
+</helmet>
+<div dir="{{ dir }}" style="min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;color:var(--z-text)">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;border-bottom:1px solid color-mix(in srgb, var(--z-fg) 8%, transparent);background:var(--z-surface);flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:12px">
+      <strong style="font-size:19px;letter-spacing:.02em">ZAL</strong>
+      <span style="color:var(--z-muted)">·</span>
+      <span style="font-size:15px;font-weight:700">{{ restName }}</span>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ signOut }}" style="height:32px;padding:0 12px;border-radius:9999px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid color-mix(in srgb, var(--z-fg) 12%, transparent);background:transparent;color:var(--z-text)">{{ t.signout }}</button></sc-if>
+      <sc-for list="{{ langs }}" as="lg" hint-placeholder-count="4">
+        <button type="button" onClick="{{ lg.pick }}" style="{{ lg.style }}">{{ lg.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ needAuth }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:30px">
+      <div style="max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px;background:var(--z-surface);border-radius:20px;padding:28px;box-shadow:0 20px 40px -20px rgba(0,0,0,.15)">
+        <strong style="font-size:18px">{{ t.signin }}</strong>
+        <input type="email" value="{{ aEmail }}" onChange="{{ setAEmail }}" placeholder="{{ t.email }}" style="height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:0;color:var(--z-text);font:inherit;font-size:14px;outline:none">
+        <input type="password" value="{{ aPass }}" onChange="{{ setAPass }}" placeholder="{{ t.pass }}" style="height:46px;padding:0 14px;border-radius:12px;background:var(--z-inset);border:0;color:var(--z-text);font:inherit;font-size:14px;outline:none">
+        <sc-if value="{{ hasAMsg }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--z-bad)">{{ aMsg }}</span></sc-if>
+        <button type="button" onClick="{{ submitAuth }}" style="height:46px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;cursor:pointer">{{ t.signin }}</button>
+        <a href="./#partner" style="text-align:center;font-size:13.5px;font-weight:700;color:var(--z-text-2)">{{ t.register }}</a>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ noAccess }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center">
+      <div style="display:flex;flex-direction:column;gap:14px;align-items:center"><p style="max-width:420px;color:var(--z-muted);font-size:14px;line-height:1.6;margin:0">{{ t.noAccess }}</p><a href="./#partner" style="height:44px;padding:0 22px;display:flex;align-items:center;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);font-weight:800;text-decoration:none">{{ t.register }}</a></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasAccess }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;gap:6px;padding:16px 24px 0">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="2">
+        <button type="button" onClick="{{ tb.pick }}" style="{{ tb.style }}">{{ tb.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="flex:1;padding:16px 24px 32px;display:flex;flex-direction:column;gap:12px">
+      <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ noOrders }}" hint-placeholder-val="{{ false }}"><div style="padding:30px;text-align:center;color:var(--z-muted)">{{ t.noOrders }}</div></sc-if>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
+          <sc-for list="{{ orders }}" as="o" hint-placeholder-count="4">
+            <div style="background:var(--z-surface);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)">
+              <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                <span style="font-size:12.5px;color:var(--z-muted)">{{ o.time }} · {{ o.fulfil }}</span>
+                <span style="{{ o.pillStyle }}">{{ o.statusLbl }}</span>
+              </div>
+              <span style="font-size:13.5px;line-height:1.5">{{ o.items }}</span>
+              <strong style="font-size:16px">{{ o.total }}</strong>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ o.actions }}" as="ac" hint-placeholder-count="1">
+                  <button type="button" onClick="{{ ac.run }}" style="{{ ac.style }}">{{ ac.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMenu }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--z-surface);border-radius:16px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)">
+          <input id="dish-name" placeholder="{{ t.dishName }}" style="height:42px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:0;color:var(--z-text);font:inherit;font-size:14px;outline:none">
+          <input id="dish-price" type="number" step="0.1" min="0.1" placeholder="€" style="height:42px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:0;color:var(--z-text);font:inherit;font-size:14px;outline:none">
+          <input id="dish-ing" placeholder="{{ t.dishIng }}" style="height:42px;padding:0 12px;border-radius:10px;background:var(--z-inset);border:0;color:var(--z-text);font:inherit;font-size:14px;outline:none">
+          <button type="button" onClick="{{ addDish }}" style="height:42px;border-radius:9999px;background:var(--z-accent);color:var(--z-on-accent);border:0;font:inherit;font-weight:800;cursor:pointer">{{ t.addDish }}</button>
+        </div>
+        <sc-if value="{{ hasMenuMsg }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--z-muted)">{{ menuMsg }}</span></sc-if>
+        <sc-for list="{{ dishes }}" as="d" hint-placeholder-count="3">
+          <div style="background:var(--z-surface);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;gap:14px;align-items:center;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><strong style="font-size:14.5px">{{ d.name }}</strong><span style="font-size:12.5px;color:var(--z-muted)">{{ d.sub }}</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><strong>{{ d.price }}</strong><button type="button" onClick="{{ d.hide }}" style="height:32px;padding:0 12px;border-radius:9999px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;border:1px solid color-mix(in srgb, var(--z-bad) 40%, transparent);background:transparent;color:var(--z-bad)">{{ t.hide }}</button></div>
+          </div>
+        </sc-for>
+      </sc-if>
+
+      <sc-if value="{{ isEarn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+          <div style="background:var(--z-surface);border-radius:16px;padding:18px;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)"><span style="font-size:12px;color:var(--z-muted);font-weight:700">{{ t.balance }}</span><div style="font-size:26px;font-weight:900;margin-top:6px">{{ balance }}</div></div>
+          <div style="background:var(--z-surface);border-radius:16px;padding:18px;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)"><span style="font-size:12px;color:var(--z-muted);font-weight:700">{{ t.commission }}</span><div style="font-size:26px;font-weight:900;margin-top:6px">7%</div></div>
+        </div>
+        <sc-for list="{{ ledger }}" as="w" hint-placeholder-count="3">
+          <div style="background:var(--z-surface);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;gap:14px;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)"><span style="font-size:13px;color:var(--z-muted)">{{ w.label }}</span><strong style="{{ w.style }}">{{ w.amount }}</strong></div>
+        </sc-for>
+      </sc-if>
+
+      <sc-if value="{{ isBookings }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ noBookings }}" hint-placeholder-val="{{ false }}"><div style="padding:30px;text-align:center;color:var(--z-muted)">{{ t.noBookings }}</div></sc-if>
+        <sc-for list="{{ bookings }}" as="b" hint-placeholder-count="3">
+          <div style="background:var(--z-surface);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid color-mix(in srgb, var(--z-fg) 6%, transparent)">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <strong style="font-size:14.5px">{{ b.when }}</strong>
+              <span style="font-size:12.5px;color:var(--z-muted)">{{ b.guests }} · {{ b.code }}</span>
+            </div>
+            <span style="{{ b.pillStyle }}">{{ b.statusLbl }}</span>
+          </div>
+        </sc-for>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TX = {
+  en:{signout:"Sign out",register:"Register your restaurant",menu:"Menu",earn:"Earnings",dishName:"Dish name",dishIng:"Ingredients, comma separated",addDish:"Add dish",hide:"Hide",balance:"Balance",commission:"ZAL commission",order:"Order",refund:"Refund",added:"Dish added",signin:"Sign in",email:"Email",pass:"Password",orders:"Orders",bookings:"Bookings",noOrders:"No orders yet.",noBookings:"No bookings for today.",
+    noAccess:"This account has no restaurant yet. Register your restaurant to open your partner dashboard.",
+    pickup:"Pickup",delivery:"Delivery",dine_in:"Dine-in",accept:"Accept",preparing:"Start preparing",ready:"Mark ready",complete:"Complete",cancel:"Cancel",
+    st:{pending:"New",accepted:"Accepted",preparing:"Preparing",ready:"Ready",completed:"Completed",cancelled:"Cancelled"},confirmed:"Confirmed",cancelled:"Cancelled",seated:"Seated",no_show:"No-show"},
+  ar:{signout:"تسجيل الخروج",register:"سجّل مطعمك",menu:"المنيو",earn:"الأرباح",dishName:"اسم الطبق",dishIng:"المكونات، بفواصل",addDish:"إضافة طبق",hide:"إخفاء",balance:"الرصيد",commission:"عمولة زال",order:"طلب",refund:"استرجاع",added:"تمت إضافة الطبق",signin:"تسجيل الدخول",email:"البريد الإلكتروني",pass:"كلمة المرور",orders:"الطلبات",bookings:"الحجوزات",noOrders:"لا طلبات حالياً.",noBookings:"لا حجوزات اليوم.",
+    noAccess:"هذا الحساب ما عنده مطعم بعد. سجّل مطعمك لتفتح لوحة الشريك.",
+    pickup:"استلام",delivery:"توصيل",dine_in:"في المطعم",accept:"قبول",preparing:"بدء التحضير",ready:"جاهز",complete:"إنهاء",cancel:"إلغاء",
+    st:{pending:"جديد",accepted:"مقبول",preparing:"قيد التحضير",ready:"جاهز",completed:"مكتمل",cancelled:"ملغى"},confirmed:"مؤكد",cancelled:"ملغى",seated:"حضر",no_show:"لم يحضر"},
+  fr:{signout:"Déconnexion",register:"Inscrire votre restaurant",menu:"Carte",earn:"Revenus",dishName:"Nom du plat",dishIng:"Ingrédients, séparés par des virgules",addDish:"Ajouter",hide:"Masquer",balance:"Solde",commission:"Commission ZAL",order:"Commande",refund:"Remboursement",added:"Plat ajouté",signin:"Se connecter",email:"E-mail",pass:"Mot de passe",orders:"Commandes",bookings:"Réservations",noOrders:"Aucune commande.",noBookings:"Aucune réservation aujourd'hui.",
+    noAccess:"Ce compte n'a pas encore de restaurant. Inscrivez votre restaurant pour ouvrir votre tableau de bord.",
+    pickup:"À emporter",delivery:"Livraison",dine_in:"Sur place",accept:"Accepter",preparing:"Préparation",ready:"Prête",complete:"Terminer",cancel:"Annuler",
+    st:{pending:"Nouvelle",accepted:"Acceptée",preparing:"En préparation",ready:"Prête",completed:"Terminée",cancelled:"Annulée"},confirmed:"Confirmée",cancelled:"Annulée",seated:"Honorée",no_show:"Manquée"},
+  nl:{signout:"Uitloggen",register:"Registreer je restaurant",menu:"Menu",earn:"Inkomsten",dishName:"Naam gerecht",dishIng:"Ingrediënten, komma-gescheiden",addDish:"Toevoegen",hide:"Verbergen",balance:"Saldo",commission:"ZAL-commissie",order:"Bestelling",refund:"Terugbetaling",added:"Gerecht toegevoegd",signin:"Inloggen",email:"E-mail",pass:"Wachtwoord",orders:"Bestellingen",bookings:"Reservaties",noOrders:"Nog geen bestellingen.",noBookings:"Geen reservaties vandaag.",
+    noAccess:"Dit account heeft nog geen restaurant. Registreer je restaurant om je dashboard te openen.",
+    pickup:"Afhalen",delivery:"Levering",dine_in:"Ter plaatse",accept:"Aanvaarden",preparing:"Bereiden",ready:"Klaar",complete:"Afronden",cancel:"Annuleren",
+    st:{pending:"Nieuw",accepted:"Aanvaard",preparing:"In bereiding",ready:"Klaar",completed:"Afgerond",cancelled:"Geannuleerd"},confirmed:"Bevestigd",cancelled:"Geannuleerd",seated:"Aanwezig",no_show:"Gemist"}
+};
+const eur = n => (Number(n) || 0).toFixed(2).replace(".", ",") + " €";
+const pill = (bg, fg) => "flex-shrink:0;font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:9999px;background:" + bg + ";color:" + fg;
+const NEXT = { pending:["accepted","cancel"], accepted:["ready","cancel"], ready:["complete"] };
+const chip = on => "height:36px;padding:0 15px;border-radius:9999px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;border:1px solid " +
+  (on ? "var(--z-accent);background:var(--z-accent);color:var(--z-on-accent)" : "color-mix(in srgb, var(--z-fg) 12%, transparent);background:transparent;color:var(--z-text)");
+
+class Component extends DCLogic {
+  state = { lang: /^ar/.test(navigator.language) ? "ar" : "en", dishes:[], ledger:[], menuMsg:"", user:null, checked:false, rests:[], rid:null, tab:"orders", orders:[], bookings:[], aEmail:"", aPass:"", aMsg:"" };
+  componentDidMount() { this.init(); }
+  componentWillUnmount() { if (this.unwatch) this.unwatch(); if (this.authSub) this.authSub.unsubscribe(); }
+  async init() {
+    const Z = window.ZalDB;
+    if (!Z || !Z.configured()) return this.setState({ checked:true });
+    const c = Z.client();
+    c.auth.getSession().then(({ data }) => { this.setState({ user: data.session ? data.session.user : null, checked:true }); if (data.session) this.afterLogin(); });
+    this.authSub = c.auth.onAuthStateChange((_e, ses) => { this.setState({ user: ses ? ses.user : null }); if (ses) this.afterLogin(); }).data.subscription;
+  }
+  async afterLogin() {
+    const rests = await window.ZalDB.staff.restaurants();
+    const rid = rests && rests[0] ? rests[0].restaurant_id : null;
+    this.setState({ rests: rests || [], rid, loaded: true });
+    if (rid) this.loadRid(rid);
+  }
+  async loadRid(rid) {
+    const S = window.ZalDB.staff;
+    const [orders, bookings] = await Promise.all([S.orders(rid), S.bookings(rid)]);
+    this.setState({ orders: orders || [], bookings: bookings || [] });
+    if (this.unwatch) this.unwatch();
+    this.unwatch = S.watch(rid, () => this.loadRid(rid));
+  }
+  async setStatus(id, st) { try { await window.ZalDB.staff.setStatus(id, st); this.loadRid(this.state.rid); } catch (e) { alert(e.message); } }
+  async loadMenu() { const c = window.ZalDB.client(); const r = await c.from("menu_items").select("id,name,price,description,ingredients,available").eq("restaurant_id", this.state.rid).eq("available", true).order("name"); this.setState({ dishes: r.data || [] }); }
+  async loadEarn() { const u = this.state.user; if (!u) return; const r = await window.ZalDB.client().from("zal_wallet_entries").select("id,party,event,amount,created_at").eq("user_id", u.id).eq("party", "restaurant").order("created_at", { ascending:false }).limit(100); this.setState({ ledger: r.data || [] }); }
+  async addDish() {
+    const v = id => (document.getElementById(id) || {}).value || "", t = TX[this.state.lang] || TX.en;
+    try {
+      await window.ZalDB.client().rpc("zal_team_save_dish", { p_restaurant_id: this.state.rid, p_name: v("dish-name").trim(), p_description: "", p_price: Number(v("dish-price")),
+        p_ingredients: v("dish-ing").split(",").map(x => x.trim()).filter(Boolean) }).then(r => { if (r.error) throw r.error; });
+      ["dish-name","dish-price","dish-ing"].forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+      this.setState({ menuMsg: t.added }); this.loadMenu();
+    } catch (e) { this.setState({ menuMsg: e.message }); }
+  }
+  async hideDish(id) { const r = await window.ZalDB.client().rpc("zal_team_set_dish_available", { p_dish_id: id, p_available: false }); if (r.error) alert(r.error.message); this.loadMenu(); }
+  async submitAuth() {
+    const c = window.ZalDB.client(), s = this.state;
+    if (!s.aEmail || !s.aPass) return;
+    this.setState({ aMsg:"" });
+    const { error } = await c.auth.signInWithPassword({ email: s.aEmail.trim(), password: s.aPass });
+    if (error) this.setState({ aMsg: error.message });
+  }
+  renderVals() {
+    const s = this.state, lang = s.lang, t = TX[lang] || TX.en;
+    const restRow = s.rests[0];
+    const orders = s.orders.map(o => ({
+      time: new Date(o.created_at).toLocaleTimeString(lang === "ar" ? "ar" : "en-GB", { hour:"2-digit", minute:"2-digit", timeZone:"Europe/Brussels" }),
+      fulfil: t[o.fulfilment] || o.fulfilment,
+      statusLbl: t.st[o.status] || o.status,
+      pillStyle: o.status === "cancelled" ? pill("color-mix(in srgb, var(--z-fg) 8%, transparent)", "var(--z-muted)")
+        : o.status === "completed" ? pill("color-mix(in srgb, var(--z-ok) 16%, transparent)", "var(--z-ok)")
+        : o.status === "ready" ? pill("var(--z-ok)", "#fff") : pill("var(--z-accent)", "var(--z-on-accent)"),
+      items: (o.zal_order_items || []).map(i => i.qty + "× " + ((i.menu_items && i.menu_items.name) || "")).join(" · "),
+      total: eur(o.subtotal),
+      actions: (o.status === "ready" && o.fulfilment === "delivery" ? [] : NEXT[o.status] || []).map(k => ({
+        label: t[k === "accepted" ? "accept" : k] || k,
+        style: "height:34px;padding:0 14px;border-radius:9999px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;border:0;" +
+          (k === "cancel" ? "background:transparent;border:1px solid color-mix(in srgb, var(--z-bad) 40%, transparent);color:var(--z-bad)" : "background:var(--z-accent);color:var(--z-on-accent)"),
+        run: () => this.setStatus(o.id, k === "complete" ? "completed" : k === "cancel" ? "cancelled" : k)
+      }))
+    }));
+    const bookings = s.bookings.map(b => ({
+      when: new Date(b.starts_at).toLocaleString(lang === "ar" ? "ar" : "en-GB", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit", timeZone:"Europe/Brussels" }),
+      guests: b.guests + (lang === "ar" ? " أشخاص" : " guests"), code: b.share_code,
+      statusLbl: t[b.status] || b.status,
+      pillStyle: b.status === "confirmed" ? pill("var(--z-accent)", "var(--z-on-accent)") : pill("color-mix(in srgb, var(--z-fg) 8%, transparent)", "var(--z-muted)")
+    }));
+    return {
+      dir: lang === "ar" ? "rtl" : "ltr", t,
+      langs: [["en","EN"],["ar","AR"],["fr","FR"],["nl","NL"]].map(([k, label]) => ({ label, style: chip(lang === k), pick: () => this.setState({ lang:k }) })),
+      restName: (restRow && restRow.restaurants && restRow.restaurants.name) || "—",
+      needAuth: s.checked && !s.user, noAccess: !!s.user && s.checked && s.loaded && !s.rid,
+      aEmail: s.aEmail, aPass: s.aPass, hasAMsg: !!s.aMsg, aMsg: s.aMsg,
+      setAEmail: e => this.setState({ aEmail: e.target.value }), setAPass: e => this.setState({ aPass: e.target.value }),
+      submitAuth: () => this.submitAuth(),
+      hasAccess: !!s.user && !!s.rid,
+      tabs: [["orders",t.orders],["bookings",t.bookings],["menu",t.menu],["earn",t.earn]].map(([k, label]) => ({ label, style: chip(s.tab === k),
+        pick: () => { this.setState({ tab:k }); if (k === "menu") this.loadMenu(); if (k === "earn") this.loadEarn(); } })),
+      isOrders: s.tab === "orders", isBookings: s.tab === "bookings", isMenu: s.tab === "menu", isEarn: s.tab === "earn",
+      signedIn: !!s.user, signOut: async () => { await window.ZalDB.client().auth.signOut(); this.setState({ user:null, rid:null, rests:[], orders:[] }); },
+      dishes: s.dishes.map(d => ({ name: d.name, sub: (d.ingredients || []).join(", ") || d.description || "", price: eur(d.price), hide: () => this.hideDish(d.id) })),
+      addDish: () => this.addDish(), hasMenuMsg: !!s.menuMsg, menuMsg: s.menuMsg,
+      balance: eur(s.ledger.reduce((a, w) => a + Number(w.amount), 0)),
+      ledger: s.ledger.map(w => ({ label: (w.event === "refund" ? t.refund : t.order) + " · " + new Date(w.created_at).toLocaleString(lang === "ar" ? "ar" : "en-GB"),
+        amount: (Number(w.amount) >= 0 ? "+" : "") + eur(w.amount), style: "color:" + (Number(w.amount) < 0 ? "var(--z-bad)" : "var(--z-ok)") })),
+      orders, noOrders: !orders.length, bookings, noBookings: !bookings.length
+    };
+  }
+}
+</script>
+</body>
+</html>

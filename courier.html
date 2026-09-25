@@ -1,1 +1,15 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta http-equiv="refresh" content="0; url=./#courier"><title>ZAL</title></head><body><a href="./#courier">ZAL</a></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>ZAL Courier</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>body{margin:0;min-height:100vh;background:#0A1122;color:#F4F6FB;font-family:Inter,Tajawal,sans-serif;display:grid;place-items:center;text-align:center}
+a,button{color:#0A1122;background:#F2B203;border:0;border-radius:999px;padding:13px 24px;font:800 15px Inter,Tajawal,sans-serif;cursor:pointer;text-decoration:none;display:inline-block;margin:6px}
+a.ghost{background:transparent;color:#F4F6FB;border:1px solid rgba(255,255,255,.15)}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="zal-config.js?v=5"></script><script src="zal-supabase.js?v=5"></script><script defer src="zal-ui.js?v=5"></script>
+</head><body>
+<div><h1 style="font-size:26px">ZAL Courier</h1>
+<button onclick="window.ZalTeam && ZalTeam.open('driver')">Open courier dashboard · لوحة السائق</button><br>
+<a class="ghost" href="./#courier-signup">Become a courier · سجّل كسائق</a></div>
+<script>window.addEventListener("zal-team-ready", () => ZalTeam.open("driver"));</script>
+</body></html>
